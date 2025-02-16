@@ -1,0 +1,62 @@
+.profile-container {
+  @apply min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
+  background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.15) 1px, transparent 0);
+  background-size: 40px 40px;
+}
+
+.profile-card {
+  @apply bg-gray-900/50 backdrop-blur-sm rounded-2xl p-8 mb-8
+    border border-gray-800/50;
+  box-shadow: 
+    0 0 40px rgba(6, 78, 59, 0.1),
+    0 0 80px rgba(0, 0, 0, 0.3);
+}
+
+.profile-title {
+  @apply text-2xl font-bold mb-8 text-center;
+  background: linear-gradient(to right, #10b981, #064e3b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 30px rgba(6, 78, 59, 0.3);
+}
+
+.info-grid {
+  @apply grid gap-6 md:grid-cols-2;
+}
+
+.info-item {
+  @apply space-y-2;
+}
+
+.info-item label {
+  @apply text-sm font-medium text-emerald-400;
+  text-shadow: 0 0 20px rgba(6, 78, 59, 0.2);
+}
+
+.info-item p {
+  @apply text-white text-lg p-3 rounded-xl bg-gray-800/50 border border-gray-700/50;
+}
+
+.back-button {
+  @apply px-4 py-2 rounded-xl text-sm font-medium text-white
+    transition-all duration-300 ease-in-out;
+  background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
+  border: 1px solid rgba(6, 78, 59, 0.2);
+  box-shadow: 0 4px 20px rgba(6, 78, 59, 0.15);
+}
+
+.back-button:hover {
+  @apply transform scale-[1.02];
+  box-shadow: 0 4px 25px rgba(6, 78, 59, 0.25);
+}
+
+.back-button:active {
+  @apply transform scale-[0.98];
+}
+
+.profile-card:hover {
+  @apply transform transition-all duration-500;
+  box-shadow: 
+    0 0 50px rgba(6, 78, 59, 0.15),
+    0 0 90px rgba(0, 0, 0, 0.3);
+} 

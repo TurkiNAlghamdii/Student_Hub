@@ -1,0 +1,43 @@
+.navbar {
+  @apply bg-gray-900/50 backdrop-blur-sm border-b border-gray-800/50;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.nav-content {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between;
+}
+
+.nav-title {
+  @apply text-xl font-bold;
+  background: linear-gradient(to right, #10b981, #064e3b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 30px rgba(6, 78, 59, 0.3);
+}
+
+.nav-buttons {
+  @apply flex gap-4;
+}
+
+.nav-button {
+  @apply px-4 py-2 rounded-xl text-sm font-medium text-white
+    transition-all duration-300 ease-in-out;
+  background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
+  border: 1px solid rgba(6, 78, 59, 0.2);
+  box-shadow: 0 4px 20px rgba(6, 78, 59, 0.15);
+}
+
+.nav-button:hover {
+  @apply transform scale-[1.02];
+  box-shadow: 0 4px 25px rgba(6, 78, 59, 0.25);
+}
+
+.nav-button:active {
+  @apply transform scale-[0.98];
+}
+
+.profile-button,
+.logout-button,
+.back-button {
+  @extend .nav-button;
+} 
