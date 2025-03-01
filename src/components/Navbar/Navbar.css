@@ -1,14 +1,14 @@
 .navbar {
-  @apply bg-gray-900/50 backdrop-blur-sm border-b border-gray-800/50;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  @apply bg-gray-900/80 backdrop-blur-md border-b border-gray-800/50 sticky top-0 z-50;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .nav-content {
-  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between;
+  @apply max-w-7xl mx-auto px-4 py-4 flex justify-between items-center;
 }
 
 .nav-title {
-  @apply text-xl font-bold;
+  @apply text-xl font-bold text-white;
   background: linear-gradient(to right, #10b981, #064e3b);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -16,10 +16,10 @@
 }
 
 .nav-buttons {
-  @apply flex gap-4;
+  @apply flex gap-3;
 }
 
-.nav-button {
+.back-button, .profile-button, .logout-button {
   @apply px-4 py-2 rounded-xl text-sm font-medium text-white
     transition-all duration-300 ease-in-out;
   background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
@@ -27,17 +27,31 @@
   box-shadow: 0 4px 20px rgba(6, 78, 59, 0.15);
 }
 
-.nav-button:hover {
+.back-button:hover, .profile-button:hover, .logout-button:hover {
   @apply transform scale-[1.02];
   box-shadow: 0 4px 25px rgba(6, 78, 59, 0.25);
 }
 
-.nav-button:active {
+.back-button:active, .profile-button:active, .logout-button:active {
   @apply transform scale-[0.98];
 }
 
-.profile-button,
-.logout-button,
-.back-button {
-  @extend .nav-button;
+.logout-button {
+  background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
+  border: 1px solid rgba(153, 27, 27, 0.2);
+  box-shadow: 0 4px 20px rgba(153, 27, 27, 0.15);
+}
+
+.logout-button:hover {
+  box-shadow: 0 4px 25px rgba(153, 27, 27, 0.25);
+}
+
+@media (max-width: 640px) {
+  .nav-buttons {
+    @apply gap-2;
+  }
+  
+  .back-button, .profile-button, .logout-button {
+    @apply px-3 py-1.5 text-xs;
+  }
 } 
