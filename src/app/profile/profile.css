@@ -1,15 +1,46 @@
 .profile-container {
   @apply min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
-  background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.15) 1px, transparent 0);
-  background-size: 40px 40px;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 20%),
+    radial-gradient(circle at 90% 80%, rgba(6, 78, 59, 0.07) 0%, transparent 25%),
+    radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.1) 1px, transparent 0);
+  background-size: 100% 100%, 100% 100%, 40px 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
+  animation: rotate 60s linear infinite;
+  z-index: 0;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .profile-card {
-  @apply bg-gray-900/50 backdrop-blur-sm rounded-2xl p-8 mb-8
-    border border-gray-800/50;
+  @apply bg-gray-900/60 backdrop-blur-md rounded-2xl p-8 mb-8
+    border border-gray-800/50 relative z-10;
   box-shadow: 
-    0 0 40px rgba(6, 78, 59, 0.1),
-    0 0 80px rgba(0, 0, 0, 0.3);
+    0 10px 40px rgba(0, 0, 0, 0.3),
+    0 0 80px rgba(6, 78, 59, 0.15);
+  transition: all 0.4s ease;
+}
+
+.profile-card:hover {
+  @apply transform transition-all duration-500;
+  box-shadow: 
+    0 15px 60px rgba(0, 0, 0, 0.4),
+    0 0 100px rgba(6, 78, 59, 0.2);
+  transform: translateY(-5px);
 }
 
 .profile-title {
@@ -51,18 +82,47 @@
   object-fit: cover;
 }
 
+.avatar-upload {
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.avatar-upload:hover .avatar-overlay {
+  opacity: 1;
+}
+
 .avatar-overlay {
   position: absolute;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.6);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   opacity: 0;
   transition: opacity 0.3s ease;
+  border-radius: 50%;
+}
+
+.avatar-overlay span {
   color: white;
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.uploading-indicator {
+  width: 96px;
+  height: 96px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0;
+  border-radius: 50%;
+  font-size: 14px;
+  color: #666;
 }
 
 .avatar-container:hover .avatar-overlay {
@@ -102,7 +162,6 @@
   @apply text-sm font-medium text-emerald-400;
   text-shadow: 0 0 20px rgba(6, 78, 59, 0.2);
 }
-
 .info-item p {
   @apply text-white text-lg p-3 rounded-xl bg-gray-800/50 border border-gray-700/50;
   overflow-wrap: break-word;
@@ -110,13 +169,28 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
-/* For very long emails without spaces */
 .info-item.email p {
   font-size: 0.95rem;
   word-break: break-all;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: break-word;
+  @apply text-white p-3 rounded-xl bg-gray-800/50 border border-gray-700/50;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
 }
 
+/* Add responsive adjustments for small screens */
+@media (max-width: 640px) {
+  .info-item.email p {
+    font-size: 0.85rem;
+  }
+  
+  .info-grid {
+    @apply grid-cols-1;
+  }
+}
 .profile-header {
   @apply flex justify-between items-center mb-6;
 }
@@ -178,11 +252,4 @@
 
 .back-button:active {
   @apply transform scale-[0.98];
-}
-
-.profile-card:hover {
-  @apply transform transition-all duration-500;
-  box-shadow: 
-    0 0 50px rgba(6, 78, 59, 0.15),
-    0 0 90px rgba(0, 0, 0, 0.3);
 }
