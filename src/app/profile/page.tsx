@@ -204,15 +204,6 @@ interface StudentProfile {
             <div className="profile-card">
               <h2 className="profile-title">My Information</h2>
               
-              <div className="profile-header">
-                <button 
-                  className="edit-button"
-                  onClick={() => setIsEditing(!isEditing)}
-                >
-                  {isEditing ? 'Cancel' : 'Edit Profile'}
-                </button>
-              </div>
-  
               {updateMessage && (
                 <div className={`update-message ${updateMessage.includes('Failed') ? 'error' : 'success'}`}>
                   {updateMessage}
@@ -302,7 +293,7 @@ interface StudentProfile {
                 </form>
               ) : (
                 <div className="profile-content">
-                  <div className="profile-avatar">
+                  <div className="profile-avatar flex-col">
                     {studentProfile?.avatar_url ? (
                       <div className="avatar-container">
                         <Image 
@@ -318,6 +309,15 @@ interface StudentProfile {
                         {studentProfile?.full_name?.charAt(0) || user?.email?.charAt(0) || '?'}
                       </div>
                     )}
+                    
+                    <div className="mt-2 text-center">
+                      <span 
+                        className="text-emerald-400 cursor-pointer hover:text-emerald-300"
+                        onClick={() => setIsEditing(!isEditing)}
+                      >
+                        Edit Profile
+                      </span>
+                    </div>
                   </div>
   
                   <div className="profile-details">
