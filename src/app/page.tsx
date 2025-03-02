@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import Navbar from '@/components/Navbar/Navbar'
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner'
 import './home.css'
+import NotificationsBox from '@/components/NotificationsBox'
 
 export default function Home() {
   const router = useRouter()
@@ -45,12 +46,13 @@ export default function Home() {
 
   return (
     <div className="home-container">
-      <Navbar title="Student Hub" showProfile />
+      <Navbar title="Student Hub" />
       <main className="main-content">
         <div className="welcome-section">
           <h2 className="welcome-text">
             Welcome, {studentProfile?.full_name || user.email}
           </h2>
+          <NotificationsBox />
         </div>
       </main>
     </div>

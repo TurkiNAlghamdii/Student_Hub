@@ -100,22 +100,24 @@ interface StudentProfile {
           if (reader.result) {
             // Store the base64 image data in localStorage
             const base64Image = reader.result.toString()
-            localStorage.setItem(`avatar_${user.id}`, base64Image)
-            
-            // Also update the student profile in the database with the avatar URL
-            try {
-              const { error } = await supabase
-                .from('students')
-                .update({ avatar_url: base64Image })
-                .eq('id', user.id)
-                
-              if (error) {
-                console.error('Error updating avatar in database:', error)
-              } else {
-                console.log('Avatar URL saved to database')
+            if (user) {
+              localStorage.setItem(`avatar_${user.id}`, base64Image)
+              
+              // Also update the student profile in the database with the avatar URL
+              try {
+                const { error } = await supabase
+                  .from('students')
+                  .update({ avatar_url: base64Image })
+                  .eq('id', user.id)
+                  
+                if (error) {
+                  console.error('Error updating avatar in database:', error)
+                } else {
+                  console.log('Avatar URL saved to database')
+                }
+              } catch (dbError) {
+                console.error('Database error:', dbError)
               }
-            } catch (dbError) {
-              console.error('Database error:', dbError)
             }
             
             console.log('Avatar saved to localStorage')
@@ -196,7 +198,7 @@ interface StudentProfile {
     if (!user) return null
     return (
       <div className="profile-container">
-        <Navbar title="Student Profile" showBack={true} />
+        <Navbar title="Student Profile" />
         <main className="flex justify-center items-center p-6">
           <div className="max-w-2xl w-full">
             <div className="profile-card">
