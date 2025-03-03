@@ -1,30 +1,75 @@
-'use client'
+import { createClient } from '@supabase/supabase-js'
+import CoursesClient from './CoursesClient'
 
-import { useRouter } from 'next/navigation'
-import Navbar from '@/components/Navbar/Navbar'
+// Define the course interface
+interface Course {
+  course_code: string
+  course_name: string
+  course_description: string
+  faculty: {
+    name: string
+  }
+  instructor?: string
+}
 
-export default function CoursesPage() {
-  const router = useRouter()
+// This is a server component that fetches data
+export default async function CoursesPage() {
+  let courses: Course[] = [];
+  let error: string | null = null;
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">
-      <Navbar title="My Courses" />
-      <div className="container mx-auto p-6">
-        <div className="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-gray-800/50">
-          <h1 className="text-2xl font-bold mb-6 text-white">My Courses</h1>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <div 
-              className="bg-gray-900/50 backdrop-blur-md rounded-xl border border-gray-800/50 p-6 cursor-pointer hover:border-emerald-500/50 transition-colors"
-              onClick={() => router.push('/courses/CPIT370')}
-            >
-              <h2 className="text-xl font-semibold text-emerald-500">CPIT370</h2>
-              <p className="text-gray-300 mt-2">Computer Networks</p>
-              <p className="text-gray-400 text-sm mt-1">Dr. Mohammed Ahmed</p>
-            </div>
-            {/* Add more course cards here */}
-          </div>
-        </div>
-      </div>
-    </div>
-  )
+  try {
+    // Create Supabase client with service role key (bypasses RLS)
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false
+      }
+    });
+    
+    // Fetch courses from Supabase
+    const { data, error: supabaseError } = await supabase
+      .from('courses')
+      .select('*');
+    
+    if (supabaseError) {
+      throw new Error(`Error fetching courses: ${supabaseError.message}`);
+    }
+    
+    if (!data || data.length === 0) {
+      error = 'No courses found';
+    } else {
+      // Format the courses data
+      courses = data.map(course => ({
+        course_code: course.course_code,
+        course_name: course.course_name,
+        course_description: course.course_description || 'No description available',
+        faculty: {
+          name: getFacultyName(course.faculty)
+        },
+        instructor: course.instructor
+      }));
+    }
+  } catch (err: any) {
+    error = err.message || 'An unexpected error occurred';
+  }
+
+  // Return the client component with the courses data or error
+  return <CoursesClient courses={courses} error={error} />;
+}
+
+function getFacultyName(faculty: any): string {
+  if (!faculty) return 'Faculty of Computing';
+  
+  if (typeof faculty === 'string') {
+    return faculty;
+  }
+  
+  if (typeof faculty === 'object' && faculty !== null) {
+    return faculty.name || 'Faculty of Computing';
+  }
+  
+  return 'Faculty of Computing';
 }

@@ -1,0 +1,117 @@
+.course-container {
+  @apply min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
+  background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.15) 1px, transparent 0);
+  background-size: 40px 40px;
+}
+
+.course-content {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
+}
+
+.course-section {
+  @apply bg-gray-900/50 backdrop-blur-sm rounded-2xl p-8 mb-8
+    border border-gray-800/50;
+  box-shadow: 
+    0 0 40px rgba(6, 78, 59, 0.1),
+    0 0 80px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.course-section:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.05), transparent 60%);
+  pointer-events: none;
+}
+
+.course-section:hover {
+  @apply transform transition-all duration-500;
+  box-shadow: 
+    0 0 50px rgba(6, 78, 59, 0.15),
+    0 0 90px rgba(0, 0, 0, 0.3);
+}
+
+.course-header {
+  @apply border-b border-gray-800/30 pb-6 mb-6;
+}
+
+.course-code {
+  background: linear-gradient(to right, #10b981, #064e3b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  @apply text-3xl font-bold mb-2;
+  text-shadow: 0 0 30px rgba(6, 78, 59, 0.3);
+}
+
+.course-name {
+  @apply text-2xl font-semibold text-white mb-4;
+  text-shadow: 0 0 20px rgba(6, 78, 59, 0.2);
+}
+
+.faculty-badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium mb-6;
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.2) 0%, rgba(6, 78, 59, 0.2) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: #10b981;
+  box-shadow: 0 2px 10px rgba(6, 78, 59, 0.1);
+}
+
+.course-content-section {
+  @apply mt-6;
+}
+
+.section-title {
+  @apply text-xl font-semibold text-white mb-4;
+  text-shadow: 0 0 20px rgba(6, 78, 59, 0.2);
+  display: flex;
+  align-items: center;
+}
+
+.section-title:before {
+  content: '';
+  @apply w-1 h-6 bg-emerald-500 rounded mr-3;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+.course-description {
+  @apply text-gray-300 leading-relaxed text-base;
+  line-height: 1.8;
+}
+
+.back-button {
+  @apply mt-10 px-5 py-2.5 rounded-xl text-sm font-medium text-white
+    transition-all duration-300 ease-in-out flex items-center justify-center w-full sm:w-auto;
+  background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
+  border: 1px solid rgba(6, 78, 59, 0.2);
+  box-shadow: 0 4px 20px rgba(6, 78, 59, 0.15);
+}
+
+.back-button:hover {
+  @apply transform scale-[1.02];
+  box-shadow: 0 4px 25px rgba(6, 78, 59, 0.25);
+}
+
+.back-button:active {
+  @apply transform scale-[0.98];
+}
+
+.back-button:before {
+  content: '←';
+  @apply mr-2;
+}
+
+.loading-container {
+  @apply min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
+  background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.15) 1px, transparent 0);
+  background-size: 40px 40px;
+}
+
+.error-message {
+  @apply text-red-400;
+} 

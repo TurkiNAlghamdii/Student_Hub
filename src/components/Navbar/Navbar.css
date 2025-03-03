@@ -45,26 +45,78 @@
   white-space: nowrap;
 }
 
+/* Search form container */
+.search-form-container {
+  position: relative;
+  width: 100%;
+}
+
 /* Search form */
 .search-form {
-  @apply w-full;
+  width: 100%;
 }
 
 /* Search input container */
 .search-input-container {
-  @apply relative flex items-center;
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 /* Search input */
 .search-input {
-  @apply w-full py-2 pl-4 pr-10 rounded-xl text-sm text-white bg-gray-800/50 border border-gray-700/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  padding-right: 2.5rem;
+  background-color: rgba(31, 41, 55, 0.6);
+  border: 1px solid rgba(75, 85, 99, 0.4);
+  border-radius: 9999px;
+  color: white;
   transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  background-color: rgba(31, 41, 55, 0.8);
+  border-color: rgba(16, 185, 129, 0.6);
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
 }
 
 /* Search button */
 .search-button {
-  @apply absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-emerald-500;
-  transition: all 0.3s ease;
+  position: absolute;
+  right: 0.5rem;
+  color: rgba(156, 163, 175, 0.8);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s ease;
+}
+
+.search-button:hover {
+  color: rgba(16, 185, 129, 1);
+}
+
+/* Loading indicator for search */
+.search-loading {
+  position: absolute;
+  right: 0.5rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid rgba(16, 185, 129, 0.3);
+  border-top-color: rgba(16, 185, 129, 1);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Back button */
@@ -155,15 +207,25 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .nav-content {
+    padding: 0.5rem 1rem;
+  }
+  
   .nav-center {
-    flex: 1;
+    max-width: 200px;
   }
   
-  .search-input {
-    @apply py-1.5;
+  .nav-title {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .nav-center {
+    display: none;
   }
   
-  .profile-button {
-    @apply px-3 py-1.5;
+  .nav-content {
+    justify-content: space-between;
   }
 }

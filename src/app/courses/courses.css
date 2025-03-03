@@ -1,0 +1,83 @@
+.courses-container {
+  @apply min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
+  background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.15) 1px, transparent 0);
+  background-size: 40px 40px;
+}
+
+.courses-content {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
+}
+
+.courses-section {
+  @apply bg-gray-900/50 backdrop-blur-sm rounded-2xl p-8 mb-8
+    border border-gray-800/50;
+  box-shadow: 
+    0 0 40px rgba(6, 78, 59, 0.1),
+    0 0 80px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.courses-section:hover {
+  @apply transform transition-all duration-500;
+  box-shadow: 
+    0 0 50px rgba(6, 78, 59, 0.15),
+    0 0 90px rgba(0, 0, 0, 0.3);
+}
+
+.courses-title {
+  @apply text-2xl font-bold text-white mb-6;
+  text-shadow: 0 0 30px rgba(6, 78, 59, 0.3);
+}
+
+.courses-grid {
+  @apply grid gap-6 md:grid-cols-2 lg:grid-cols-3;
+}
+
+.course-card {
+  @apply bg-gray-900/50 backdrop-blur-md rounded-xl border border-gray-800/50 p-6 cursor-pointer
+    transition-all duration-300 ease-in-out;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.course-card:hover {
+  @apply border-emerald-500/50 transform scale-[1.02];
+  box-shadow: 0 8px 25px rgba(6, 78, 59, 0.2);
+}
+
+.course-card:active {
+  @apply transform scale-[0.98];
+}
+
+.course-card-code {
+  background: linear-gradient(to right, #10b981, #064e3b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  @apply text-xl font-semibold;
+  text-shadow: 0 0 30px rgba(6, 78, 59, 0.3);
+}
+
+.course-card-name {
+  @apply text-gray-300 mt-2;
+}
+
+.course-card-faculty {
+  @apply text-gray-400 text-sm mt-1;
+}
+
+.course-card-instructor {
+  @apply text-gray-400 text-sm mt-1;
+}
+
+.loading-container {
+  @apply min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
+  background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.15) 1px, transparent 0);
+  background-size: 40px 40px;
+}
+
+.error-message {
+  @apply text-red-400;
+}
+
+.empty-courses {
+  @apply text-gray-400;
+} 

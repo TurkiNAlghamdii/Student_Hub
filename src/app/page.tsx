@@ -44,13 +44,23 @@ export default function Home() {
 
   if (!user) return null
 
+  // Extract first name from full name or use email as fallback
+  const getFirstName = () => {
+    if (studentProfile?.full_name) {
+      // Split the full name and take the first part as the first name
+      return studentProfile.full_name.split(' ')[0];
+    }
+    // If no full name, use the part of the email before the @ symbol
+    return user.email ? user.email.split('@')[0] : 'Student';
+  }
+
   return (
     <div className="home-container">
       <Navbar title="Student Hub" />
       <main className="main-content">
         <div className="welcome-section">
           <h2 className="welcome-text">
-            Welcome, {studentProfile?.full_name || user.email}
+            Welcome, {getFirstName()}
           </h2>
           <NotificationsBox />
         </div>
