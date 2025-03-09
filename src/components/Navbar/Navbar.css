@@ -1,6 +1,6 @@
 /* Navbar container */
 .navbar {
-  @apply bg-gray-900/50 backdrop-blur-sm border-b border-gray-800/50;
+  @apply bg-gray-900 border-b border-gray-800;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
@@ -154,41 +154,92 @@
 
 /* Sidebar toggle button */
 .sidebar-toggle-button {
-  @apply p-2 rounded-xl text-white bg-gray-800/50 border border-gray-700/50
+  @apply p-2 rounded-xl text-white bg-gray-800 border border-gray-700
     transition-all duration-300 ease-in-out;
   box-shadow: 0 4px 20px rgba(6, 78, 59, 0.15);
   margin-left: auto;
 }
 
 .sidebar-toggle-button:hover {
-  @apply transform scale-[1.05] bg-gray-700/50;
+  @apply transform scale-[1.05] bg-gray-700;
   box-shadow: 0 4px 25px rgba(6, 78, 59, 0.25);
+  border-color: rgba(16, 185, 129, 0.3);
 }
 
 /* Sidebar */
 .sidebar {
-  @apply fixed top-16 right-0 h-[calc(100vh-4rem)] w-64 bg-gray-900/95 backdrop-blur-md border-l border-gray-800/50 z-50;
+  @apply fixed top-16 right-0 h-[calc(100vh-4rem)] w-64 bg-gray-900 border-l border-gray-800/50 z-50;
   box-shadow: -5px 0 30px rgba(0, 0, 0, 0.3);
-  animation: slideIn 0.3s ease-out;
+  transform: translateX(0);
+  transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(0);
-  }
+.sidebar-closing {
+  transform: translateX(100%);
+}
+
+/* Sidebar backdrop */
+.sidebar-backdrop {
+  @apply fixed inset-0 bg-black/60 z-40;
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
+
+.sidebar-backdrop-closing {
+  opacity: 0;
+}
+
+/* Sidebar header */
+.sidebar-header {
+  @apply flex items-center justify-between p-5 border-b border-gray-800;
+  background: linear-gradient(to right, rgba(16, 185, 129, 0.1), rgba(6, 78, 59, 0.05));
+}
+
+.sidebar-title {
+  @apply text-lg font-bold text-white;
+  background: linear-gradient(to right, #10b981, #064e3b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+}
+
+.sidebar-close-button {
+  @apply p-1.5 rounded-lg text-gray-400 hover:text-white transition-all duration-300;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(6, 78, 59, 0.1) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.1);
+}
+
+.sidebar-close-button:hover {
+  @apply transform scale-105;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 78, 59, 0.2) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
 }
 
 /* Sidebar content */
 .sidebar-content {
-  @apply p-6;
+  @apply p-5 overflow-y-auto;
+  height: calc(100% - 70px);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(16, 185, 129, 0.3) rgba(31, 41, 55, 0.5);
+}
+
+.sidebar-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-content::-webkit-scrollbar-track {
+  background: rgba(31, 41, 55, 0.5);
+}
+
+.sidebar-content::-webkit-scrollbar-thumb {
+  background-color: rgba(16, 185, 129, 0.3);
+  border-radius: 20px;
 }
 
 /* Sidebar menu */
 .sidebar-menu {
-  @apply space-y-4;
+  @apply space-y-3;
 }
 
 .sidebar-menu li {
@@ -196,13 +247,33 @@
 }
 
 .sidebar-menu a, .sidebar-menu button {
-  @apply block w-full py-2 px-4 rounded-lg text-white hover:bg-gray-800/70 transition-all duration-300 text-left;
+  @apply block w-full py-3 px-4 rounded-lg text-white transition-all duration-300 text-left;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.03) 0%, rgba(6, 78, 59, 0.01) 100%);
   border: 1px solid transparent;
 }
 
 .sidebar-menu a:hover, .sidebar-menu button:hover {
-  @apply border-gray-700/50 text-emerald-400;
-  box-shadow: 0 4px 20px rgba(6, 78, 59, 0.15);
+  @apply text-emerald-400;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 78, 59, 0.05) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  box-shadow: 0 4px 20px rgba(6, 78, 59, 0.1);
+  transform: translateX(-3px);
+}
+
+/* Menu item animation */
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.menu-item {
+  will-change: transform, opacity;
 }
 
 /* Responsive adjustments */

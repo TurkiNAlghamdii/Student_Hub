@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { MagnifyingGlassIcon, Bars3Icon } from '@heroicons/react/24/outline'
+import { MagnifyingGlassIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import './Navbar.css'
@@ -26,11 +26,13 @@ export default function Navbar({ title, showBack = false }: NavbarProps) {
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState('')
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [isSidebarClosing, setIsSidebarClosing] = useState(false)
   const [searchResults, setSearchResults] = useState<Course[]>([])
   const [showResults, setShowResults] = useState(false)
   const [isSearching, setIsSearching] = useState(false)
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const searchContainerRef = useRef<HTMLDivElement>(null)
+  const sidebarRef = useRef<HTMLDivElement>(null)
 
   // Handle clicks outside of search results
   useEffect(() => {
@@ -45,6 +47,52 @@ export default function Navbar({ title, showBack = false }: NavbarProps) {
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [])
+
+  // Handle escape key to close sidebar
+  useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isSidebarOpen) {
+        closeSidebar()
+      }
+    }
+
+    document.addEventListener('keydown', handleEscKey)
+    return () => {
+      document.removeEventListener('keydown', handleEscKey)
+    }
+  }, [isSidebarOpen])
+
+  // Handle sidebar animation end
+  useEffect(() => {
+    const handleTransitionEnd = (event: TransitionEvent) => {
+      // Only process the sidebar element's transform transition
+      if (event.propertyName === 'transform' && isSidebarClosing) {
+        setIsSidebarOpen(false)
+        setIsSidebarClosing(false)
+      }
+    }
+
+    const sidebarElement = sidebarRef.current
+    if (sidebarElement) {
+      sidebarElement.addEventListener('transitionend', handleTransitionEnd)
+      return () => {
+        sidebarElement.removeEventListener('transitionend', handleTransitionEnd)
+      }
+    }
+  }, [isSidebarClosing])
+
+  // Prevent body scroll when sidebar is open
+  useEffect(() => {
+    if (isSidebarOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isSidebarOpen])
 
   // Search for courses when query changes
   useEffect(() => {
@@ -131,9 +179,27 @@ export default function Navbar({ title, showBack = false }: NavbarProps) {
     }
   }
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen)
+  const openSidebar = () => {
+    setIsSidebarOpen(true)
+    setIsSidebarClosing(false)
   }
+
+  const closeSidebar = () => {
+    setIsSidebarClosing(true)
+  }
+
+  // Menu items with staggered animation
+  const menuItems = [
+    { label: 'Home', href: '/' },
+    { label: 'Profile', href: '/profile' },
+    { label: 'Courses', href: '/courses' },
+    { label: 'Notifications', href: '/notifications' },
+    { label: 'Summer Training', href: '/summer-training' },
+    { label: 'Events', href: '/events' },
+    { label: 'Chat', href: '/chat' },
+    { label: 'AI Chat', href: '/ai-chat' },
+    { label: 'Logout', action: handleLogout }
+  ]
 
   return (
     <nav className="navbar">
@@ -144,11 +210,18 @@ export default function Navbar({ title, showBack = false }: NavbarProps) {
             <button 
               onClick={() => router.back()}
               className="back-button mr-4"
+              aria-label="Go back"
             >
               Back
             </button>
           )}
-          <h1 className="nav-title">{title}</h1>
+          <Link href="/" className="flex items-center">
+            <img 
+              src="/StudentHubWhite.svg" 
+              alt="Student Hub Logo" 
+              className="h-36 w-auto [filter:contrast(1.5)_brightness(1.2)_drop-shadow(0_0_1px_rgba(255,255,255,0.8))]"
+            />
+          </Link>
         </div>
 
         {/* Search bar in the middle */}
@@ -194,8 +267,9 @@ export default function Navbar({ title, showBack = false }: NavbarProps) {
         <div className="nav-right">
           <div className="nav-buttons">
             <button
-              onClick={toggleSidebar}
+              onClick={openSidebar}
               className="sidebar-toggle-button"
+              aria-label="Open menu"
             >
               <Bars3Icon className="h-6 w-6" />
             </button>
@@ -203,20 +277,62 @@ export default function Navbar({ title, showBack = false }: NavbarProps) {
         </div>
       </div>
 
-      {/* Sidebar (hidden by default) */}
-      {isSidebarOpen && (
-        <div className="sidebar">
+      {/* Sidebar backdrop */}
+      {(isSidebarOpen || isSidebarClosing) && (
+        <div 
+          className={`sidebar-backdrop ${isSidebarClosing ? 'sidebar-backdrop-closing' : ''}`}
+          onClick={closeSidebar}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Sidebar */}
+      {(isSidebarOpen || isSidebarClosing) && (
+        <div 
+          ref={sidebarRef}
+          className={`sidebar ${isSidebarClosing ? 'sidebar-closing' : ''}`}
+        >
+          <div className="sidebar-header">
+            <h2 className="sidebar-title">Menu</h2>
+            <button 
+              onClick={closeSidebar}
+              className="sidebar-close-button"
+              aria-label="Close menu"
+            >
+              <XMarkIcon className="h-6 w-6" />
+            </button>
+          </div>
           <div className="sidebar-content">
             <ul className="sidebar-menu">
-              <li><Link href="/">Home</Link></li>
-              <li><Link href="/profile">Profile</Link></li>
-              <li><Link href="/courses">Courses</Link></li>
-              <li><Link href="/notifications">Notifications</Link></li>
-              <li><Link href="/summer-training">Summer Training</Link></li>
-              <li><Link href="/events">Events</Link></li>
-              <li><Link href="/chat">Chat</Link></li>
-              <li><Link href="/ai-chat">AI Chat</Link></li>
-              <li><button onClick={handleLogout}>Logout</button></li>
+              {menuItems.map((item, index) => (
+                <li 
+                  key={item.label} 
+                  className="menu-item"
+                  style={{ 
+                    animationDelay: `${index * 50}ms`,
+                    opacity: 0,
+                    animation: isSidebarClosing ? 'none' : `fadeInRight 0.3s ease forwards ${index * 50}ms`
+                  }}
+                >
+                  {item.href ? (
+                    <Link 
+                      href={item.href} 
+                      onClick={closeSidebar}
+                    >
+                      {item.label}
+                    </Link>
+                  ) : (
+                    <button 
+                      onClick={() => { 
+                        closeSidebar(); 
+                        if (item.action) item.action(); 
+                      }}
+                    >
+                      {item.label}
+                    </button>
+                  )}
+                </li>
+              ))}
             </ul>
           </div>
         </div>
