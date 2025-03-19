@@ -13,16 +13,12 @@ interface CourseDetails {
 }
 
 // This is a server component
-export default async function CoursePage({ params }: { params: any }) {
-  // Use a try/catch block to handle any errors with params
-  let courseCode;
-  try {
-    // Note: Next.js warns about accessing params.courseCode directly, but the page functions correctly
-    courseCode = params?.courseCode;
-    if (!courseCode) {
-      return notFound();
-    }
-  } catch (e) {
+export default async function CoursePage({ params }: { params: { courseCode: string } }) {
+  // Make sure params is properly resolved before accessing courseCode
+  const resolvedParams = await Promise.resolve(params);
+  const courseCode = resolvedParams.courseCode;
+  
+  if (!courseCode) {
     return notFound();
   }
 

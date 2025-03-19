@@ -37,6 +37,9 @@ export default function Login() {
 
       if (error) throw error
 
+      // Store login timestamp for session management (8 hour limit)
+      localStorage.setItem('sessionStartTime', Date.now().toString())
+      
       router.push('/')
     } catch (error: any) {
       setError(error.message)

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { MagnifyingGlassIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/contexts/AuthContext'
 import './Navbar.css'
 import SearchResults from '../SearchResults/SearchResults'
 import '../SearchResults/SearchResults.css'
@@ -24,6 +24,7 @@ interface Course {
 
 export default function Navbar({ title, showBack = false }: NavbarProps) {
   const router = useRouter()
+  const { signOut } = useAuth()
   const [searchQuery, setSearchQuery] = useState('')
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [isSidebarClosing, setIsSidebarClosing] = useState(false)
@@ -172,8 +173,7 @@ export default function Navbar({ title, showBack = false }: NavbarProps) {
 
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut()
-      router.push('/login')
+      await signOut()
     } catch (error) {
       console.error('Error logging out:', error)
     }
