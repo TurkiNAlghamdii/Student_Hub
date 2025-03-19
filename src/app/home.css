@@ -91,4 +91,28 @@
 
 .profile-button:active {
   @apply transform scale-[0.98];
+}
+
+.content-section {
+  @apply grid gap-8;
+}
+
+.row {
+  @apply grid gap-8;
+}
+
+.col {
+  @apply w-full;
+}
+
+@media (min-width: 768px) {
+  .row {
+    @apply grid-cols-1;
+  }
+}
+
+@media (min-width: 1024px) {
+  .row {
+    @apply grid-cols-2;
+  }
 } 

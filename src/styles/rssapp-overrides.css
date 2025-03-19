@@ -1,0 +1,77 @@
+/* Override RSS app styles to match our dark theme */
+rssapp-wall,
+body rssapp-wall,
+#__next rssapp-wall {
+  --rssapp-theme-color: #10b981 !important;
+  --rssapp-background-color: transparent !important;
+  --rssapp-text-color: #ffffff !important;
+  --rssapp-secondary-color: rgba(203, 213, 225, 0.8) !important;
+  --rssapp-border-color: rgba(71, 85, 105, 0.3) !important;
+  --rssapp-link-color: #10b981 !important;
+  --rssapp-items-per-page: 3 !important;
+  max-height: 800px !important;
+}
+
+/* Ensure RSS app widget respects our container */
+rssapp-wall .rssapp-wall-root,
+body rssapp-wall .rssapp-wall-root {
+  background-color: transparent !important;
+  max-height: 800px !important;
+  overflow: hidden !important;
+}
+
+/* Make card items match our dark theme */
+rssapp-wall .rssapp-item,
+body rssapp-wall .rssapp-item {
+  background-color: rgba(30, 41, 59, 0.5) !important;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(71, 85, 105, 0.3) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+/* Hide all but the first 3 items */
+rssapp-wall .rssapp-wall-root .rssapp-item:nth-child(n+4),
+body rssapp-wall .rssapp-wall-root .rssapp-item:nth-child(n+4) {
+  display: none !important;
+  height: 0 !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  left: -9999px !important;
+}
+
+rssapp-wall .rssapp-item:hover,
+body rssapp-wall .rssapp-item:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Style the date to stand out */
+rssapp-wall .rssapp-item-date,
+body rssapp-wall .rssapp-item-date {
+  color: #10b981 !important;
+  opacity: 0.8;
+}
+
+/* Override any light-themed elements */
+rssapp-wall .rssapp-item-content,
+rssapp-wall .rssapp-item-title,
+rssapp-wall .rssapp-item-description,
+body rssapp-wall .rssapp-item-content,
+body rssapp-wall .rssapp-item-title,
+body rssapp-wall .rssapp-item-description {
+  color: #ffffff !important;
+}
+
+/* Hide the load more button */
+rssapp-wall .rssapp-load-more-container,
+body rssapp-wall .rssapp-load-more-container,
+rssapp-wall .rssapp-wall-root .rssapp-load-more-container,
+body rssapp-wall .rssapp-wall-root .rssapp-load-more-container {
+  display: none !important;
+  height: 0 !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+} 

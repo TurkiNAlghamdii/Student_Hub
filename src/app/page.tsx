@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import Navbar from '@/components/Navbar/Navbar'
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner'
+import RssSimple from '@/components/RssSimple/RssSimple'
 import './home.css'
 import NotificationsBox from '@/components/NotificationsBox'
 
@@ -63,6 +64,18 @@ export default function Home() {
             Welcome, {getFirstName()}
           </h2>
           <NotificationsBox />
+        </div>
+        
+        <div className="content-section">
+          <div className="row">
+            <div className="col">
+              <RssSimple 
+                url="https://rss.app/feeds/pcVOetZC9dx4E4dt.xml" 
+                title="FCIT X Feed" 
+                count={3}
+              />
+            </div>
+          </div>
         </div>
       </main>
     </div>
