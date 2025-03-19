@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import Navbar from '@/components/Navbar/Navbar'
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner'
 import { useAuth } from '@/contexts/AuthContext'
+import FileUploadSection from '@/components/FileUpload/FileUploadSection'
+import FilesList from '@/components/FileUpload/FilesList'
 import './course.css'
 
 interface CourseDetails {
@@ -28,6 +30,8 @@ export default function CourseClient({ course, error }: CourseClientProps) {
   const [isAlreadyAdded, setIsAlreadyAdded] = useState(false)
   const [addStatus, setAddStatus] = useState<{ message: string; isError: boolean } | null>(null)
   const [checkingStatus, setCheckingStatus] = useState(true)
+  const [refreshFilesList, setRefreshFilesList] = useState(0)
+  const [showUploadSection, setShowUploadSection] = useState(false)
 
   // Check if course is already added
   useEffect(() => {
@@ -148,6 +152,17 @@ export default function CourseClient({ course, error }: CourseClientProps) {
     }
   }
 
+  const handleFileUploadSuccess = () => {
+    // Increment refresh trigger to reload the files list
+    setRefreshFilesList(prev => prev + 1)
+    // Hide the upload section after successful upload
+    setShowUploadSection(false)
+  }
+
+  const toggleUploadSection = () => {
+    setShowUploadSection(prev => !prev)
+  }
+
   return (
     <div className="course-container">
       <Navbar title={`${course!.course_code}: ${course!.course_name}`} />
@@ -194,6 +209,35 @@ export default function CourseClient({ course, error }: CourseClientProps) {
             <h3 className="section-title">Course Description</h3>
             <p className="course-description">{course!.course_description}</p>
           </div>
+          
+          {user && (
+            <>
+              <div className="files-section-container">
+                <FilesList 
+                  courseCode={course!.course_code} 
+                  refreshTrigger={refreshFilesList} 
+                />
+                
+                <div className="upload-toggle-container">
+                  <button
+                    onClick={toggleUploadSection}
+                    className="upload-toggle-button"
+                    aria-label={showUploadSection ? "Hide upload form" : "Upload a file"}
+                    type="button"
+                  >
+                    {showUploadSection ? "Cancel Upload" : "Upload File"}
+                  </button>
+                </div>
+                
+                {showUploadSection && (
+                  <FileUploadSection 
+                    courseCode={course!.course_code} 
+                    onUploadSuccess={handleFileUploadSuccess} 
+                  />
+                )}
+              </div>
+            </>
+          )}
         </div>
       </main>
     </div>

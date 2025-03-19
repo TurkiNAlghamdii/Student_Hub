@@ -44,7 +44,8 @@
 }
 
 .section-title {
-  @apply text-lg font-medium text-white mb-3 flex items-center;
+  @apply text-lg font-medium mb-3 flex items-center;
+  color: #10b981;
 }
 
 .section-title:before {
@@ -174,4 +175,38 @@
 
 .add-course-button.already-added:hover {
   background-color: rgba(6, 78, 59, 0.25);
+}
+
+.files-section-container {
+  @apply mt-8;
+}
+
+.upload-toggle-container {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0;
+}
+
+.upload-toggle-button {
+  background-color: #059669;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-toggle-button:hover {
+  background-color: #059669;
+}
+
+.upload-toggle-button:before {
+  content: '📤';
+  margin-right: 0.5rem;
 } 
