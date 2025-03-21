@@ -1,0 +1,426 @@
+.notifications-page {
+  @apply min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
+  background-image: 
+    radial-gradient(circle at 1px 1px, rgba(55, 65, 81, 0.15) 1px, transparent 0),
+    linear-gradient(to right, rgba(16, 185, 129, 0.03), rgba(55, 65, 81, 0.02));
+  background-size: 40px 40px, 100% 100%;
+}
+
+.notifications-container {
+  @apply max-w-4xl mx-auto p-6;
+  animation: fade-in 0.4s ease-out forwards;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.notifications-panel {
+  @apply rounded-2xl p-8 mb-8 border border-gray-800/50;
+  background: rgba(13, 17, 23, 0.8);
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.2),
+    0 0 80px rgba(6, 78, 59, 0.08);
+}
+
+.notifications-header {
+  @apply flex justify-between items-center mb-6 pb-4 border-b border-gray-800/50;
+}
+
+.page-title {
+  @apply text-2xl font-bold;
+  background: linear-gradient(to right, #10b981, #064e3b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 30px rgba(6, 78, 59, 0.3);
+}
+
+.mark-all-read-button {
+  @apply flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-all duration-300 text-sm;
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.8) 0%, rgba(4, 120, 87, 0.9) 100%);
+  border: 1px solid rgba(5, 150, 105, 0.2);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
+}
+
+.mark-all-read-button:hover {
+  @apply transform scale-[1.02];
+  box-shadow: 0 4px 18px rgba(5, 150, 105, 0.25);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.85) 0%, rgba(5, 150, 105, 0.95) 100%);
+}
+
+.button-icon {
+  @apply w-5 h-5;
+}
+
+.empty-state {
+  @apply flex flex-col items-center justify-center py-16 text-center;
+  animation: fade-in 0.4s ease-out forwards;
+}
+
+.empty-icon {
+  @apply w-16 h-16 text-gray-600 mb-4;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+.empty-state h2 {
+  @apply text-xl font-semibold mb-2;
+}
+
+.empty-state p {
+  @apply text-gray-400 max-w-md mx-auto;
+}
+
+.error-message {
+  @apply text-red-400 text-center py-12;
+}
+
+.notifications-list-container {
+  @apply space-y-4;
+}
+
+.notification-count {
+  @apply text-gray-400 text-sm mb-6 pb-2 border-b border-gray-800/50;
+}
+
+.notifications-list {
+  @apply space-y-4;
+}
+
+/* Notification styling for the full page view */
+.notification-item {
+  @apply rounded-lg p-5 transition-all duration-300 relative overflow-hidden;
+  background: rgba(22, 27, 34, 0.5);
+  border: 1px solid rgba(55, 65, 81, 0.3);
+}
+
+.notification-item:hover {
+  @apply transform translate-y-[-2px];
+  background: rgba(31, 41, 55, 0.5);
+  border: 1px solid rgba(55, 65, 81, 0.5);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.notification-item.unread {
+  background: rgba(31, 41, 55, 0.4);
+  border-left: 3px solid #10b981;
+}
+
+.notification-item.unread::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.07) 0%, rgba(16, 185, 129, 0) 100%);
+  pointer-events: none;
+}
+
+.notification-content {
+  @apply space-y-2;
+}
+
+.notification-header {
+  @apply flex justify-between items-start gap-4;
+}
+
+.notification-title {
+  @apply text-white font-medium leading-snug;
+}
+
+.notification-message {
+  @apply text-gray-300 text-sm leading-relaxed;
+}
+
+.notification-time {
+  @apply text-emerald-500/70 text-xs block mt-2;
+}
+
+.notification-actions {
+  @apply flex items-center gap-2;
+}
+
+.full-page-loading {
+  @apply min-h-screen flex flex-col items-center justify-center;
+  background: linear-gradient(to bottom right, #0d1117, #121820);
+}
+
+/* Notification toggle button in navbar */
+.notification-toggle-btn {
+  @apply relative p-2 rounded-full transition-all duration-300;
+  color: transparent;
+  background: linear-gradient(to right, #10b981, #064e3b);
+  -webkit-background-clip: text;
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 78, 59, 0.15) 100%);
+    z-index: -1;
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
+  
+  &:hover {
+    @apply transform scale-105;
+    box-shadow: 0 0 15px rgba(6, 78, 59, 0.15);
+    
+    &::before {
+      opacity: 1;
+    }
+  }
+  
+  &:active {
+    @apply transform scale-95;
+  }
+}
+
+/* Badge with animation for new notifications */
+.notification-badge {
+  @apply absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-xs font-semibold text-white rounded-full;
+  background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+/* Notifications box dropdown with improved styling */
+.notifications-box {
+  @apply mt-2 w-96 max-h-[500px] overflow-hidden rounded-xl;
+  background: rgba(13, 17, 23, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(55, 65, 81, 0.3);
+  box-shadow: 
+    0 8px 30px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(6, 78, 59, 0.15);
+  transform-origin: top right;
+  animation: slide-in 0.2s ease-out forwards;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 9999;
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.notifications-box .notifications-header {
+  @apply flex justify-between items-center p-4 border-b border-gray-700/50;
+  background: linear-gradient(to right, rgba(13, 17, 23, 0.9), rgba(17, 24, 39, 0.9));
+}
+
+.notifications-box .notifications-title {
+  @apply text-lg font-bold;
+  background: linear-gradient(to right, #10b981, #064e3b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 10px rgba(6, 78, 59, 0.3);
+}
+
+.notifications-box .mark-all-read-button {
+  @apply flex items-center gap-1 px-3 py-1.5 text-white rounded-md transition-all duration-300 text-xs;
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.8) 0%, rgba(4, 120, 87, 0.9) 100%);
+  border: 1px solid rgba(5, 150, 105, 0.2);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.notifications-box .mark-all-read-button:hover {
+  @apply transform scale-[1.03];
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.85) 0%, rgba(5, 150, 105, 0.95) 100%);
+  box-shadow: 0 2px 8px rgba(6, 78, 59, 0.3);
+}
+
+.notifications-box .notifications-content {
+  @apply p-4 max-h-[350px] overflow-y-auto scrollbar-custom;
+}
+
+/* Notification type indicators */
+.notification-item[data-type="file_upload"] .notification-title::before {
+  content: '';
+  @apply mr-2;
+}
+
+.notification-item[data-type="event"] .notification-title::before {
+  content: '';
+  @apply mr-2;
+}
+
+.notification-item[data-type="announcement"] .notification-title::before {
+  content: '';
+  @apply mr-2;
+}
+
+.notification-item[data-type="course_update"] .notification-title::before {
+  content: '';
+  @apply mr-2;
+}
+
+.notifications-box .notification-item .notification-title {
+  @apply text-sm font-medium text-white mb-1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.notifications-box .notification-item .notification-message {
+  @apply text-xs text-gray-300 leading-relaxed;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.notifications-box .notification-item .notification-time {
+  @apply text-[10px] text-emerald-500/70 mt-1.5 block;
+}
+
+/* Improved empty and loading states */
+.notifications-box .notifications-loading,
+.notifications-box .notifications-error,
+.notifications-box .notifications-empty {
+  @apply p-8 text-center;
+}
+
+.notifications-box .notifications-loading {
+  @apply flex flex-col items-center justify-center;
+}
+
+.notifications-box .notifications-error {
+  @apply text-red-400 text-sm;
+}
+
+.notifications-box .notifications-empty {
+  @apply text-gray-400 text-sm;
+}
+
+.notifications-box .notifications-empty svg,
+.notifications-box .notifications-error svg {
+  @apply opacity-70 mb-3;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.notifications-box .notifications-footer {
+  @apply p-3 text-center border-t border-gray-700/50;
+  background: linear-gradient(to bottom, rgba(17, 24, 39, 0.7), rgba(31, 41, 55, 0.7));
+}
+
+.notifications-box .view-all-button {
+  @apply w-full py-2 text-sm rounded-md transition-all duration-300;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(6, 78, 59, 0.25) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: #10b981;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.notifications-box .view-all-button:hover {
+  @apply transform scale-[1.02];
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(6, 78, 59, 0.3) 100%);
+  box-shadow: 0 2px 8px rgba(6, 78, 59, 0.2);
+}
+
+/* Action buttons styling */
+.notification-read-btn {
+  @apply p-1.5 rounded-full transition-all duration-200;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.notification-read-btn:hover {
+  background: rgba(16, 185, 129, 0.25);
+  color: #10b981;
+  transform: scale(1.05);
+}
+
+.notification-view-btn {
+  @apply px-3 py-1 text-xs transition-all duration-200 flex items-center gap-1;
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.25) 0%, rgba(4, 120, 87, 0.35) 100%);
+  color: #10b981;
+  border-radius: 4px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.notification-view-btn:hover {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(6, 78, 59, 0.4) 100%);
+  color: #34d399;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.action-icon {
+  @apply w-4 h-4;
+}
+
+/* Styling for different notification types */
+.notifications-box .notification-item {
+  @apply p-4 transition-all duration-200;
+  border-left: 0;
+  border-radius: 0;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(55, 65, 81, 0.2);
+}
+
+.notifications-box .notification-item:hover {
+  @apply bg-gray-800/40;
+}
+
+.notifications-box .notification-item.unread {
+  @apply bg-gray-800/30;
+  border-left: 3px solid #10b981;
+}
+
+.notifications-box .notification-item.unread::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.05) 0%, rgba(16, 185, 129, 0) 100%);
+  pointer-events: none;
+}
+
+.notification-icon-container {
+  @apply flex items-center justify-center h-8 w-8 rounded-lg bg-gradient-to-br from-emerald-600/20 to-emerald-700/30 border border-emerald-600/20;
+} 

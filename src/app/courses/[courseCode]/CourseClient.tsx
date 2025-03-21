@@ -7,6 +7,13 @@ import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner'
 import { useAuth } from '@/contexts/AuthContext'
 import FileUploadSection from '@/components/FileUpload/FileUploadSection'
 import FilesList from '@/components/FileUpload/FilesList'
+import { 
+  PlusIcon, 
+  ArrowLeftIcon, 
+  CheckIcon,
+  ArrowUpTrayIcon,
+  XMarkIcon
+} from '@heroicons/react/24/outline'
 import './course.css'
 
 interface CourseDetails {
@@ -173,6 +180,7 @@ export default function CourseClient({ course, error }: CourseClientProps) {
                 aria-label="Back to Courses"
                 type="button"
               >
+                <ArrowLeftIcon className="h-4 w-4 mr-1" />
                 <span>Back to Courses</span>
               </button>
             </div>
@@ -201,6 +209,7 @@ export default function CourseClient({ course, error }: CourseClientProps) {
                 aria-label="Back to Courses"
                 type="button"
               >
+                <ArrowLeftIcon className="h-4 w-4 mr-1" />
                 <span>Back to Courses</span>
               </button>
               
@@ -218,7 +227,10 @@ export default function CourseClient({ course, error }: CourseClientProps) {
                       <span>Adding...</span>
                     </>
                   ) : (
-                    <span>Add to My Courses</span>
+                    <>
+                      <PlusIcon className="h-4 w-4" />
+                      <span>Add to My Courses</span>
+                    </>
                   )}
                 </button>
               ) : (
@@ -228,7 +240,8 @@ export default function CourseClient({ course, error }: CourseClientProps) {
                   aria-label="Course added"
                   type="button"
                 >
-                  ✓ Added to My Courses
+                  <CheckIcon className="h-4 w-4" />
+                  <span>Added to My Courses</span>
                 </button>
               )}
             </div>
@@ -260,7 +273,17 @@ export default function CourseClient({ course, error }: CourseClientProps) {
                 aria-label={showUploadSection ? "Hide upload form" : "Upload a file"}
                 type="button"
               >
-                {showUploadSection ? "Cancel Upload" : "Upload File"}
+                {showUploadSection ? (
+                  <>
+                    <XMarkIcon className="h-4 w-4" />
+                    <span>Cancel Upload</span>
+                  </>
+                ) : (
+                  <>
+                    <ArrowUpTrayIcon className="h-4 w-4" />
+                    <span>Upload File</span>
+                  </>
+                )}
               </button>
             </div>
             

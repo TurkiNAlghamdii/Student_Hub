@@ -195,7 +195,7 @@ export async function POST(request: NextRequest, { params }: { params: { courseC
     // Check if the course exists
     const { data: course, error: courseError } = await supabaseAdmin
       .from('courses')
-      .select('course_code')
+      .select('course_code, course_name')
       .eq('course_code', courseCode)
       .single();
       
@@ -230,6 +230,15 @@ export async function POST(request: NextRequest, { params }: { params: { courseC
     
     const publicUrl = data.publicUrl;
     
+    // Get uploader's information for notification
+    const { data: uploaderData } = await supabaseAdmin
+      .from('students')
+      .select('full_name')
+      .eq('id', userId)
+      .single();
+    
+    const uploaderName = uploaderData?.full_name || 'A student';
+    
     // Insert the file record into the database
     const { data: fileData, error: fileError } = await supabaseAdmin
       .from('course_files')
@@ -253,6 +262,34 @@ export async function POST(request: NextRequest, { params }: { params: { courseC
         .remove([filePath]);
         
       return NextResponse.json({ error: `Failed to save file record: ${fileError.message}` }, { status: 500 });
+    }
+    
+    // Find all students who have this course in their list
+    const { data: studentsWithCourse, error: studentsError } = await supabaseAdmin
+      .from('students')
+      .select('id, courses')
+      .contains('courses', [courseCode]);
+    
+    if (!studentsError && studentsWithCourse && studentsWithCourse.length > 0) {
+      // Prepare notifications for all students who have this course except the uploader
+      const notifications = studentsWithCourse
+        .filter(student => student.id !== userId) // Exclude the uploader
+        .map(student => ({
+          user_id: student.id,
+          type: 'file_upload',
+          title: `New file in ${course.course_code}`,
+          message: `${uploaderName} uploaded "${file.name}" to ${course.course_name}`,
+          link: `/courses/${courseCode}`,
+          related_id: fileData.id,
+          is_read: false
+        }));
+      
+      // Insert notifications if there are any recipients
+      if (notifications.length > 0) {
+        await supabaseAdmin
+          .from('notifications')
+          .insert(notifications);
+      }
     }
     
     return NextResponse.json({ 

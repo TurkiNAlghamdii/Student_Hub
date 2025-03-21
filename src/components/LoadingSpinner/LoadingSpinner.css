@@ -1,9 +1,20 @@
 .loading-container {
-  @apply min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
-  background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.15) 1px, transparent 0);
-  background-size: 40px 40px;
+  @apply flex items-center justify-center;
 }
 
 .loading-spinner {
-  @apply w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin;
+  @apply border-t-emerald-500 rounded-full animate-spin;
+  background-color: transparent;
+  border-color: rgba(16, 185, 129, 0.15);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
+  animation: spinner 0.8s linear infinite;
+}
+
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 } 

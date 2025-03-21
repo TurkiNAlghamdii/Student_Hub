@@ -1,0 +1,84 @@
+.notifications-box {
+  @apply mt-6 p-6 bg-gray-900/50 backdrop-blur-md rounded-xl border border-gray-800/50 overflow-hidden;
+  transition: all 0.3s ease;
+}
+
+.notifications-header {
+  @apply flex justify-between items-center mb-4;
+}
+
+.notifications-title {
+  @apply text-xl font-semibold text-white cursor-pointer hover:text-emerald-500 transition-colors flex items-center gap-2;
+}
+
+.unread-badge {
+  @apply bg-emerald-500 text-white text-xs py-0.5 px-2 rounded-full font-bold inline-flex justify-center items-center min-w-[1.5rem];
+}
+
+.notifications-content {
+  @apply space-y-4;
+}
+
+.notifications-loading {
+  @apply py-6 text-gray-400 text-center text-sm animate-pulse;
+}
+
+.notifications-error {
+  @apply py-6 text-red-400 text-center text-sm;
+}
+
+.notifications-empty {
+  @apply py-6 text-gray-400 text-center flex flex-col items-center gap-2;
+}
+
+.empty-icon {
+  @apply w-10 h-10 text-gray-500 opacity-70;
+}
+
+.notifications-list {
+  @apply space-y-3 max-h-[300px] overflow-y-auto pr-1 scrollbar-custom;
+}
+
+.notification-item {
+  @apply flex justify-between items-start bg-gray-800/40 p-3 rounded-lg border border-gray-700/40 transition-all;
+}
+
+.notification-item.unread {
+  @apply bg-gray-800/70 border-l-4 border-l-emerald-500;
+}
+
+.notification-content {
+  @apply flex-1 pr-3;
+}
+
+.notification-title {
+  @apply text-sm font-medium text-white mb-1;
+}
+
+.notification-message {
+  @apply text-xs text-gray-300 line-clamp-2;
+}
+
+.notification-time {
+  @apply text-xs text-gray-500 mt-1 block;
+}
+
+.notification-actions {
+  @apply flex items-center gap-1 min-w-fit self-end mt-2;
+}
+
+.notification-view-btn {
+  @apply text-xs bg-gray-700/70 hover:bg-gray-600/70 text-gray-100 px-2 py-1 rounded-md transition-colors;
+}
+
+.notification-read-btn {
+  @apply p-1 text-emerald-500 hover:text-emerald-400 rounded-full transition-colors;
+}
+
+.mark-all-read-button {
+  @apply text-xs flex items-center gap-1 text-emerald-500 hover:text-emerald-400 transition-colors;
+}
+
+.view-all-button {
+  @apply w-full text-sm py-2 text-center text-gray-300 hover:text-emerald-400 transition-colors border-t border-gray-700/40 pt-3 mt-2;
+} 

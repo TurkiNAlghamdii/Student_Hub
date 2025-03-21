@@ -19,3 +19,21 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Custom scrollbar styling */
+@layer utilities {
+  .scrollbar-custom {
+    @apply scrollbar-thin scrollbar-track-gray-900/40 scrollbar-thumb-emerald-800/60 hover:scrollbar-thumb-emerald-700/80;
+  }
+}
+
+/* Apply custom scrollbar to all scrollable elements by default */
+html {
+  @apply scrollbar-custom;
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(16, 185, 129, 0.6) rgba(17, 24, 39, 0.4);
+}
