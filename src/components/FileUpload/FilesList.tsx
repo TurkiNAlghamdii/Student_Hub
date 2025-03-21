@@ -38,6 +38,17 @@ const FilesList: React.FC<FilesListProps> = ({ courseCode, refreshTrigger }) => 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    // Check if user is admin
+    if (user) {
+      const isUserAdmin = user.app_metadata?.is_admin === true || 
+                         user.app_metadata?.is_admin === 'true' || 
+                         String(user.app_metadata?.is_admin).toLowerCase() === 'true';
+      setIsAdmin(isUserAdmin);
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchFiles = async () => {
@@ -220,14 +231,14 @@ const FilesList: React.FC<FilesListProps> = ({ courseCode, refreshTrigger }) => 
                       >
                         Download
                       </button>
-                      {file.user_id === user?.id && (
+                      {(file.user_id === user?.id || isAdmin) && (
                         <button
                           onClick={() => handleDeleteFile(file.id)}
                           className="delete-file-button"
                           aria-label="Delete file"
                           type="button"
                         >
-                          Delete
+                          {file.user_id !== user?.id && isAdmin ? 'Admin Delete' : 'Delete'}
                         </button>
                       )}
                     </div>

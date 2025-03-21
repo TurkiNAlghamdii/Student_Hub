@@ -27,6 +27,21 @@ export async function DELETE(
       return NextResponse.json({ error: 'User ID is required' }, { status: 401 });
     }
     
+    // Get user data to check for admin status
+    const { data: userData, error: userError } = await supabaseAdmin
+      .auth
+      .admin
+      .getUserById(userId);
+      
+    if (userError) {
+      return NextResponse.json({ error: 'Error fetching user data' }, { status: 500 });
+    }
+    
+    // Check if user is admin
+    const isAdmin = userData.user.app_metadata?.is_admin === true || 
+                    userData.user.app_metadata?.is_admin === 'true' || 
+                    String(userData.user.app_metadata?.is_admin).toLowerCase() === 'true';
+    
     // Get the file record to check ownership and get file path
     const { data: file, error: fileError } = await supabaseAdmin
       .from('course_files')
@@ -39,8 +54,8 @@ export async function DELETE(
       return NextResponse.json({ error: 'File not found' }, { status: 404 });
     }
     
-    // Check if the user owns the file
-    if (file.user_id !== userId) {
+    // Check if the user owns the file or is an admin
+    if (file.user_id !== userId && !isAdmin) {
       return NextResponse.json({ error: 'You do not have permission to delete this file' }, { status: 403 });
     }
     

@@ -45,6 +45,22 @@ export async function GET(request: NextRequest, { params }: { params: { courseCo
       return NextResponse.json({ error: 'User ID is required' }, { status: 401 });
     }
     
+    // Get user data to check for admin status
+    const { data: userData, error: userError } = await supabaseAdmin
+      .auth
+      .admin
+      .getUserById(userId);
+      
+    if (userError) {
+      console.error('Error fetching user data:', userError);
+      // Continue without admin privileges if user data fetch fails
+    }
+    
+    // Check if user is admin
+    const isAdmin = userData?.user?.app_metadata?.is_admin === true || 
+                   userData?.user?.app_metadata?.is_admin === 'true' || 
+                   String(userData?.user?.app_metadata?.is_admin).toLowerCase() === 'true';
+    
     // Check if the course exists
     try {
       const { data: course, error: courseError } = await supabaseAdmin

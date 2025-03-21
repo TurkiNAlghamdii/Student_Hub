@@ -32,18 +32,19 @@ export default function CoursesClient({ courses, error }: CoursesClientProps) {
   const [fetchError, setFetchError] = useState<string | null>(null)
   const [initialLoadComplete, setInitialLoadComplete] = useState(false)
 
+  // Check authentication and redirect if not logged in
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login')
+    }
+  }, [user, authLoading, router])
+  
   // Fetch user's courses when component mounts
   useEffect(() => {
     // Skip fetching if auth is still loading or if user is not logged in
-    if (authLoading) return;
+    if (authLoading || !user) return;
     
     const fetchUserCourses = async () => {
-      if (!user) {
-        setCoursesLoading(false)
-        setInitialLoadComplete(true)
-        return
-      }
-
       setCoursesLoading(true)
       try {
         const response = await fetch('/api/user/courses', {
@@ -132,8 +133,8 @@ export default function CoursesClient({ courses, error }: CoursesClientProps) {
 
   const displayCourses = viewMode === 'all' ? courses : myCourses
   
-  // Only show loading when it's the initial load or both auth and courses are loading
-  const isLoading = !initialLoadComplete || (authLoading || (viewMode === 'my' && coursesLoading));
+  // Show loading when authentication is loading, waiting for user data
+  const isLoading = authLoading || (viewMode === 'my' && coursesLoading);
 
   if (isLoading) {
     return (
@@ -149,6 +150,11 @@ export default function CoursesClient({ courses, error }: CoursesClientProps) {
         </main>
       </div>
     )
+  }
+
+  // Don't render the main content if user is not authenticated
+  if (!user) {
+    return null;
   }
 
   return (

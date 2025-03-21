@@ -25,7 +25,7 @@ interface CourseClientProps {
 
 export default function CourseClient({ course, error }: CourseClientProps) {
   const router = useRouter()
-  const { user } = useAuth()
+  const { user, loading: authLoading } = useAuth()
   const [isAdding, setIsAdding] = useState(false)
   const [isAlreadyAdded, setIsAlreadyAdded] = useState(false)
   const [addStatus, setAddStatus] = useState<{ message: string; isError: boolean } | null>(null)
@@ -33,10 +33,17 @@ export default function CourseClient({ course, error }: CourseClientProps) {
   const [refreshFilesList, setRefreshFilesList] = useState(0)
   const [showUploadSection, setShowUploadSection] = useState(false)
 
+  // Check authentication and redirect if not logged in
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login')
+    }
+  }, [user, authLoading, router])
+
   // Check if course is already added
   useEffect(() => {
     const checkIfCourseIsAdded = async () => {
-      if (!user || !course) {
+      if (authLoading || !user || !course) {
         setCheckingStatus(false)
         return
       }
@@ -66,40 +73,9 @@ export default function CourseClient({ course, error }: CourseClientProps) {
     }
 
     checkIfCourseIsAdded()
-  }, [user, course])
+  }, [user, course, authLoading])
 
-  if (!course && !error) {
-    return (
-      <div className="loading-container">
-        <LoadingSpinner />
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="course-container">
-        <Navbar title="Course Not Found" />
-        <main className="course-content">
-          <div className="course-section">
-            <h1 className="text-2xl font-bold mb-6 text-white">Error</h1>
-            <p className="error-message">{error}</p>
-            <div className="course-actions">
-              <button
-                onClick={() => router.push('/courses')}
-                className="back-button"
-                aria-label="Back to Courses"
-                type="button"
-              >
-                <span>Back to Courses</span>
-              </button>
-            </div>
-          </div>
-        </main>
-      </div>
-    )
-  }
-
+  // Handle adding a course to user's selection
   const handleAddCourse = async () => {
     if (!user) {
       router.push('/login')
@@ -153,50 +129,111 @@ export default function CourseClient({ course, error }: CourseClientProps) {
   }
 
   const handleFileUploadSuccess = () => {
-    // Increment refresh trigger to reload the files list
-    setRefreshFilesList(prev => prev + 1)
-    // Hide the upload section after successful upload
     setShowUploadSection(false)
+    setRefreshFilesList(prev => prev + 1)
   }
 
   const toggleUploadSection = () => {
     setShowUploadSection(prev => !prev)
   }
 
-  return (
-    <div className="course-container">
-      <Navbar title={`${course!.course_code}: ${course!.course_name}`} />
-      <main className="course-content">
-        <div className="course-section">
-          <div className="course-actions">
-            <button
-              onClick={() => router.push('/courses')}
-              className="back-button"
-              aria-label="Back to Courses"
-              type="button"
-            >
-              <span>Back to Courses</span>
-            </button>
-            
-            <button 
-              onClick={handleAddCourse}
-              className={`add-course-button ${isAdding ? 'loading' : ''} ${isAlreadyAdded ? 'already-added' : ''}`}
-              disabled={isAdding || checkingStatus || isAlreadyAdded}
-              aria-label={isAlreadyAdded ? 'Already added to courses' : 'Add to My Courses'}
-              type="button"
-            >
-              {isAdding ? '\u00A0' : isAlreadyAdded ? 'Added to Courses' : 'Add to My Courses'}
-            </button>
-          </div>
-        
-          <div className="course-header">
-            <h1 className="course-code">{course!.course_code}</h1>
-            <h2 className="course-name">{course!.course_name}</h2>
-            <div className="faculty-badge">
-              {course!.faculty.name}
+  if (authLoading) {
+    return (
+      <div className="loading-container">
+        <LoadingSpinner />
+      </div>
+    )
+  }
+
+  // Don't render if user is not authenticated
+  if (!user) {
+    return null;
+  }
+
+  if (!course && !error) {
+    return (
+      <div className="loading-container">
+        <LoadingSpinner />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="course-container">
+        <Navbar title="Course Not Found" />
+        <main className="course-content">
+          <div className="course-section">
+            <h1 className="text-2xl font-bold mb-6 text-white">Error</h1>
+            <p className="error-message">{error}</p>
+            <div className="course-actions">
+              <button
+                onClick={() => router.push('/courses')}
+                className="back-button"
+                aria-label="Back to Courses"
+                type="button"
+              >
+                <span>Back to Courses</span>
+              </button>
             </div>
           </div>
-          
+        </main>
+      </div>
+    )
+  }
+
+  return (
+    <div className="course-container">
+      <Navbar title={course!.course_name} />
+      <main className="course-content">
+        <div className="course-section">
+          <div className="course-header">
+            <div className="course-info">
+              <span className="course-code">{course!.course_code}</span>
+              <h1 className="course-name">{course!.course_name}</h1>
+              <p className="course-faculty">{course!.faculty.name}</p>
+            </div>
+            
+            <div className="course-actions">
+              <button
+                onClick={() => router.push('/courses')}
+                className="back-button"
+                aria-label="Back to Courses"
+                type="button"
+              >
+                <span>Back to Courses</span>
+              </button>
+              
+              {!isAlreadyAdded ? (
+                <button
+                  onClick={handleAddCourse}
+                  className="add-button"
+                  disabled={isAdding || checkingStatus}
+                  aria-label="Add to my courses"
+                  type="button"
+                >
+                  {isAdding ? (
+                    <>
+                      <div className="button-spinner"></div>
+                      <span>Adding...</span>
+                    </>
+                  ) : (
+                    <span>Add to My Courses</span>
+                  )}
+                </button>
+              ) : (
+                <button
+                  className="added-button"
+                  disabled
+                  aria-label="Course added"
+                  type="button"
+                >
+                  ✓ Added to My Courses
+                </button>
+              )}
+            </div>
+          </div>
+
           {addStatus && (
             <div className="status-message-container">
               <p className={`status-message ${addStatus.isError ? 'error' : 'success'}`}>
@@ -210,36 +247,32 @@ export default function CourseClient({ course, error }: CourseClientProps) {
             <p className="course-description">{course!.course_description}</p>
           </div>
           
-          {user && (
-            <>
-              <div className="files-section-container">
-                <FilesList 
-                  courseCode={course!.course_code} 
-                  refreshTrigger={refreshFilesList} 
-                />
-                
-                <div className="upload-toggle-container">
-                  <button
-                    onClick={toggleUploadSection}
-                    className="upload-toggle-button"
-                    aria-label={showUploadSection ? "Hide upload form" : "Upload a file"}
-                    type="button"
-                  >
-                    {showUploadSection ? "Cancel Upload" : "Upload File"}
-                  </button>
-                </div>
-                
-                {showUploadSection && (
-                  <FileUploadSection 
-                    courseCode={course!.course_code} 
-                    onUploadSuccess={handleFileUploadSuccess} 
-                  />
-                )}
-              </div>
-            </>
-          )}
+          <div className="files-section-container">
+            <FilesList 
+              courseCode={course!.course_code} 
+              refreshTrigger={refreshFilesList} 
+            />
+            
+            <div className="upload-toggle-container">
+              <button
+                onClick={toggleUploadSection}
+                className="upload-toggle-button"
+                aria-label={showUploadSection ? "Hide upload form" : "Upload a file"}
+                type="button"
+              >
+                {showUploadSection ? "Cancel Upload" : "Upload File"}
+              </button>
+            </div>
+            
+            {showUploadSection && (
+              <FileUploadSection 
+                courseCode={course!.course_code} 
+                onUploadSuccess={handleFileUploadSuccess} 
+              />
+            )}
+          </div>
         </div>
       </main>
     </div>
   )
-} 
+}
