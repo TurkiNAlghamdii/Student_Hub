@@ -180,11 +180,11 @@
 }
 
 .content-section {
-  @apply grid gap-8;
+  @apply mb-8;
 }
 
 .row {
-  @apply grid gap-8;
+  @apply flex flex-col gap-6;
 }
 
 .col {
@@ -193,13 +193,17 @@
 
 @media (min-width: 768px) {
   .row {
-    @apply grid-cols-1;
+    @apply flex-row;
+  }
+  
+  .col {
+    @apply w-1/2;
   }
 }
 
 @media (min-width: 1024px) {
   .row {
-    @apply grid-cols-2;
+    @apply gap-8;
   }
 }
 

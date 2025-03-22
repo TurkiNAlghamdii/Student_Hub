@@ -7,6 +7,7 @@ import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner'
 import { useAuth } from '@/contexts/AuthContext'
 import FileUploadSection from '@/components/FileUpload/FileUploadSection'
 import FilesList from '@/components/FileUpload/FilesList'
+import CommentSection from '@/components/Comments/CommentSection'
 import { 
   PlusIcon, 
   ArrowLeftIcon, 
@@ -67,7 +68,7 @@ export default function CourseClient({ course, error }: CourseClientProps) {
           
           if (data.courses && Array.isArray(data.courses)) {
             const isAdded = data.courses.some(
-              (c: any) => c.course_code === course.course_code
+              (c: { course_code: string }) => c.course_code === course.course_code
             )
             setIsAlreadyAdded(isAdded)
           }
@@ -294,6 +295,8 @@ export default function CourseClient({ course, error }: CourseClientProps) {
               />
             )}
           </div>
+          
+          <CommentSection courseCode={course!.course_code} />
         </div>
       </main>
     </div>

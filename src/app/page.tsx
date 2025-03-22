@@ -7,21 +7,37 @@ import { useAuth } from '@/contexts/AuthContext'
 import Navbar from '@/components/Navbar/Navbar'
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner'
 import RssSimple from '@/components/RssSimple/RssSimple'
+import CourseWidget from '@/components/CourseWidget/CourseWidget'
 import './home.css'
 import NotificationsBox from '@/components/NotificationsBox'
 import { 
   BookOpenIcon, 
   UserCircleIcon, 
   CalendarIcon, 
-  BellIcon,
-  ChatBubbleLeftRightIcon
+  BellIcon
 } from '@heroicons/react/24/outline'
 import Link from 'next/link'
+
+// Define the student profile interface
+interface StudentProfile {
+  id: string
+  full_name?: string
+  email?: string
+  department?: string
+  major?: string
+  level?: number
+  gpa?: number
+  credits_earned?: number
+  enrollment_status?: string
+  graduation_year?: number
+  student_id?: string
+  // Extend this interface with other specific properties as needed
+}
 
 export default function Home() {
   const router = useRouter()
   const { user, loading: authLoading } = useAuth()
-  const [studentProfile, setStudentProfile] = useState<any>(null)
+  const [studentProfile, setStudentProfile] = useState<StudentProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [shortcutsReady, setShortcutsReady] = useState(false)
 
@@ -139,6 +155,9 @@ export default function Home() {
         
         <div className="content-section">
           <div className="row">
+            <div className="col">
+              <CourseWidget />
+            </div>
             <div className="col">
               <RssSimple 
                 url="https://rss.app/feeds/pcVOetZC9dx4E4dt.xml" 
