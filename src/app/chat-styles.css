@@ -1,0 +1,147 @@
+/* Chat page specific styles for Next.js app */
+
+.home-container {
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, #030712, #111827, #030712);
+  background-image: radial-gradient(circle at 1px 1px, rgba(55, 65, 81, 0.15) 1px, transparent 0);
+  background-size: 40px 40px;
+}
+
+.chat-welcome-section {
+  background-color: rgba(17, 24, 39, 0.5);
+  backdrop-filter: blur(8px);
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(31, 41, 55, 0.5);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 
+    0 0 40px rgba(6, 78, 59, 0.1),
+    0 0 80px rgba(0, 0, 0, 0.3);
+  transition: all 0.5s;
+}
+
+.chat-welcome-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 0 50px rgba(6, 78, 59, 0.15),
+    0 0 90px rgba(0, 0, 0, 0.3);
+}
+
+.chat-welcome-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 0 30px rgba(6, 78, 59, 0.3);
+}
+
+.chat-shortcut-section {
+  background-color: rgba(17, 24, 39, 0.5);
+  backdrop-filter: blur(8px);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(31, 41, 55, 0.5);
+  transition: all 0.3s;
+  position: relative;
+  z-index: 10;
+  box-shadow: 
+    0 0 30px rgba(6, 78, 59, 0.05),
+    0 0 60px rgba(0, 0, 0, 0.2);
+  min-height: 60vh;
+}
+
+.chat-shortcut-section:hover {
+  box-shadow: 
+    0 0 40px rgba(6, 78, 59, 0.1),
+    0 0 80px rgba(0, 0, 0, 0.3);
+}
+
+.course-tag {
+  font-size: 0.75rem;
+  background-color: rgba(6, 78, 59, 0.2);
+  color: rgb(52, 211, 153);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(6, 78, 59, 0.3);
+}
+
+.api-key-info {
+  background-color: rgba(17, 24, 39, 0.5);
+  backdrop-filter: blur(8px);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(6, 78, 59, 0.3);
+}
+
+.api-key-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.api-key-text {
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 1rem;
+}
+
+.api-key-list {
+  list-style-type: decimal;
+  list-style-position: inside;
+  color: rgba(255, 255, 255, 0.9);
+  margin-left: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.api-key-link {
+  color: rgb(52, 211, 153);
+  text-decoration: underline;
+}
+
+.api-key-code {
+  background-color: rgba(31, 41, 55, 1);
+  padding: 0 0.5rem;
+  margin: 0 0.25rem;
+  border-radius: 0.25rem;
+}
+
+.api-key-dismiss {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: rgb(52, 211, 153);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.api-key-dismiss:hover {
+  color: rgb(110, 231, 183);
+}
+
+.loading-container {
+  min-height: 16rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-spinner {
+  width: 3rem;
+  height: 3rem;
+  border: 4px solid rgba(16, 185, 129, 0.2);
+  border-top: 4px solid rgb(16, 185, 129);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+} 

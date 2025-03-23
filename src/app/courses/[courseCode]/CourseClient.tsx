@@ -13,7 +13,9 @@ import {
   ArrowLeftIcon, 
   CheckIcon,
   ArrowUpTrayIcon,
-  XMarkIcon
+  XMarkIcon,
+  ChatBubbleLeftRightIcon,
+  AcademicCapIcon
 } from '@heroicons/react/24/outline'
 import './course.css'
 
@@ -145,6 +147,17 @@ export default function CourseClient({ course, error }: CourseClientProps) {
     setShowUploadSection(prev => !prev)
   }
 
+  // Function to navigate to chat with course description
+  const handleNavigateToChat = () => {
+    if (course) {
+      // Save course description and name to session storage
+      sessionStorage.setItem('courseDescription', course.course_description);
+      sessionStorage.setItem('courseName', course.course_name);
+      // Navigate to the chat page
+      router.push(`/courses/${course.course_code}/chat`);
+    }
+  }
+
   if (authLoading) {
     return (
       <div className="loading-container">
@@ -169,7 +182,7 @@ export default function CourseClient({ course, error }: CourseClientProps) {
   if (error) {
     return (
       <div className="course-container">
-        <Navbar title="Course Not Found" />
+        <Navbar />
         <main className="course-content">
           <div className="course-section">
             <h1 className="text-2xl font-bold mb-6 text-white">Error</h1>
@@ -193,14 +206,17 @@ export default function CourseClient({ course, error }: CourseClientProps) {
 
   return (
     <div className="course-container">
-      <Navbar title={course!.course_name} />
+      <Navbar />
       <main className="course-content">
         <div className="course-section">
           <div className="course-header">
             <div className="course-info">
               <span className="course-code">{course!.course_code}</span>
               <h1 className="course-name">{course!.course_name}</h1>
-              <p className="course-faculty">{course!.faculty.name}</p>
+              <p className="course-faculty">
+                <AcademicCapIcon className="h-4 w-4 mr-1" />
+                {course!.faculty.name}
+              </p>
             </div>
             
             <div className="course-actions">
@@ -212,6 +228,16 @@ export default function CourseClient({ course, error }: CourseClientProps) {
               >
                 <ArrowLeftIcon className="h-4 w-4 mr-1" />
                 <span>Back to Courses</span>
+              </button>
+              
+              <button
+                onClick={handleNavigateToChat}
+                className="chat-button"
+                aria-label="AI Chat Assistant"
+                type="button"
+              >
+                <ChatBubbleLeftRightIcon className="h-4 w-4 mr-1" />
+                <span>AI Chat Assistant</span>
               </button>
               
               {!isAlreadyAdded ? (

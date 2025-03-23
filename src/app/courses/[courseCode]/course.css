@@ -32,6 +32,13 @@
   @apply text-xl font-medium text-white mb-4;
 }
 
+.course-faculty {
+  @apply text-sm font-medium mb-2 inline-flex items-center px-3 py-1 rounded-lg;
+  background-color: rgba(6, 78, 59, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
 .faculty-badge {
   @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-normal;
   background-color: rgba(6, 78, 59, 0.2);
@@ -82,6 +89,23 @@
 
 .back-button:active {
   transform: translateY(0);
+}
+
+.chat-button {
+  @apply flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-all duration-300 text-sm;
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.8) 0%, rgba(4, 120, 87, 0.9) 100%);
+  border: 1px solid rgba(5, 150, 105, 0.2);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
+}
+
+.chat-button:hover {
+  @apply transform scale-[1.02];
+  box-shadow: 0 4px 18px rgba(5, 150, 105, 0.25);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.85) 0%, rgba(5, 150, 105, 0.95) 100%);
+}
+
+.chat-button:active {
+  @apply transform scale-[0.98];
 }
 
 .add-button {
@@ -138,12 +162,12 @@
     justify-content: flex-end;
   }
   
-  .back-button, .add-button, .added-button {
+  .back-button, .add-button, .added-button, .chat-button {
     @apply px-2 py-1;
     font-size: 0.7rem;
   }
   
-  .back-button .h-4, .add-button .h-4, .added-button .h-4 {
+  .back-button .h-4, .add-button .h-4, .added-button .h-4, .chat-button .h-4 {
     @apply h-3 w-3;
   }
 }

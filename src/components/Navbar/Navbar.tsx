@@ -10,7 +10,6 @@ import SearchResults from '../SearchResults/SearchResults'
 import '../SearchResults/SearchResults.css'
 
 interface NavbarProps {
-  title: string
   showBack?: boolean
 }
 
@@ -22,7 +21,7 @@ interface Course {
   }
 }
 
-export default function Navbar({ title, showBack = false }: NavbarProps) {
+export default function Navbar({ showBack = false }: NavbarProps) {
   const router = useRouter()
   const { signOut } = useAuth()
   const [searchQuery, setSearchQuery] = useState('')
@@ -196,8 +195,7 @@ export default function Navbar({ title, showBack = false }: NavbarProps) {
     { label: 'Notifications', href: '/notifications' },
     { label: 'Summer Training', href: '/summer-training' },
     { label: 'Events', href: '/events' },
-    { label: 'Chat', href: '/chat' },
-    { label: 'AI Chat', href: '/ai-chat' },
+    { label: 'AI Chat', href: '/chat' },
     { label: 'Logout', action: handleLogout }
   ]
 

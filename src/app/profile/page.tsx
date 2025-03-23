@@ -198,7 +198,7 @@ interface StudentProfile {
     if (!user) return null
     return (
       <div className="profile-container">
-        <Navbar title="Student Profile" />
+        <Navbar />
         <main className="flex justify-center items-center p-6">
           <div className="max-w-2xl w-full">
             <div className="profile-card">

@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar/Navbar'
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner'
 import { useAuth } from '@/contexts/AuthContext'
 import './courses.css'
+import { AcademicCapIcon } from '@heroicons/react/24/outline'
 
 // Define the course interface
 interface Course {
@@ -120,7 +121,7 @@ export default function CoursesClient({ courses, error }: CoursesClientProps) {
   if (error) {
     return (
       <div className="courses-container">
-        <Navbar title="Courses" />
+        <Navbar />
         <main className="courses-content">
           <div className="courses-section">
             <h1 className="courses-title">Error</h1>
@@ -139,7 +140,7 @@ export default function CoursesClient({ courses, error }: CoursesClientProps) {
   if (isLoading) {
     return (
       <div className="courses-container">
-        <Navbar title="Courses" />
+        <Navbar />
         <main className="courses-content">
           <div className="courses-section loading-section">
             <div className="loading-animation">
@@ -159,7 +160,7 @@ export default function CoursesClient({ courses, error }: CoursesClientProps) {
 
   return (
     <div className="courses-container">
-      <Navbar title="Courses" />
+      <Navbar />
       <main className="courses-content">
         <div className="courses-section">
           <div className="courses-header">
@@ -209,7 +210,7 @@ export default function CoursesClient({ courses, error }: CoursesClientProps) {
 
           {viewMode === 'my' && user && myCourses.length === 0 && !coursesLoading && !fetchError && (
             <div className="empty-courses-container">
-              <p className="empty-courses">You haven't added any courses yet.</p>
+              <p className="empty-courses">You haven&apos;t added any courses yet.</p>
               <button 
                 className="browse-button"
                 onClick={() => setViewMode('all')}
@@ -230,6 +231,7 @@ export default function CoursesClient({ courses, error }: CoursesClientProps) {
                   <h2 className="course-card-code">{course.course_code}</h2>
                   <p className="course-card-name">{course.course_name}</p>
                   <p className="course-card-faculty">
+                    <AcademicCapIcon className="h-3 w-3 mr-1" />
                     {course.faculty?.name || 'Faculty of Computing'}
                   </p>
                   

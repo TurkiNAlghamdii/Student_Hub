@@ -74,7 +74,7 @@
 }
 
 .event-card-link {
-  @apply text-blue-400 hover:text-blue-300 underline transition-colors;
+  @apply text-emerald-400 hover:text-emerald-300 underline transition-colors;
 }
 
 .delete-button {
@@ -187,7 +187,7 @@
 }
 
 .form-input {
-  @apply w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-white;
+  @apply w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-white;
 }
 
 .error-message {

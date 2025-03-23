@@ -1,0 +1,76 @@
+/* Styling for page-level components */
+@import './home.css';
+
+/* Additional chat page specific styles */
+.chat-page-container {
+  @apply min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
+  background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.15) 1px, transparent 0);
+  background-size: 40px 40px;
+}
+
+.chat-welcome-section {
+  @apply bg-gray-900/50 backdrop-blur-sm rounded-2xl p-8 mb-8
+    border border-gray-800/50 flex justify-between items-center;
+  box-shadow: 
+    0 0 40px rgba(6, 78, 59, 0.1),
+    0 0 80px rgba(0, 0, 0, 0.3);
+}
+
+.chat-welcome-section:hover {
+  @apply transform transition-all duration-500;
+  box-shadow: 
+    0 0 50px rgba(6, 78, 59, 0.15),
+    0 0 90px rgba(0, 0, 0, 0.3);
+}
+
+.chat-welcome-text {
+  @apply text-2xl font-bold text-white;
+  text-shadow: 0 0 30px rgba(6, 78, 59, 0.3);
+}
+
+.chat-shortcut-section {
+  @apply bg-gray-900/50 backdrop-blur-sm rounded-2xl p-5 mb-8
+    border border-gray-800/50 transition-all duration-300 relative z-10;
+  box-shadow: 
+    0 0 30px rgba(6, 78, 59, 0.05),
+    0 0 60px rgba(0, 0, 0, 0.2);
+  min-height: 60vh;
+}
+
+.chat-shortcut-section:hover {
+  box-shadow: 
+    0 0 40px rgba(6, 78, 59, 0.1),
+    0 0 80px rgba(0, 0, 0, 0.3);
+}
+
+.api-key-info {
+  @apply bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 mb-6 border border-emerald-800/30;
+}
+
+.api-key-dismiss {
+  @apply mt-4 text-sm text-emerald-400 hover:text-emerald-300;
+}
+
+.api-key-title {
+  @apply text-xl font-bold mb-2 text-white;
+}
+
+.api-key-text {
+  @apply text-white/90 mb-4;
+}
+
+.api-key-list {
+  @apply list-decimal list-inside text-white/90 space-y-2 ml-2;
+}
+
+.api-key-link {
+  @apply text-emerald-400 underline;
+}
+
+.api-key-code {
+  @apply bg-gray-800 px-2 py-1 rounded;
+}
+
+.course-tag {
+  @apply text-xs bg-emerald-800/20 text-emerald-400 px-3 py-1 rounded-full border border-emerald-800/30;
+} 

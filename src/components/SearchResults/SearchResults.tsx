@@ -1,4 +1,7 @@
+import React from 'react'
 import { useRouter } from 'next/navigation'
+import './SearchResults.css'
+import { AcademicCapIcon } from '@heroicons/react/24/outline'
 
 interface Course {
   course_code: string
@@ -39,7 +42,10 @@ export default function SearchResults({ results, onResultClick, isVisible }: Sea
               <div className="search-result-code">{course.course_code}</div>
               <div className="search-result-details">
                 <div className="search-result-name">{course.course_name}</div>
-                <div className="search-result-faculty">{course.faculty?.name}</div>
+                <div className="search-result-faculty">
+                  <AcademicCapIcon className="h-3 w-3 mr-1" />
+                  {course.faculty?.name}
+                </div>
               </div>
             </div>
           ))

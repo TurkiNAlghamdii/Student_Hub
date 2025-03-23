@@ -8,13 +8,14 @@ import Navbar from '@/components/Navbar/Navbar'
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner'
 import RssSimple from '@/components/RssSimple/RssSimple'
 import CourseWidget from '@/components/CourseWidget/CourseWidget'
+import AIAssistantWidget from '@/components/AIAssistantWidget/AIAssistantWidget'
 import './home.css'
 import NotificationsBox from '@/components/NotificationsBox'
 import { 
   BookOpenIcon, 
   UserCircleIcon, 
   CalendarIcon, 
-  BellIcon
+  ChatBubbleLeftRightIcon
 } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 
@@ -83,6 +84,14 @@ export default function Home() {
     return user.email ? user.email.split('@')[0] : 'Student';
   }
 
+  // Get time-based greeting based on user's local time
+  const getTimeBasedGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
+  }
+
   // Navigation shortcuts data
   const shortcuts = [
     {
@@ -104,10 +113,10 @@ export default function Home() {
       path: "/events"
     },
     {
-      title: "Notifications",
-      description: "View all notifications",
-      icon: <BellIcon className="shortcut-icon" />,
-      path: "/notifications"
+      title: "AI Chat",
+      description: "Get intelligent assistance",
+      icon: <ChatBubbleLeftRightIcon className="shortcut-icon" />,
+      path: "/chat"
     }
   ];
 
@@ -124,13 +133,13 @@ export default function Home() {
 
   return (
     <div className="home-container">
-      <Navbar title="Student Hub" />
+      <Navbar />
       <main className="main-content">
-        <div className="welcome-section" style={{ zIndex: 20, position: 'relative' }}>
+        <div className="welcome-section">
           <h2 className="welcome-text">
-            Welcome, {getFirstName()}
+            {getTimeBasedGreeting()}, {getFirstName()}
           </h2>
-          <div style={{ position: 'relative', zIndex: 50 }}>
+          <div style={{ position: 'relative', zIndex: 10 }}>
             <NotificationsBox />
           </div>
         </div>
@@ -158,6 +167,11 @@ export default function Home() {
             <div className="col">
               <CourseWidget />
             </div>
+            <div className="col">
+              <AIAssistantWidget />
+            </div>
+          </div>
+          <div className="row mt-6">
             <div className="col">
               <RssSimple 
                 url="https://rss.app/feeds/pcVOetZC9dx4E4dt.xml" 

@@ -204,7 +204,7 @@ export default function EventsPage() {
 
   return (
     <div className="events-container">
-      <Navbar title="Events" />
+      <Navbar />
       <div className="events-content">
         <div className="events-section">
           <div className="events-header">
@@ -242,7 +242,7 @@ export default function EventsPage() {
                   </button>
                   <button
                     onClick={() => setIsAdmin(true)}
-                    className="text-xs px-2 py-1 bg-blue-600 text-white rounded"
+                    className="text-xs px-2 py-1 bg-emerald-600 text-white rounded"
                   >
                     Force Admin UI
                   </button>
