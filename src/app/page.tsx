@@ -136,11 +136,13 @@ export default function Home() {
       <Navbar />
       <main className="main-content">
         <div className="welcome-section">
-          <h2 className="welcome-text">
-            {getTimeBasedGreeting()}, {getFirstName()}
-          </h2>
-          <div style={{ position: 'relative', zIndex: 10 }}>
-            <NotificationsBox />
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', position: 'relative' }}>
+            <h2 className="welcome-text">
+              {getTimeBasedGreeting()}, {getFirstName()}
+            </h2>
+            <div style={{ position: 'relative', zIndex: 999999 }}>
+              <NotificationsBox />
+            </div>
           </div>
         </div>
         

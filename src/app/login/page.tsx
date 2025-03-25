@@ -7,7 +7,10 @@ import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
+import Image from 'next/image'
 import './login.css'
+import Logo from '@/components/Logo'
+import { FormEvent } from 'react'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -24,7 +27,7 @@ export default function Login() {
     }
   }, [session, router])
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
@@ -54,20 +57,27 @@ export default function Login() {
   return (
     <div className="login-container">
       <motion.div
+        className="login-card"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="login-card"
+        transition={{ duration: 0.5 }}
       >
-        <div>
-          <motion.h2
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="login-title"
-          >
-            Welcome Back
-          </motion.h2>
-        </div>
+        <motion.div
+          className="logo-container"
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.2, duration: 0.3 }}
+        >
+          <Logo />
+        </motion.div>
+        <motion.h2
+          className="login-title"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
+          Welcome Back
+        </motion.h2>
         <form className="login-form" onSubmit={handleLogin}>
           <div className="input-container">
             <motion.div

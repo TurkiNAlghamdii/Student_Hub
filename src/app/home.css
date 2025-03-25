@@ -44,11 +44,12 @@
 
 .welcome-section {
   @apply bg-gradient-to-r from-emerald-900/40 via-gray-900/50 to-emerald-900/30 backdrop-blur-sm rounded-2xl p-8 mb-8
-    border border-emerald-700/30 flex justify-between items-center relative overflow-hidden;
+    border border-emerald-700/30 flex justify-between items-center relative;
   box-shadow: 
     0 0 40px rgba(6, 78, 59, 0.15),
     0 0 80px rgba(0, 0, 0, 0.3);
   position: relative;
+  overflow: visible;
 }
 
 .welcome-section::before {

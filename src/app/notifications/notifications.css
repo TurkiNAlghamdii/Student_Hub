@@ -216,25 +216,20 @@
 
 /* Notifications box dropdown with improved styling */
 .notifications-box {
-  @apply mt-2 w-96 max-h-[500px] overflow-hidden rounded-xl;
-  background: rgba(13, 17, 23, 0.95);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(55, 65, 81, 0.3);
+  @apply w-96 max-h-[500px] overflow-hidden rounded-xl;
+  background: rgb(13, 17, 23);
+  border: 1px solid rgba(55, 65, 81, 0.5);
   box-shadow: 
     0 8px 30px rgba(0, 0, 0, 0.4),
     0 0 20px rgba(6, 78, 59, 0.15);
   transform-origin: top right;
   animation: slide-in 0.2s ease-out forwards;
-  position: absolute;
-  right: 0;
-  top: 100%;
-  z-index: 9999;
 }
 
 @keyframes slide-in {
   from {
     opacity: 0;
-    transform: translateY(-10px) scale(0.95);
+    transform: translateY(-5px) scale(0.98);
   }
   to {
     opacity: 1;
@@ -244,7 +239,7 @@
 
 .notifications-box .notifications-header {
   @apply flex justify-between items-center p-4 border-b border-gray-700/50;
-  background: linear-gradient(to right, rgba(13, 17, 23, 0.9), rgba(17, 24, 39, 0.9));
+  background: rgb(17, 24, 39);
 }
 
 .notifications-box .notifications-title {

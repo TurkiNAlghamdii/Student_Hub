@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import { createPortal } from 'react-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { useNotifications } from '@/contexts/NotificationsContext'
 import { 
@@ -18,6 +19,7 @@ import '../app/notifications/notifications.css'
 
 const NotificationsBox = () => {
   const [isOpen, setIsOpen] = useState(false)
+  const [position, setPosition] = useState({ top: 0, right: 0 })
   const { user } = useAuth()
   const { 
     notifications, 
@@ -65,6 +67,30 @@ const NotificationsBox = () => {
     }
   }, [isOpen, fetchNotifications])
 
+  useEffect(() => {
+    // Update position when button position changes
+    const updatePosition = () => {
+      if (buttonRef.current) {
+        const rect = buttonRef.current.getBoundingClientRect()
+        setPosition({
+          top: rect.bottom + window.scrollY + 8,
+          right: window.innerWidth - rect.right
+        })
+      }
+    }
+
+    if (isOpen) {
+      updatePosition()
+      window.addEventListener('resize', updatePosition)
+      window.addEventListener('scroll', updatePosition)
+    }
+
+    return () => {
+      window.removeEventListener('resize', updatePosition)
+      window.removeEventListener('scroll', updatePosition)
+    }
+  }, [isOpen])
+
   const handleToggle = () => {
     setIsOpen(!isOpen)
   }
@@ -92,7 +118,7 @@ const NotificationsBox = () => {
   if (!user) return null
 
   return (
-    <div className="relative z-50" style={{ position: 'relative' }} ref={boxRef}>
+    <>
       <button
         ref={buttonRef}
         className="notification-toggle-btn"
@@ -109,14 +135,15 @@ const NotificationsBox = () => {
         )}
       </button>
 
-      {isOpen && (
+      {isOpen && typeof window !== 'undefined' && createPortal(
         <div 
+          ref={boxRef}
           className="notifications-box" 
-          style={{ 
-            position: 'absolute', 
-            right: 0, 
-            top: '100%', 
-            zIndex: 9999 
+          style={{
+            position: 'absolute',
+            top: `${position.top}px`,
+            right: `${position.right}px`,
+            zIndex: 999999
           }}
           role="dialog" 
           aria-label="Notifications"
@@ -191,9 +218,10 @@ const NotificationsBox = () => {
               <ArrowRightIcon className="h-4 w-4 ml-2 inline" />
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
-    </div>
+    </>
   )
 }
 
