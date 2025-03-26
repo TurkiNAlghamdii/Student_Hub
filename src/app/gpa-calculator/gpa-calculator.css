@@ -1,0 +1,232 @@
+.gpa-calculator-container {
+  @apply min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
+  background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.15) 1px, transparent 0);
+  background-size: 40px 40px;
+}
+
+.gpa-calculator-content {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
+}
+
+.gpa-calculator-header {
+  @apply mb-6;
+}
+
+.gpa-calculator-title {
+  background: linear-gradient(to right, #10b981, #064e3b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  @apply text-3xl font-bold;
+  text-shadow: 0 0 30px rgba(6, 78, 59, 0.3);
+}
+
+.gpa-calculator-section {
+  @apply bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 md:p-8
+    border border-gray-800/50 space-y-8;
+  box-shadow: 
+    0 0 40px rgba(6, 78, 59, 0.1),
+    0 0 80px rgba(0, 0, 0, 0.3);
+}
+
+.section-subtitle {
+  background: linear-gradient(to right, #10b981, #064e3b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  @apply text-xl font-semibold mb-4;
+  text-shadow: 0 0 20px rgba(6, 78, 59, 0.3);
+}
+
+/* Previous GPA Section */
+.previous-gpa-section {
+  @apply pb-6 border-b border-gray-800/50;
+}
+
+.input-group {
+  @apply grid grid-cols-1 md:grid-cols-3 gap-4;
+}
+
+.input-field {
+  @apply flex flex-col space-y-2;
+}
+
+.input-field label {
+  @apply text-gray-300 text-sm font-medium;
+}
+
+.gpa-input {
+  @apply bg-gray-800/50 text-white border border-gray-700 rounded-md
+    px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500
+    focus:border-transparent transition duration-200;
+}
+
+.readonly-input {
+  @apply bg-gray-800/80 cursor-not-allowed;
+}
+
+/* GPA Scale Section */
+.gpa-scale-section {
+  @apply pb-6 border-b border-gray-800/50;
+}
+
+.scale-selector {
+  @apply flex border border-gray-700 rounded-md overflow-hidden;
+  width: fit-content;
+}
+
+.scale-button {
+  @apply bg-gray-800 text-white px-6 py-2 
+    transition-all duration-200 ease-in-out;
+}
+
+.scale-button.active {
+  @apply bg-emerald-600 font-medium;
+}
+
+.scale-button:hover:not(.active) {
+  @apply bg-gray-700;
+}
+
+/* Results Section */
+.results-section {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-gray-800/50;
+}
+
+.cumulative-results, .semester-results {
+  @apply rounded-xl border border-gray-800/70 p-4 bg-gray-900/30;
+}
+
+.results-grid {
+  @apply grid grid-cols-2 gap-x-4 gap-y-3;
+}
+
+.result-item {
+  @apply flex flex-col;
+}
+
+.result-label {
+  @apply text-gray-400 text-xs mb-1;
+}
+
+.result-value {
+  @apply text-white text-lg font-semibold;
+}
+
+.gpa-value {
+  @apply text-emerald-400 text-2xl;
+}
+
+/* Courses Table Section */
+.courses-table-section {
+  @apply pt-2;
+}
+
+.courses-table-header {
+  @apply flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4;
+}
+
+.add-course-button {
+  @apply flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700
+    text-white px-4 py-2 rounded-md transition-colors duration-200
+    text-sm font-medium;
+}
+
+.courses-table {
+  @apply border border-gray-800 rounded-lg overflow-hidden;
+}
+
+.courses-table-head {
+  @apply grid grid-cols-12 gap-x-2 bg-gray-800 text-gray-300 
+    text-sm font-medium py-3 px-4;
+}
+
+.courses-table-body {
+  @apply divide-y divide-gray-800;
+}
+
+.course-row {
+  @apply grid grid-cols-12 gap-x-2 py-3 px-4 text-gray-300 items-center hover:bg-gray-800/50;
+}
+
+.course-cell {
+  @apply flex items-center;
+}
+
+.course-name-cell {
+  @apply col-span-3;
+}
+
+.course-grade-cell, .course-hours-cell, .course-gpa-cell, .course-points-cell {
+  @apply col-span-2;
+}
+
+.course-actions-cell {
+  @apply col-span-1 justify-center;
+}
+
+.course-input {
+  @apply bg-gray-800/70 text-white border border-gray-700 rounded
+    px-2 py-1 text-sm w-full focus:outline-none focus:ring-1 
+    focus:ring-emerald-500 focus:border-transparent;
+}
+
+.name-input {
+  @apply w-full;
+}
+
+.readonly-value {
+  @apply text-gray-300 font-mono;
+}
+
+.remove-course-btn {
+  @apply text-red-500 hover:text-red-400 p-1 rounded-full 
+    hover:bg-red-500/10 transition-colors duration-200;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .course-row, .courses-table-head {
+    @apply grid-cols-10;
+  }
+
+  .course-name-cell {
+    @apply col-span-4;
+  }
+
+  .course-grade-cell, .course-hours-cell {
+    @apply col-span-2;
+  }
+
+  .course-gpa-cell, .course-points-cell {
+    @apply hidden;
+  }
+
+  .result-value {
+    @apply text-base;
+  }
+
+  .gpa-value {
+    @apply text-xl;
+  }
+}
+
+@media (max-width: 640px) {
+  .course-row, .courses-table-head {
+    @apply grid-cols-8 text-xs;
+  }
+
+  .course-name-cell {
+    @apply col-span-3;
+  }
+
+  .course-grade-cell, .course-hours-cell {
+    @apply col-span-2;
+  }
+
+  .results-grid {
+    @apply grid-cols-1;
+  }
+
+  .course-actions-cell {
+    @apply col-span-1;
+  }
+} 

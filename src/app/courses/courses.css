@@ -33,6 +33,111 @@
   @apply grid gap-6 md:grid-cols-2 lg:grid-cols-3;
 }
 
+/* Semester Layout Styles */
+.semesters-container {
+  @apply space-y-10;
+}
+
+.semester-section {
+  @apply bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 mb-8
+    border border-gray-800/50;
+  box-shadow: 
+    0 0 40px rgba(6, 78, 59, 0.1),
+    0 0 80px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.semester-section:hover {
+  @apply transform transition-all duration-300;
+  box-shadow: 
+    0 0 50px rgba(6, 78, 59, 0.15),
+    0 0 90px rgba(0, 0, 0, 0.3);
+}
+
+.semester-header {
+  @apply flex justify-between items-center mb-4 px-2;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+  padding-bottom: 0.75rem;
+}
+
+.semester-title {
+  background: linear-gradient(to right, #10b981, #064e3b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  @apply text-xl font-semibold;
+  text-shadow: 0 0 30px rgba(6, 78, 59, 0.3);
+}
+
+.total-credits {
+  @apply text-emerald-400 text-sm py-1 px-3 rounded-md;
+  background: rgba(6, 78, 59, 0.2);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.semester-table {
+  @apply w-full rounded-lg overflow-hidden;
+  border: 1px solid rgba(16, 185, 129, 0.1);
+}
+
+.semester-table-header {
+  @apply grid grid-cols-12 text-sm font-semibold py-3 px-4;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+.table-header-code {
+  @apply col-span-2 text-center;
+}
+
+.table-header-title {
+  @apply col-span-6;
+}
+
+.table-header-cr {
+  @apply col-span-1 text-center;
+}
+
+.table-header-pre {
+  @apply col-span-3 text-center;
+}
+
+.semester-table-body {
+  @apply divide-y divide-gray-800/50;
+}
+
+.semester-table-row {
+  @apply grid grid-cols-12 py-3 px-4 text-gray-300 cursor-pointer
+    transition-all duration-200 hover:bg-gray-800/50;
+}
+
+.semester-table-row:hover {
+  @apply text-white;
+}
+
+.table-cell-code {
+  @apply col-span-2 font-mono font-semibold text-emerald-500 text-center;
+}
+
+.table-cell-title {
+  @apply col-span-6 flex flex-col;
+}
+
+.course-title-en {
+  @apply text-sm;
+}
+
+.course-title-ar {
+  @apply text-xs text-gray-400;
+}
+
+.table-cell-cr {
+  @apply col-span-1 text-center;
+}
+
+.table-cell-pre {
+  @apply col-span-3 text-center text-sm text-gray-400 font-mono;
+}
+
 .course-card {
   @apply bg-gray-900/50 backdrop-blur-md rounded-xl border border-gray-800/50 p-6 cursor-pointer
     transition-all duration-300 ease-in-out;
@@ -221,6 +326,108 @@
     flex: 1;
     text-align: center;
   }
+
+  /* Programs toggle responsive styling */
+  .programs-toggle {
+    @apply flex-wrap;
+  }
+
+  .program-button {
+    @apply py-2 px-3 text-xs;
+    min-width: 33.33%;
+  }
+
+  .program-title {
+    @apply text-xl;
+  }
+
+  .program-description {
+    @apply text-sm;
+  }
+
+  /* Responsive semester table adjustments */
+  .semester-table-header,
+  .semester-table-row {
+    @apply grid-cols-10;
+  }
+
+  .table-header-code, .table-cell-code {
+    @apply col-span-3;
+  }
+
+  .table-header-title, .table-cell-title {
+    @apply col-span-4;
+  }
+
+  .table-header-cr, .table-cell-cr {
+    @apply col-span-1;
+  }
+
+  .table-header-pre, .table-cell-pre {
+    @apply col-span-2;
+  }
+
+  .semester-title {
+    @apply text-lg;
+  }
+
+  .total-credits {
+    @apply text-xs;
+  }
+
+  .course-title-en {
+    @apply text-xs font-medium;
+  }
+
+  .course-title-ar {
+    @apply text-xs;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Even smaller screens program toggle */
+  .programs-toggle {
+    @apply flex-col;
+  }
+
+  .program-button {
+    @apply w-full border-b border-gray-800;
+    border-right: none;
+  }
+
+  .program-button:last-child {
+    border-bottom: none;
+  }
+
+  .semester-table-header,
+  .semester-table-row {
+    @apply grid-cols-6 px-2 py-2;
+    font-size: 0.7rem;
+  }
+
+  .table-header-code, .table-cell-code {
+    @apply col-span-2 text-xs;
+  }
+
+  .table-header-title, .table-cell-title {
+    @apply col-span-3;
+  }
+
+  .table-header-cr, .table-cell-cr {
+    @apply col-span-1;
+  }
+
+  .table-header-pre, .table-cell-pre {
+    @apply hidden;
+  }
+
+  .semester-section {
+    @apply p-3;
+  }
+
+  .semester-header {
+    @apply px-1 mb-2;
+  }
 }
 
 .loading-section {
@@ -243,6 +450,70 @@
   font-size: 1.125rem;
   font-weight: 500;
   animation: pulse 2s infinite;
+}
+
+/* Footnotes styling */
+.course-footnotes {
+  @apply mt-8 p-4 rounded-lg bg-gray-900/30 border border-gray-800/50;
+}
+
+.footnote-item {
+  @apply text-gray-400 text-sm mb-1;
+  font-style: italic;
+}
+
+/* Programs container and toggle styling */
+.programs-container {
+  @apply mb-6;
+}
+
+.programs-toggle {
+  @apply flex mb-8 border border-gray-800 rounded-lg overflow-hidden;
+  background-color: rgba(15, 23, 42, 0.5);
+}
+
+.program-button {
+  @apply flex-1 py-3 px-4 text-sm font-medium text-gray-300 transition-all;
+  border-right: 1px solid rgba(31, 41, 55, 0.8);
+}
+
+.program-button:last-child {
+  border-right: none;
+}
+
+.program-button:hover:not(.active) {
+  @apply bg-gray-800/50 text-white;
+}
+
+.program-button.active {
+  @apply text-white;
+  background: linear-gradient(to bottom, rgba(16, 185, 129, 0.2), rgba(6, 78, 59, 0.3));
+  box-shadow: inset 0 -2px 0 #10b981;
+}
+
+.program-content {
+  @apply mb-8;
+}
+
+.program-header {
+  @apply mb-6 pb-4 border-b border-gray-800/50;
+}
+
+.program-title {
+  background: linear-gradient(to right, #10b981, #047857);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  @apply text-2xl font-bold;
+  text-shadow: 0 0 30px rgba(6, 78, 59, 0.3);
+}
+
+.program-description {
+  @apply text-gray-400 mt-1;
+}
+
+.empty-program-notice {
+  @apply flex items-center justify-center p-12 bg-gray-900/30 rounded-xl border border-gray-800/50 text-gray-400;
+  min-height: 200px;
 }
 
 @keyframes pulse {

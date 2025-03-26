@@ -192,6 +192,7 @@ export default function Navbar({ showBack = false }: NavbarProps) {
     { label: 'Home', href: '/' },
     { label: 'Profile', href: '/profile' },
     { label: 'Courses', href: '/courses' },
+    { label: 'GPA Calculator', href: '/gpa-calculator' },
     { label: 'Notifications', href: '/notifications' },
     { label: 'Summer Training', href: '/summer-training' },
     { label: 'Events', href: '/events' },
