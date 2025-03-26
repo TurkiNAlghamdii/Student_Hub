@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { MagnifyingGlassIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import { MagnifyingGlassIcon, Bars3Icon, XMarkIcon, UserCircleIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import './Navbar.css'
@@ -265,6 +265,13 @@ export default function Navbar({ showBack = false }: NavbarProps) {
         {/* Sidebar toggle on the right */}
         <div className="nav-right">
           <div className="nav-buttons">
+            <button
+              onClick={() => router.push('/profile')}
+              className="user-profile-button"
+              aria-label="Go to profile"
+            >
+              <UserCircleIcon className="h-6 w-6" />
+            </button>
             <button
               onClick={openSidebar}
               className="sidebar-toggle-button"

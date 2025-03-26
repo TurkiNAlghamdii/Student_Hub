@@ -9,6 +9,7 @@ import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner'
 import RssSimple from '@/components/RssSimple/RssSimple'
 import CourseWidget from '@/components/CourseWidget/CourseWidget'
 import AIAssistantWidget from '@/components/AIAssistantWidget/AIAssistantWidget'
+import SalaryCounterWidget from '@/components/SalaryCounterWidget/SalaryCounterWidget'
 import './home.css'
 import NotificationsBox from '@/components/NotificationsBox'
 import { 
@@ -174,6 +175,9 @@ export default function Home() {
             </div>
           </div>
           <div className="row mt-6">
+            <div className="col">
+              <SalaryCounterWidget />
+            </div>
             <div className="col">
               <RssSimple 
                 url="https://rss.app/feeds/pcVOetZC9dx4E4dt.xml" 

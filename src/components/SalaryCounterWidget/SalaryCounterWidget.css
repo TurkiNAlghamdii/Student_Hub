@@ -1,0 +1,123 @@
+.salary-counter-widget {
+  @apply bg-gray-900/50 backdrop-blur-sm rounded-2xl p-5
+    border border-gray-800/50 transition-all duration-300;
+  box-shadow: 
+    0 0 30px rgba(6, 78, 59, 0.05),
+    0 0 60px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.salary-counter-widget:hover {
+  transform: translateY(-5px);
+  box-shadow: 
+    0 0 40px rgba(6, 78, 59, 0.1),
+    0 0 80px rgba(0, 0, 0, 0.3);
+}
+
+.widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(75, 85, 99, 0.3);
+  padding-bottom: 8px;
+}
+
+.widget-title-container {
+  display: flex;
+  align-items: center;
+}
+
+.widget-icon {
+  width: 20px;
+  height: 20px;
+  color: #10b981;
+  margin-right: 0.6rem;
+}
+
+.widget-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  text-shadow: 0 0 30px rgba(6, 78, 59, 0.3);
+}
+
+.widget-actions {
+  @apply flex items-center gap-2;
+}
+
+.counter-info-button {
+  @apply px-2.5 py-1 rounded-lg text-xs font-medium text-white
+    transition-all duration-300 ease-in-out flex items-center justify-center;
+  background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
+  border: 1px solid rgba(6, 78, 59, 0.2);
+  box-shadow: 0 4px 20px rgba(6, 78, 59, 0.15);
+  width: fit-content;
+  white-space: nowrap;
+}
+
+.counter-info-button:hover {
+  @apply transform scale-[1.02];
+  box-shadow: 0 4px 25px rgba(6, 78, 59, 0.25);
+}
+
+.widget-content {
+  flex: 1;
+}
+
+.countdown-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  margin-top: 0.5rem;
+  background: rgba(22, 27, 34, 0.5);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+.countdown-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 50px;
+}
+
+.countdown-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #10b981;
+  line-height: 1;
+  text-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+}
+
+.countdown-label {
+  font-size: 0.7rem;
+  color: #9ca3af;
+  margin-top: 0.4rem;
+}
+
+.countdown-separator {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: rgba(16, 185, 129, 0.7);
+  margin-top: -0.5rem;
+}
+
+/* For smaller screens */
+@media (max-width: 768px) {
+  .countdown-item {
+    min-width: 40px;
+  }
+  
+  .countdown-value {
+    font-size: 1.5rem;
+  }
+  
+  .countdown-separator {
+    font-size: 1.5rem;
+  }
+} 

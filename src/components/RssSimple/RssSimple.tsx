@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { ArrowRightIcon } from '@heroicons/react/24/outline'
+import TwitterXIcon from '../icons/TwitterXIcon'
 import styles from './RssSimple.module.css'
 
 interface MediaItem {
@@ -37,6 +39,7 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
   const [feedData, setFeedData] = useState<FeedData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isViewMoreHovered, setIsViewMoreHovered] = useState(false)
 
   useEffect(() => {
     const fetchFeed = async () => {
@@ -73,6 +76,7 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
         month: 'short',
         day: 'numeric'
       })
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       return dateString
     }
@@ -158,10 +162,15 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
   if (loading) {
     return (
       <div className={styles.container}>
-        <h3 className={styles.title}>{title}</h3>
+        <div className={styles.widgetHeader}>
+          <div className={styles.widgetTitleContainer}>
+            <TwitterXIcon className={styles.widgetIcon} />
+            <h3 className={styles.title}>{title}</h3>
+          </div>
+        </div>
         <div className={styles.loading}>
           <div className={styles.spinner}></div>
-          <p>Loading tweets...</p>
+          <p>Loading X posts...</p>
         </div>
       </div>
     )
@@ -170,7 +179,12 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
   if (error) {
     return (
       <div className={styles.container}>
-        <h3 className={styles.title}>{title}</h3>
+        <div className={styles.widgetHeader}>
+          <div className={styles.widgetTitleContainer}>
+            <TwitterXIcon className={styles.widgetIcon} />
+            <h3 className={styles.title}>{title}</h3>
+          </div>
+        </div>
         <div className={styles.error}>
           <p>{error}</p>
         </div>
@@ -181,9 +195,14 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
   if (!feedData || !feedData.items || feedData.items.length === 0) {
     return (
       <div className={styles.container}>
-        <h3 className={styles.title}>{title}</h3>
+        <div className={styles.widgetHeader}>
+          <div className={styles.widgetTitleContainer}>
+            <TwitterXIcon className={styles.widgetIcon} />
+            <h3 className={styles.title}>{title}</h3>
+          </div>
+        </div>
         <div className={styles.empty}>
-          <p>No tweets found.</p>
+          <p>No X posts found.</p>
         </div>
       </div>
     )
@@ -194,55 +213,69 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
 
   return (
     <div className={styles.container}>
-      <h3 className={styles.title}>{title}</h3>
-      <ul className={styles.items}>
-        {displayItems.map((item, index) => {
-          const imageUrl = getImageUrl(item);
-          const cleanedDescription = cleanDescription(item.description);
-          
-          return (
-            <li key={index} className={styles.item}>
-              <a href={item.link} target="_blank" rel="noopener noreferrer" className={styles.link}>
-                <div className={styles.itemContent}>
-                  <div className={styles.tweetHeader}>
-                    {item.pubDate && (
-                      <span className={styles.date}>{formatDate(item.pubDate)}</span>
-                    )}
-                    <span className={isRetweet(item.description, item.title) ? styles.retweetBadge : styles.tweetBadge}>
-                      {isRetweet(item.description, item.title) ? 'Retweet' : 'Post'}
-                    </span>
-                  </div>
-                  
-                  <p className={styles.description} dangerouslySetInnerHTML={{ __html: cleanedDescription }}></p>
-                  
-                  {imageUrl && (
-                    <div className={styles.imageContainer}>
-                      <img 
-                        src={imageUrl} 
-                        alt="Tweet media" 
-                        className={styles.tweetImage}
-                        onError={(e) => {
-                          // Hide broken images
-                          (e.target as HTMLImageElement).style.display = 'none';
-                        }}
-                      />
+      <div className={styles.widgetHeader}>
+        <div className={styles.widgetTitleContainer}>
+          <TwitterXIcon className={styles.widgetIcon} />
+          <h3 className={styles.title}>{title}</h3>
+        </div>
+        <div className={styles.widgetActions}>
+          <a 
+            href="https://x.com/FCITKAU" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className={styles.viewButton}
+            onMouseEnter={() => setIsViewMoreHovered(true)}
+            onMouseLeave={() => setIsViewMoreHovered(false)}
+          >
+            <span>View X</span>
+            <ArrowRightIcon 
+              className={`${styles.arrowIcon} ${isViewMoreHovered ? styles.arrowIconHovered : ''}`}
+            />
+          </a>
+        </div>
+      </div>
+      
+      <div className={styles.widgetContent}>
+        <ul className={styles.items}>
+          {displayItems.map((item, index) => {
+            const imageUrl = getImageUrl(item);
+            const cleanedDescription = cleanDescription(item.description);
+            
+            return (
+              <li key={index} className={styles.item}>
+                <a href={item.link} target="_blank" rel="noopener noreferrer" className={styles.link}>
+                  <div className={styles.itemContent}>
+                    <div className={styles.tweetHeader}>
+                      {item.pubDate && (
+                        <span className={styles.date}>{formatDate(item.pubDate)}</span>
+                      )}
+                      <span className={isRetweet(item.description, item.title) ? styles.retweetBadge : styles.tweetBadge}>
+                        {isRetweet(item.description, item.title) ? 'Retweet' : 'Post'}
+                      </span>
                     </div>
-                  )}
-                </div>
-              </a>
-            </li>
-          );
-        })}
-      </ul>
-      <div className={styles.footer}>
-        <a 
-          href="https://x.com/FCITKAU" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className={styles.viewMore}
-        >
-          View more tweets
-        </a>
+                    
+                    <p className={styles.description} dangerouslySetInnerHTML={{ __html: cleanedDescription }}></p>
+                    
+                    {imageUrl && (
+                      <div className={styles.imageContainer}>
+                        <img 
+                          src={imageUrl} 
+                          alt="Tweet media" 
+                          className={styles.tweetImage}
+                          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                          onError={(e) => {
+                            // Hide broken images
+                            (e.target as HTMLImageElement).style.display = 'none';
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </div>
   )

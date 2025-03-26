@@ -77,7 +77,10 @@ export default function CourseWidget() {
     return (
       <div className="course-widget">
         <div className="course-widget-header">
-          <h3>My Courses</h3>
+          <div className="course-widget-title-container">
+            <BookOpenIcon className="course-widget-icon" />
+            <h3>My Courses</h3>
+          </div>
           <Link href="/courses" className="view-all-link">View All</Link>
         </div>
         <div className="course-widget-list">
@@ -91,7 +94,10 @@ export default function CourseWidget() {
     return (
       <div className="course-widget">
         <div className="course-widget-header">
-          <h3>My Courses</h3>
+          <div className="course-widget-title-container">
+            <BookOpenIcon className="course-widget-icon" />
+            <h3>My Courses</h3>
+          </div>
           <Link href="/courses" className="view-all-link">View All</Link>
         </div>
         <div className="course-widget-error">
@@ -105,7 +111,10 @@ export default function CourseWidget() {
     return (
       <div className="course-widget">
         <div className="course-widget-header">
-          <h3>My Courses</h3>
+          <div className="course-widget-title-container">
+            <BookOpenIcon className="course-widget-icon" />
+            <h3>My Courses</h3>
+          </div>
           <Link href="/courses" className="view-all-link">View All</Link>
         </div>
         <div className="course-widget-empty">
@@ -122,7 +131,10 @@ export default function CourseWidget() {
   return (
     <div className="course-widget">
       <div className="course-widget-header">
-        <h3>My Courses</h3>
+        <div className="course-widget-title-container">
+          <BookOpenIcon className="course-widget-icon" />
+          <h3>My Courses</h3>
+        </div>
         <Link href="/courses" className="view-all-link">View All</Link>
       </div>
       <div className="course-widget-list">
