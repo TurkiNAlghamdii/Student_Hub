@@ -161,7 +161,7 @@ const FilesList: React.FC<FilesListProps> = ({ courseCode, refreshTrigger }) => 
             setShowSkeletons(false);
           }, 1000);
         } else {
-          setFiles(data.files || []);
+        setFiles(data.files || []);
           setShowSkeletons(false);
         }
       } catch (error: any) {
@@ -693,15 +693,15 @@ const FilesList: React.FC<FilesListProps> = ({ courseCode, refreshTrigger }) => 
                   
                   <div className="file-details-column">
                     <div className="file-header">
-                      <a 
-                        href={file.file_url} 
-                        className="file-name"
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        aria-label={`Download ${file.file_name}`}
-                      >
-                        {file.file_name}
-                      </a>
+                    <a 
+                      href={file.file_url} 
+                      className="file-name"
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      aria-label={`Download ${file.file_name}`}
+                    >
+                      {file.file_name}
+                    </a>
                       <span className="file-type-badge">{fileTypeInfo.label}</span>
                     </div>
                     
@@ -726,7 +726,7 @@ const FilesList: React.FC<FilesListProps> = ({ courseCode, refreshTrigger }) => 
                       </span>
                       
                       {viewMode === 'grid' && (
-                        <div className="file-actions">
+                    <div className="file-actions">
                           <button
                             onClick={() => toggleFavorite(file.id)}
                             className={`action-btn favorite-btn ${isFavorite ? 'active' : ''} ${isTogglingFavorite === file.id ? 'loading' : ''}`}
