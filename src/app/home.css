@@ -1,3 +1,15 @@
+/* Hide scrollbars but keep scroll functionality */
+html, body {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  overflow-y: scroll;
+}
+
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+  width: 0;
+  display: none; /* Chrome, Safari, Opera */
+}
+
 .home-container {
   @apply min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
   background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.15) 1px, transparent 0);
@@ -42,14 +54,20 @@
   @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
 }
 
+/* Welcome section styling */
 .welcome-section {
-  @apply bg-gradient-to-r from-emerald-900/40 via-gray-900/50 to-emerald-900/30 backdrop-blur-sm rounded-2xl p-8 mb-8
-    border border-emerald-700/30 flex justify-between items-center relative;
-  box-shadow: 
-    0 0 40px rgba(6, 78, 59, 0.15),
-    0 0 80px rgba(0, 0, 0, 0.3);
+  background-color: rgba(16, 22, 36, 0.6);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
   position: relative;
-  overflow: visible;
+  overflow: hidden;
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.1),
+    0 5px 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
 }
 
 .welcome-section::before {
@@ -59,32 +77,99 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(45deg, rgba(16, 185, 129, 0.1) 0%, transparent 40%, rgba(16, 185, 129, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, transparent 50%, rgba(16, 185, 129, 0.05) 100%);
+  border-radius: inherit;
   z-index: 0;
 }
 
+.welcome-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.greeting-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.greeting-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(6, 95, 70, 0.3) 100%);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+}
+
+.greeting-text {
+  display: flex;
+  flex-direction: column;
+}
+
 .welcome-text {
-  @apply text-2xl font-bold relative z-10;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  position: relative;
+}
+
+.user-name {
   background: linear-gradient(to right, #10b981, #a7f3d0);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+  text-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+}
+
+.welcome-subtext {
+  font-size: 0.875rem;
+  color: rgba(156, 163, 175, 0.9);
+  margin-top: 0.25rem;
+}
+
+.welcome-actions {
+  display: flex;
+  align-items: center;
+}
+
+.notification-container {
   position: relative;
-  letter-spacing: 0.5px;
+  z-index: 10;
 }
 
-.welcome-text::after {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 0;
-  width: 60%;
-  height: 2px;
-  background: linear-gradient(to right, #10b981, transparent);
+.welcome-section:hover {
+  box-shadow: 
+    0 15px 30px rgba(0, 0, 0, 0.15),
+    0 5px 15px rgba(0, 0, 0, 0.1);
+  border-color: rgba(16, 185, 129, 0.3);
+  transform: translateY(-2px);
 }
 
-.welcome-section:hover .welcome-text {
-  text-shadow: 0 0 25px rgba(16, 185, 129, 0.7);
+@media (max-width: 768px) {
+  .welcome-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .welcome-actions {
+    align-self: flex-end;
+  }
+  
+  .welcome-text {
+    font-size: 1.5rem;
+  }
 }
 
 /* Navigation shortcuts styling */
@@ -181,13 +266,6 @@
 
 .loading-spinner {
   @apply w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin;
-}
-
-.welcome-section:hover {
-  @apply transform transition-all duration-500;
-  box-shadow: 
-    0 0 50px rgba(6, 78, 59, 0.15),
-    0 0 90px rgba(0, 0, 0, 0.3);
 }
 
 .nav-buttons {

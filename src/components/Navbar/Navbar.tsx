@@ -2,7 +2,20 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { MagnifyingGlassIcon, Bars3Icon, XMarkIcon, UserCircleIcon } from '@heroicons/react/24/outline'
+import { 
+  MagnifyingGlassIcon, 
+  Bars3Icon, 
+  XMarkIcon, 
+  UserCircleIcon,
+  HomeIcon,
+  AcademicCapIcon,
+  BellIcon,
+  CalendarIcon,
+  ChatBubbleLeftRightIcon,
+  ArrowRightOnRectangleIcon,
+  CalculatorIcon,
+  BriefcaseIcon
+} from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import './Navbar.css'
@@ -27,6 +40,8 @@ export default function Navbar({ showBack = false }: NavbarProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [isSidebarClosing, setIsSidebarClosing] = useState(false)
+  const [isSidebarMounted, setIsSidebarMounted] = useState(false)
+  const [isBackdropActive, setIsBackdropActive] = useState(false)
   const [searchResults, setSearchResults] = useState<Course[]>([])
   const [showResults, setShowResults] = useState(false)
   const [isSearching, setIsSearching] = useState(false)
@@ -65,8 +80,8 @@ export default function Navbar({ showBack = false }: NavbarProps) {
   // Handle sidebar animation end
   useEffect(() => {
     const handleTransitionEnd = (event: TransitionEvent) => {
-      // Only process the sidebar element's transform transition
       if (event.propertyName === 'transform' && isSidebarClosing) {
+        // Only clean up state after animation completes
         setIsSidebarOpen(false)
         setIsSidebarClosing(false)
       }
@@ -181,23 +196,32 @@ export default function Navbar({ showBack = false }: NavbarProps) {
   const openSidebar = () => {
     setIsSidebarOpen(true)
     setIsSidebarClosing(false)
+    // Ensure DOM has time to mount the sidebar before animating
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setIsSidebarMounted(true)
+        setIsBackdropActive(true)
+      })
+    })
   }
 
   const closeSidebar = () => {
     setIsSidebarClosing(true)
+    setIsSidebarMounted(false)
+    setIsBackdropActive(false)
   }
 
   // Menu items with staggered animation
   const menuItems = [
-    { label: 'Home', href: '/' },
-    { label: 'Profile', href: '/profile' },
-    { label: 'Courses', href: '/courses' },
-    { label: 'GPA Calculator', href: '/gpa-calculator' },
-    { label: 'Notifications', href: '/notifications' },
-    { label: 'Summer Training', href: '/summer-training' },
-    { label: 'Events', href: '/events' },
-    { label: 'AI Chat', href: '/chat' },
-    { label: 'Logout', action: handleLogout }
+    { label: 'Home', href: '/', icon: <HomeIcon className="w-5 h-5" /> },
+    { label: 'Profile', href: '/profile', icon: <UserCircleIcon className="w-5 h-5" /> },
+    { label: 'Courses', href: '/courses', icon: <AcademicCapIcon className="w-5 h-5" /> },
+    { label: 'GPA Calculator', href: '/gpa-calculator', icon: <CalculatorIcon className="w-5 h-5" /> },
+    { label: 'Notifications', href: '/notifications', icon: <BellIcon className="w-5 h-5" /> },
+    { label: 'Summer Training', href: '/summer-training', icon: <BriefcaseIcon className="w-5 h-5" /> },
+    { label: 'Events', href: '/events', icon: <CalendarIcon className="w-5 h-5" /> },
+    { label: 'AI Chat', href: '/chat', icon: <ChatBubbleLeftRightIcon className="w-5 h-5" /> },
+    { label: 'Logout', action: handleLogout, icon: <ArrowRightOnRectangleIcon className="w-5 h-5" /> }
   ]
 
   return (
@@ -215,11 +239,9 @@ export default function Navbar({ showBack = false }: NavbarProps) {
             </button>
           )}
           <Link href="/" className="flex items-center">
-            <img 
-              src="/StudentHubWhite.svg" 
-              alt="Student Hub Logo" 
-              className="h-36 w-auto [filter:contrast(1.5)_brightness(1.2)_drop-shadow(0_0_1px_rgba(255,255,255,0.8))]"
-            />
+            <h1 className="text-xl font-bold text-white mx-2 hover:text-emerald-400 transition-colors">
+              <span className="text-emerald-500">#</span>Student_Hub
+            </h1>
           </Link>
         </div>
 
@@ -286,7 +308,7 @@ export default function Navbar({ showBack = false }: NavbarProps) {
       {/* Sidebar backdrop */}
       {(isSidebarOpen || isSidebarClosing) && (
         <div 
-          className={`sidebar-backdrop ${isSidebarClosing ? 'sidebar-backdrop-closing' : ''}`}
+          className={`sidebar-backdrop ${isBackdropActive ? 'sidebar-backdrop-active' : ''} ${isSidebarClosing ? 'sidebar-backdrop-closing' : ''}`}
           onClick={closeSidebar}
           aria-hidden="true"
         />
@@ -296,7 +318,7 @@ export default function Navbar({ showBack = false }: NavbarProps) {
       {(isSidebarOpen || isSidebarClosing) && (
         <div 
           ref={sidebarRef}
-          className={`sidebar ${isSidebarClosing ? 'sidebar-closing' : ''}`}
+          className={`sidebar ${!isSidebarMounted ? 'sidebar-enter' : 'sidebar-enter-active'} ${isSidebarClosing ? 'sidebar-closing' : ''}`}
         >
           <div className="sidebar-header">
             <h2 className="sidebar-title">Menu</h2>
@@ -308,24 +330,24 @@ export default function Navbar({ showBack = false }: NavbarProps) {
               <XMarkIcon className="h-6 w-6" />
             </button>
           </div>
-          <div className="sidebar-content">
+          <div 
+            className="sidebar-content"
+            style={{ overscrollBehavior: 'contain' }}
+          >
             <ul className="sidebar-menu">
               {menuItems.map((item, index) => (
                 <li 
                   key={item.label} 
-                  className="menu-item"
-                  style={{ 
-                    animationDelay: `${index * 50}ms`,
-                    opacity: 0,
-                    animation: isSidebarClosing ? 'none' : `fadeInRight 0.3s ease forwards ${index * 50}ms`
-                  }}
+                  className={`menu-item ${isSidebarMounted && !isSidebarClosing ? 'menu-item-visible' : ''}`}
                 >
                   {item.href ? (
                     <Link 
                       href={item.href} 
                       onClick={closeSidebar}
+                      className="flex items-center gap-3"
                     >
-                      {item.label}
+                      {item.icon}
+                      <span>{item.label}</span>
                     </Link>
                   ) : (
                     <button 
@@ -333,8 +355,10 @@ export default function Navbar({ showBack = false }: NavbarProps) {
                         closeSidebar(); 
                         if (item.action) item.action(); 
                       }}
+                      className="flex items-center gap-3 w-full"
                     >
-                      {item.label}
+                      {item.icon}
+                      <span>{item.label}</span>
                     </button>
                   )}
                 </li>

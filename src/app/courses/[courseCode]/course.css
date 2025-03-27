@@ -15,9 +15,7 @@
   overflow: hidden;
 }
 
-.course-section:hover {
-  /* No hover effect - keeping it simple */
-}
+
 
 .course-header {
   @apply border-b border-gray-800/30 pb-6 mb-6 relative;
