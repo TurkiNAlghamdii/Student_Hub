@@ -3,6 +3,11 @@ import { createClient } from '@supabase/supabase-js'
 import CourseClient from './CourseClient';
 import { notFound } from 'next/navigation';
 
+interface Faculty {
+  name?: string;
+  [key: string]: unknown;
+}
+
 interface CourseDetails {
   course_code: string
   course_name: string
@@ -65,15 +70,16 @@ export default async function CoursePage({ params }: { params: { courseCode: str
         }
       };
     }
-  } catch (err: any) {
-    error = err.message || 'An unexpected error occurred';
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
+    error = errorMessage;
   }
 
   // Return the client component with the course data or error
   return <CourseClient course={course} error={error} />;
 }
 
-function getFacultyName(faculty: any): string {
+function getFacultyName(faculty: Faculty | string | null | undefined): string {
   if (!faculty) return 'Faculty of Computing';
   
   if (typeof faculty === 'string') {

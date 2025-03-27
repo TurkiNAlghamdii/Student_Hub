@@ -1,6 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { XMLParser } from 'fast-xml-parser'
 
+interface MediaContent {
+  url: string;
+  type: string;
+  width?: number;
+  height?: number;
+  length?: number;
+}
+
+interface RSSItem {
+  title?: string;
+  link?: string;
+  description?: string;
+  pubDate?: string;
+  'content:encoded'?: string;
+  content?: string;
+  'media:content'?: MediaContent | MediaContent[];
+  enclosure?: MediaContent | MediaContent[];
+}
+
+interface RSSChannel {
+  title?: string;
+  description?: string;
+  link?: string;
+  item?: RSSItem | RSSItem[];
+}
+
+interface RSSFeed {
+  rss?: {
+    channel?: RSSChannel;
+  };
+}
+
 export async function GET(request: NextRequest) {
   const url = request.nextUrl.searchParams.get('url')
 
@@ -46,7 +78,7 @@ export async function GET(request: NextRequest) {
       title: channel.title || 'RSS Feed',
       description: channel.description || '',
       link: channel.link || '',
-      items: items.map((item: any) => {
+      items: items.map((item: RSSItem) => {
         // Process media content from various possible sources
         const media = extractMediaContent(item)
         
@@ -72,8 +104,8 @@ export async function GET(request: NextRequest) {
 }
 
 // Helper function to extract media content from various RSS formats
-function extractMediaContent(item: any): any[] {
-  const mediaContent = []
+function extractMediaContent(item: RSSItem): MediaContent[] {
+  const mediaContent: MediaContent[] = []
   
   // Check media:content tags
   if (item['media:content']) {
@@ -81,13 +113,13 @@ function extractMediaContent(item: any): any[] {
       ? item['media:content'] 
       : [item['media:content']]
     
-    mediaItems.forEach((media: any) => {
-      if (media && media._url) {
+    mediaItems.forEach((media: MediaContent) => {
+      if (media && media.url) {
         mediaContent.push({
-          url: media._url,
-          type: media._type || 'image/jpeg',
-          width: media._width,
-          height: media._height
+          url: media.url,
+          type: media.type || 'image/jpeg',
+          width: media.width,
+          height: media.height
         })
       }
     })
@@ -99,12 +131,12 @@ function extractMediaContent(item: any): any[] {
       ? item.enclosure
       : [item.enclosure]
     
-    enclosures.forEach((enclosure: any) => {
-      if (enclosure && enclosure._url) {
+    enclosures.forEach((enclosure: MediaContent) => {
+      if (enclosure && enclosure.url) {
         mediaContent.push({
-          url: enclosure._url,
-          type: enclosure._type || 'image/jpeg',
-          length: enclosure._length
+          url: enclosure.url,
+          type: enclosure.type || 'image/jpeg',
+          length: enclosure.length
         })
       }
     })

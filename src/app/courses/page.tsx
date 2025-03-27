@@ -1,6 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
 import CoursesClient from './CoursesClient'
 
+interface Faculty {
+  name?: string;
+  [key: string]: unknown;
+}
+
 // Define the course interface
 interface Course {
   course_code: string
@@ -52,15 +57,16 @@ export default async function CoursesPage() {
         instructor: course.instructor
       }));
     }
-  } catch (err: any) {
-    error = err.message || 'An unexpected error occurred';
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
+    error = errorMessage;
   }
 
   // Return the client component with the courses data or error
   return <CoursesClient courses={courses} error={error} />;
 }
 
-function getFacultyName(faculty: any): string {
+function getFacultyName(faculty: Faculty | string | null | undefined): string {
   if (!faculty) return 'Faculty of Computing';
   
   if (typeof faculty === 'string') {

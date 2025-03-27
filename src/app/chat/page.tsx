@@ -71,7 +71,7 @@ export default function ChatPage() {
     };
     
     checkApiKeySetup();
-  }, []);
+  }, [sendQuestionToChat]);
   
   return (
     <div className="home-container">

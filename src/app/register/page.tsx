@@ -129,8 +129,12 @@ export default function Register() {
       }
 
       router.push('/login?message=Check your email to confirm your account')
-    } catch (error: any) {
-      setError(error.message)
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('An unexpected error occurred during registration');
+      }
     } finally {
       setLoading(false)
     }

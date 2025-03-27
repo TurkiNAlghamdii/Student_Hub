@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { useNotifications } from '@/contexts/NotificationsContext'
@@ -8,7 +8,6 @@ import Navbar from '@/components/Navbar/Navbar'
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner'
 import { 
   CheckCircleIcon, 
-  BellIcon, 
   ExclamationCircleIcon, 
   ArrowPathIcon,
   InboxIcon
@@ -115,7 +114,7 @@ export default function NotificationsPage() {
                 <InboxIcon className="w-9 h-9 text-emerald-500/70" />
               </div>
               <h2 className="bg-gradient-to-r from-emerald-400 to-emerald-600 bg-clip-text text-transparent">Your notification center is empty</h2>
-              <p className="text-gray-400">When you receive notifications about course updates, file uploads, or announcements, they'll appear here.</p>
+              <p className="text-gray-400">When you receive notifications about course updates, file uploads, or announcements, they&apos;ll appear here.</p>
             </div>
           ) : (
             <div className="notifications-list-container">

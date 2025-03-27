@@ -7,7 +7,6 @@ import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
-import Image from 'next/image'
 import './login.css'
 import Logo from '@/components/Logo'
 import { FormEvent } from 'react'
@@ -44,10 +43,11 @@ export default function Login() {
       localStorage.setItem('sessionStartTime', Date.now().toString())
       
       router.push('/')
-    } catch (error: any) {
-      setError(error.message)
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred during login';
+      setError(errorMessage);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 

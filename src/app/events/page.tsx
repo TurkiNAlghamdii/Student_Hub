@@ -20,7 +20,7 @@ interface Event {
 
 export default function EventsPage() {
   const router = useRouter()
-  const { user, session, loading: authLoading } = useAuth()
+  const { user, loading: authLoading } = useAuth()
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
   const [isAdmin, setIsAdmin] = useState(false)
@@ -124,11 +124,12 @@ export default function EventsPage() {
       // Reset form and close modal
       setFormData({ title: '', description: '', date: '', location: '' })
       setShowAddModal(false)
-    } catch (err: any) {
-      setError(err.message || 'Failed to add event')
-      console.error('Error adding event:', err)
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to add event';
+      setError(errorMessage);
+      console.error('Error adding event:', err);
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
   }
 
@@ -184,9 +185,10 @@ export default function EventsPage() {
       // Reset and close modal
       setEventToDelete(null);
       setShowDeleteModal(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred while deleting the event.';
       console.error('Unexpected error deleting event:', err);
-      alert('An unexpected error occurred while deleting the event.');
+      alert(errorMessage);
     } finally {
       setDeletingEvent(false);
     }

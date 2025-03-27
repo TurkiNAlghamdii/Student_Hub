@@ -63,7 +63,7 @@ export async function GET(request: NextRequest, { params }: { params: { courseCo
     
     // Check if the course exists
     try {
-      const { data: course, error: courseError } = await supabaseAdmin
+      const { data: courseData, error: courseError } = await supabaseAdmin
         .from('courses')
         .select('course_code')
         .eq('course_code', courseCode)

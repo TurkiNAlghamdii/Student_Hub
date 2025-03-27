@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
+interface Faculty {
+  name?: string;
+  [key: string]: unknown;
+}
+
 // Create a Supabase client with the service role key
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -8,7 +13,7 @@ const supabaseAdmin = createClient(
 );
 
 // Helper function to format faculty data
-const formatFaculty = (faculty: any): { name: string } => {
+const formatFaculty = (faculty: Faculty | string | null | undefined): { name: string } => {
   if (!faculty) return { name: 'Faculty of Computing' };
   
   if (typeof faculty === 'string') {

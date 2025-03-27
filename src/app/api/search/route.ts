@@ -36,9 +36,10 @@ export async function GET(request: Request) {
       .limit(10);
 
     if (error) {
+      console.error('Search error:', error);
       return NextResponse.json({ 
         courses: [],
-        error: 'Database error'
+        error: `Database error: ${error.message}`
       }, { status: 500 });
     }
 

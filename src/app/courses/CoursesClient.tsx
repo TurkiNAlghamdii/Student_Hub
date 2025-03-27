@@ -1129,8 +1129,6 @@ export default function CoursesClient({ courses, error }: CoursesClientProps) {
     )
   }
 
-  const displayCourses = viewMode === 'all' ? courses : myCourses
-  
   // Show loading when authentication is loading, waiting for user data
   const isLoading = authLoading || (viewMode === 'my' && coursesLoading);
 

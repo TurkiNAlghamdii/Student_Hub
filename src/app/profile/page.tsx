@@ -72,7 +72,7 @@ interface StudentProfile {
           URL.revokeObjectURL(studentProfile.avatar_url);
         }
       };
-    }, [router]);
+    }, [studentProfile?.avatar_url]);
     const uploadAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
       try {
         setUploading(true)

@@ -40,13 +40,22 @@ export async function GET(
       .order('starred_at', { ascending: false });
     
     if (error) {
-      return NextResponse.json({ error: 'Failed to fetch starred materials' }, { status: 500 });
+      console.error('Error fetching starred materials:', error);
+      return NextResponse.json({ 
+        error: 'Failed to fetch starred materials',
+        details: error.message
+      }, { status: 500 });
     }
     
     return NextResponse.json({ starred_materials: data || [] });
     
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Unexpected error in GET starred materials:', error);
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      details: errorMessage
+    }, { status: 500 });
   }
 }
 
@@ -87,7 +96,13 @@ export async function HEAD(
       .eq('student_id', studentId);
     
     if (error) {
-      return new NextResponse(null, { status: 500 });
+      console.error('Error fetching starred file IDs:', error);
+      return new NextResponse(null, { 
+        status: 500,
+        headers: {
+          'X-Error': error.message
+        }
+      });
     }
     
     // Convert data to array of IDs and set as a header
@@ -99,7 +114,14 @@ export async function HEAD(
       }
     });
     
-  } catch (error: any) {
-    return new NextResponse(null, { status: 500 });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Unexpected error in HEAD starred materials:', error);
+    return new NextResponse(null, { 
+      status: 500,
+      headers: {
+        'X-Error': errorMessage
+      }
+    });
   }
 } 
