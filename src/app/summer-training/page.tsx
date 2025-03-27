@@ -1,5 +1,9 @@
 'use client'
 
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import Navbar from "@/components/Navbar/Navbar"
+
 export default function SummerTrainingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">

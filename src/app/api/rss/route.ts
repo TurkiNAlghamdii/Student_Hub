@@ -33,7 +33,7 @@ interface FeedItem {
   description: string;
   pubDate: string;
   content: string;
-  media: MediaItem[];
+  media: MediaContent[];
 }
 
 export async function GET(request: NextRequest) {

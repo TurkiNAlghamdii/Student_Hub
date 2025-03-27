@@ -12,11 +12,9 @@ import {
   ChartBarIcon,
   PresentationChartBarIcon,
   StarIcon,
-  CalendarDaysIcon,
   ArrowDownTrayIcon,
   TrashIcon,
   ClockIcon,
-  CheckCircleIcon,
   ArrowsUpDownIcon,
   XMarkIcon,
   ChevronDownIcon,
@@ -24,13 +22,9 @@ import {
   UserCircleIcon,
   DocumentArrowDownIcon
 } from '@heroicons/react/24/outline';
+import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid';
 import './filesList.css';
 
-interface Student {
-  id: string;
-  full_name: string;
-  avatar_url?: string;
-}
 
 interface UserInfo {
   full_name: string;
@@ -74,6 +68,8 @@ const FilesList: React.FC<FilesListProps> = ({ courseCode, refreshTrigger }) => 
   const [isAdmin, setIsAdmin] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isTogglingFavorite, setIsTogglingFavorite] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const [isDownloading, setIsDownloading] = useState<string | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -256,6 +252,7 @@ const FilesList: React.FC<FilesListProps> = ({ courseCode, refreshTrigger }) => 
     }
     
     try {
+      setIsDeleting(fileId);
       const response = await fetch(`/api/courses/${courseCode}/files/${fileId}`, {
         method: 'DELETE',
         headers: {
@@ -277,11 +274,14 @@ const FilesList: React.FC<FilesListProps> = ({ courseCode, refreshTrigger }) => 
       }
     } catch (error: any) {
       alert(`Failed to delete file: ${error.message || 'Unknown error'}`);
+    } finally {
+      setIsDeleting(null);
     }
   };
 
   const handleDownload = async (file: CourseFile) => {
     try {
+      setIsDownloading(file.id);
       // First try to fetch with a HEAD request to check if the file is accessible
       const checkResponse = await fetch(file.file_url, { method: 'HEAD' });
       
@@ -294,6 +294,8 @@ const FilesList: React.FC<FilesListProps> = ({ courseCode, refreshTrigger }) => 
       window.open(file.file_url, '_blank');
     } catch (error) {
       alert('Error downloading file. Please try again.');
+    } finally {
+      setIsDownloading(null);
     }
   };
 
@@ -734,7 +736,11 @@ const FilesList: React.FC<FilesListProps> = ({ courseCode, refreshTrigger }) => 
                             title={isFavorite ? "Remove from favorites" : "Add to favorites"}
                             disabled={isTogglingFavorite === file.id}
                           >
-                            <StarIcon className="h-5 w-5" />
+                            {isFavorite ? (
+                              <StarIconSolid className="h-5 w-5 text-yellow-400" />
+                            ) : (
+                              <StarIcon className="h-5 w-5 text-gray-400" />
+                            )}
                           </button>
                           
                           <div className="file-action-group">
@@ -743,6 +749,7 @@ const FilesList: React.FC<FilesListProps> = ({ courseCode, refreshTrigger }) => 
                               className="action-btn download-btn"
                               aria-label="Download file"
                               title="Download"
+                              disabled={isDownloading === file.id}
                             >
                               <ArrowDownTrayIcon className="h-5 w-5" />
                             </button>
@@ -753,6 +760,7 @@ const FilesList: React.FC<FilesListProps> = ({ courseCode, refreshTrigger }) => 
                                 className="action-btn delete-btn"
                                 aria-label="Delete file"
                                 title="Delete"
+                                disabled={isDeleting === file.id}
                               >
                                 <TrashIcon className="h-5 w-5" />
                               </button>
@@ -772,7 +780,11 @@ const FilesList: React.FC<FilesListProps> = ({ courseCode, refreshTrigger }) => 
                         title={isFavorite ? "Remove from favorites" : "Add to favorites"}
                         disabled={isTogglingFavorite === file.id}
                       >
-                        <StarIcon className="h-5 w-5" />
+                        {isFavorite ? (
+                          <StarIconSolid className="h-5 w-5 text-yellow-400" />
+                        ) : (
+                          <StarIcon className="h-5 w-5 text-gray-400" />
+                        )}
                       </button>
                       
                       <button 
@@ -780,6 +792,7 @@ const FilesList: React.FC<FilesListProps> = ({ courseCode, refreshTrigger }) => 
                         className="action-btn download-btn"
                         aria-label="Download file"
                         title="Download"
+                        disabled={isDownloading === file.id}
                       >
                         <ArrowDownTrayIcon className="h-5 w-5" />
                       </button>
@@ -790,6 +803,7 @@ const FilesList: React.FC<FilesListProps> = ({ courseCode, refreshTrigger }) => 
                           className="action-btn delete-btn"
                           aria-label="Delete file"
                           title="Delete"
+                          disabled={isDeleting === file.id}
                         >
                           <TrashIcon className="h-5 w-5" />
                         </button>

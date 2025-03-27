@@ -11,10 +11,11 @@ interface Course {
   course_code: string
   course_name: string
   course_description: string
-  faculty: {
+  credits: number
+  prerequisites?: string
+  faculty?: {
     name: string
   }
-  instructor?: string
 }
 
 // This is a server component that fetches data
@@ -51,10 +52,11 @@ export default async function CoursesPage() {
         course_code: course.course_code,
         course_name: course.course_name,
         course_description: course.course_description || 'No description available',
+        credits: course.credits || 3, // Default to 3 credits if not specified
+        prerequisites: course.prerequisites,
         faculty: {
           name: getFacultyName(course.faculty)
-        },
-        instructor: course.instructor
+        }
       }));
     }
   } catch (err: unknown) {

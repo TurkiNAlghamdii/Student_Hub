@@ -66,28 +66,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe()
   }, [])
 
-  // Check if the session has expired based on the stored timestamp
-  const checkSessionExpiry = () => {
-    const sessionStartTimeStr = localStorage.getItem('sessionStartTime');
-    if (!sessionStartTimeStr) return false;
-    
-    const sessionStartTime = parseInt(sessionStartTimeStr, 10);
-    const currentTime = Date.now();
-    
-    // Check if we've exceeded the session duration
-    return (currentTime - sessionStartTime) > SESSION_DURATION;
-  }
+  const checkSessionExpiry = (): boolean => {
+    const lastActivity = localStorage.getItem('lastActivity');
+    if (lastActivity) {
+      const lastActivityTime = parseInt(lastActivity);
+      const now = Date.now();
+      const timeDiff = now - lastActivityTime;
+      if (timeDiff > 30 * 60 * 1000) { // 30 minutes
+        handleSignOut();
+        return true;
+      }
+    }
+    return false;
+  };
 
-  // Handle sign out
   const handleSignOut = async () => {
-    setLoading(true)
-    await supabase.auth.signOut()
-    localStorage.removeItem('sessionStartTime')
-    setUser(null)
-    setSession(null)
-    setLoading(false)
-    router.push('/login')
-  }
+    try {
+      await supabase.auth.signOut();
+      router.push('/login');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      checkSessionExpiry();
+    }, 60000); // Check every minute
+
+    return () => clearInterval(interval);
+  }, [checkSessionExpiry, handleSignOut]);
 
   return (
     <AuthContext.Provider value={{ 

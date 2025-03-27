@@ -6,7 +6,7 @@ import Navbar from '@/components/Navbar/Navbar'
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner'
 import { useAuth } from '@/contexts/AuthContext'
 import './courses.css'
-import { AcademicCapIcon } from '@heroicons/react/24/outline'
+import { AcademicCapIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { supabase } from '@/lib/supabase'
 
 // Define the course interface
@@ -14,12 +14,11 @@ interface Course {
   course_code: string
   course_name: string
   course_description: string
+  credits: number
+  prerequisites?: string
   faculty?: {
     name: string
   }
-  instructor?: string
-  credits?: number
-  prerequisites?: string
 }
 
 // Define semester structure
@@ -1158,66 +1157,66 @@ export default function CoursesClient({ courses, error }: CoursesClientProps) {
     <div className="courses-container">
       <Navbar />
       <main className="courses-content">
-          <div className="courses-header">
-            <h1 className="courses-title">{viewMode === 'all' ? 'All Courses' : 'My Courses'}</h1>
-            
-            <div className="view-toggle">
-              <button 
-                className={`toggle-button ${viewMode === 'my' ? 'active' : ''}`}
-                onClick={() => setViewMode('my')}
-                disabled={coursesLoading}
-              >
-                My Courses
-              </button>
-              <button 
-                className={`toggle-button ${viewMode === 'all' ? 'active' : ''}`}
-                onClick={() => setViewMode('all')}
-                disabled={coursesLoading}
-              >
-                All Courses
-              </button>
-            </div>
+        <div className="courses-header">
+          <h1 className="courses-title">{viewMode === 'all' ? 'All Courses' : 'My Courses'}</h1>
+          
+          <div className="view-toggle">
+            <button 
+              className={`toggle-button ${viewMode === 'my' ? 'active' : ''}`}
+              onClick={() => setViewMode('my')}
+              disabled={coursesLoading}
+            >
+              My Courses
+            </button>
+            <button 
+              className={`toggle-button ${viewMode === 'all' ? 'active' : ''}`}
+              onClick={() => setViewMode('all')}
+              disabled={coursesLoading}
+            >
+              All Courses
+            </button>
           </div>
+        </div>
 
-          {/* Show a compact loading indicator when toggling between views */}
-          {coursesLoading && initialLoadComplete && (
-            <div className="inline-loading">
-              <LoadingSpinner />
-              <span>Updating...</span>
-            </div>
-          )}
+        {/* Show a compact loading indicator when toggling between views */}
+        {coursesLoading && initialLoadComplete && (
+          <div className="inline-loading">
+            <LoadingSpinner />
+            <span>Updating...</span>
+          </div>
+        )}
 
-          {fetchError && viewMode === 'my' && !coursesLoading && (
-            <p className="error-message">{fetchError}</p>
-          )}
+        {fetchError && viewMode === 'my' && !coursesLoading && (
+          <p className="error-message">{fetchError}</p>
+        )}
 
-          {viewMode === 'my' && !user && !coursesLoading && (
-            <div className="login-prompt">
-              <p>Please log in to view your courses</p>
-              <button 
-                className="login-button"
-                onClick={() => router.push('/login')}
-              tabIndex={0}
-              aria-label="Log in to view your courses"
-              >
-                Log In
-              </button>
-            </div>
-          )}
+        {viewMode === 'my' && !user && !coursesLoading && (
+          <div className="login-prompt">
+            <p>Please log in to view your courses</p>
+            <button 
+              className="login-button"
+              onClick={() => router.push('/login')}
+            tabIndex={0}
+            aria-label="Log in to view your courses"
+            >
+              Log In
+            </button>
+          </div>
+        )}
 
-          {viewMode === 'my' && user && myCourses.length === 0 && !coursesLoading && !fetchError && (
-            <div className="empty-courses-container">
-              <p className="empty-courses">You haven&apos;t added any courses yet.</p>
-              <button 
-                className="browse-button"
-                onClick={() => setViewMode('all')}
-              tabIndex={0}
-              aria-label="Browse all available courses"
-              >
-                Browse All Courses
-              </button>
-            </div>
-          )}
+        {viewMode === 'my' && user && myCourses.length === 0 && !coursesLoading && !fetchError && (
+          <div className="empty-courses-container">
+            <p className="empty-courses">You haven&apos;t added any courses yet.</p>
+            <button 
+              className="browse-button"
+              onClick={() => setViewMode('all')}
+            tabIndex={0}
+            aria-label="Browse all available courses"
+            >
+              Browse All Courses
+            </button>
+          </div>
+        )}
 
         {!coursesLoading && viewMode === 'all' && (
           <div className="programs-container">
@@ -1413,36 +1412,36 @@ export default function CoursesClient({ courses, error }: CoursesClientProps) {
         )}
 
         {!coursesLoading && viewMode === 'my' && myCourses.length > 0 && (
-            <div className="courses-grid">
+          <div className="courses-grid">
             {myCourses.map((course) => (
-                <div 
-                  key={course.course_code}
-                  className="course-card"
-                  onClick={() => router.push(`/courses/${course.course_code}`)}
+              <div 
+                key={course.course_code}
+                className="course-card"
+                onClick={() => router.push(`/courses/${course.course_code}`)}
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && router.push(`/courses/${course.course_code}`)}
+              aria-label={`${course.course_name} course`}
+              >
+                <h2 className="course-card-code">{course.course_code}</h2>
+                <p className="course-card-name">{course.course_name}</p>
+                <p className="course-card-faculty">
+                  <AcademicCapIcon className="h-3 w-3 mr-1" />
+                  {course.faculty?.name || 'Faculty of Computing'}
+                </p>
+                
+                <button 
+                  className="remove-course-button"
+                  onClick={(e) => handleRemoveCourse(course.course_code, e)}
+                  aria-label={`Remove ${course.course_code} from your courses`}
                 tabIndex={0}
-                onKeyDown={(e) => e.key === 'Enter' && router.push(`/courses/${course.course_code}`)}
-                aria-label={`${course.course_name} course`}
+                  disabled={coursesLoading}
                 >
-                  <h2 className="course-card-code">{course.course_code}</h2>
-                  <p className="course-card-name">{course.course_name}</p>
-                  <p className="course-card-faculty">
-                    <AcademicCapIcon className="h-3 w-3 mr-1" />
-                    {course.faculty?.name || 'Faculty of Computing'}
-                  </p>
-                  
-                    <button 
-                      className="remove-course-button"
-                      onClick={(e) => handleRemoveCourse(course.course_code, e)}
-                      aria-label={`Remove ${course.course_code} from your courses`}
-                  tabIndex={0}
-                      disabled={coursesLoading}
-                    >
-                      Remove
-                    </button>
-                </div>
-              ))}
-            </div>
-          )}
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </main>
     </div>
   )

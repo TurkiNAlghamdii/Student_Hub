@@ -22,6 +22,7 @@ export default function ChatInterface({
   const [isLoading, setIsLoading] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const hasInitializedRef = useRef(false);
+  const isStreamingRef = useRef(false);
 
   // Debug log
   useEffect(() => {
@@ -52,6 +53,84 @@ export default function ChatInterface({
       console.log('ChatInterface unmounted');
     };
   }, [contextType, courseName, initialQuestion]);
+
+  // Function to handle AI response to a message
+  const handleAIResponse = async (userMessage?: Message) => {
+    console.log('ChatInterface: Sending message to API:', userMessage?.content);
+    setIsLoading(true);
+    
+    try {
+      // Prepare context information
+      let context = '';
+      if (contextType === 'course' && courseName) {
+        context = `User is asking about the course: ${courseName}`;
+      } else if (contextType === 'exam') {
+        context = `User is preparing for exams and needs help with test preparation`;
+      }
+      
+      // Convert messages to format expected by API
+      const apiMessages = messages
+        .concat(userMessage || { role: 'user', content: '' })
+        .map(({ role, content }) => ({ role, content }));
+      
+      console.log('ChatInterface: Calling /api/chat with messages:', apiMessages.length);
+      
+      // Call the API
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: apiMessages,
+          context,
+        }),
+      });
+      
+      if (!response.ok) {
+        console.error('ChatInterface: API error status:', response.status);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Failed to get response from AI. Status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('ChatInterface: Received response from API');
+      
+      // Add AI response to chat
+      if (data.message && data.message.content) {
+        const assistantMessage: Message = {
+          role: 'assistant',
+          content: data.message.content,
+        };
+        
+        console.log('ChatInterface: Adding AI response to chat');
+        setMessages(prev => [...prev, assistantMessage]);
+      } else {
+        throw new Error('Invalid response format from API');
+      }
+    } catch (err) {
+      // Add error message or fallback response
+      const errorMessage = err instanceof Error ? err.message : 'Something went wrong';
+      
+      if (errorMessage.includes('API key')) {
+        // Provide a fallback response for API key issues
+        setMessages(prev => [...prev, {
+          role: 'assistant' as const,
+          content: "I'm sorry, but the AI service is currently unavailable. The administrator needs to set up a valid OpenAI API key. Please try again later or contact support."
+        }]);
+      } else {
+        // Add generic error message
+        setMessages(prev => [...prev, {
+          role: 'assistant' as const, 
+          content: `Error: ${errorMessage}. Please try again.`
+        }]);
+      }
+      
+      console.error('Chat error:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Initialize with a welcome message and check for course description or initial question
   useEffect(() => {
@@ -133,85 +212,7 @@ export default function ChatInterface({
     } catch (error) {
       console.error('ChatInterface: Error in initialization:', error);
     }
-  }, [contextType, courseName, initialQuestion]);
-
-  // Function to handle AI response to a message
-  const handleAIResponse = async (userMessage: Message) => {
-    console.log('ChatInterface: Sending message to API:', userMessage.content);
-    setIsLoading(true);
-    
-    try {
-      // Prepare context information
-      let context = '';
-      if (contextType === 'course' && courseName) {
-        context = `User is asking about the course: ${courseName}`;
-      } else if (contextType === 'exam') {
-        context = `User is preparing for exams and needs help with test preparation`;
-      }
-      
-      // Convert messages to format expected by API
-      const apiMessages = messages
-        .concat(userMessage)
-        .map(({ role, content }) => ({ role, content }));
-      
-      console.log('ChatInterface: Calling /api/chat with messages:', apiMessages.length);
-      
-      // Call the API
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          messages: apiMessages,
-          context,
-        }),
-      });
-      
-      if (!response.ok) {
-        console.error('ChatInterface: API error status:', response.status);
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `Failed to get response from AI. Status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      console.log('ChatInterface: Received response from API');
-      
-      // Add AI response to chat
-      if (data.message && data.message.content) {
-        const assistantMessage: Message = {
-          role: 'assistant',
-          content: data.message.content,
-        };
-        
-        console.log('ChatInterface: Adding AI response to chat');
-        setMessages(prev => [...prev, assistantMessage]);
-      } else {
-        throw new Error('Invalid response format from API');
-      }
-    } catch (err) {
-      // Add error message or fallback response
-      const errorMessage = err instanceof Error ? err.message : 'Something went wrong';
-      
-      if (errorMessage.includes('API key')) {
-        // Provide a fallback response for API key issues
-        setMessages(prev => [...prev, {
-          role: 'assistant' as const,
-          content: "I'm sorry, but the AI service is currently unavailable. The administrator needs to set up a valid OpenAI API key. Please try again later or contact support."
-        }]);
-      } else {
-        // Add generic error message
-        setMessages(prev => [...prev, {
-          role: 'assistant' as const, 
-          content: `Error: ${errorMessage}. Please try again.`
-        }]);
-      }
-      
-      console.error('Chat error:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [contextType, courseName, initialQuestion, handleAIResponse]);
 
   // Auto-scroll to bottom of chat when messages change
   useEffect(() => {
@@ -289,7 +290,19 @@ export default function ChatInterface({
     return () => {
       window.removeEventListener('send-chat-question', handleCustomQuestion as EventListener);
     };
-  }, [messages]);
+  }, [messages, handleAIResponse]);
+
+  useEffect(() => {
+    if (messages.length > 0 && messages[messages.length - 1].role === 'user') {
+      handleAIResponse();
+    }
+  }, [messages, handleAIResponse]);
+
+  useEffect(() => {
+    if (isStreamingRef.current) {
+      handleAIResponse();
+    }
+  }, [handleAIResponse]);
 
   return (
     <div className="chat-container">
