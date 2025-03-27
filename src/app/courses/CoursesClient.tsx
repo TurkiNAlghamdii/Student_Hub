@@ -7,6 +7,7 @@ import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner'
 import { useAuth } from '@/contexts/AuthContext'
 import './courses.css'
 import { AcademicCapIcon } from '@heroicons/react/24/outline'
+import { supabase } from '@/lib/supabase'
 
 // Define the course interface
 interface Course {

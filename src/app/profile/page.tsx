@@ -30,6 +30,7 @@ interface StudentProfile {
     const [formData, setFormData] = useState<Partial<StudentProfile>>({})
     const [uploading, setUploading] = useState(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
+    const [error, setError] = useState<string | null>(null)
     
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name, value } = e.target
@@ -58,8 +59,12 @@ interface StudentProfile {
         setTimeout(() => {
           setUpdateMessage('')
         }, 3000)
-      } catch (error) {
-        console.error('Error updating profile:', error)
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message)
+        } else {
+          setError('An unexpected error occurred')
+        }
         setUpdateMessage('Failed to update profile')
       }
     }
@@ -133,9 +138,13 @@ interface StudentProfile {
           console.error('Error reading file:', error)
           throw new Error('Failed to process image')
         }
-      } catch (error: any) {
-        console.error('Error handling avatar:', error);
-        setUpdateMessage(`Error updating avatar: ${error.message || 'Please try again later'}`);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message)
+        } else {
+          setError('An unexpected error occurred')
+        }
+        setUpdateMessage(`Error updating avatar: ${error instanceof Error ? error.message : 'Please try again later'}`)
       } finally {
         setUploading(false)
       }

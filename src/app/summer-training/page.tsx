@@ -1,11 +1,6 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import Navbar from '@/components/Navbar/Navbar'
-
 export default function SummerTrainingPage() {
-  const router = useRouter()
-  
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">
       <Navbar />

@@ -27,10 +27,13 @@ interface RSSChannel {
   item?: RSSItem | RSSItem[];
 }
 
-interface RSSFeed {
-  rss?: {
-    channel?: RSSChannel;
-  };
+interface FeedItem {
+  title: string;
+  link: string;
+  description: string;
+  pubDate: string;
+  content: string;
+  media: MediaItem[];
 }
 
 export async function GET(request: NextRequest) {

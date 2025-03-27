@@ -29,18 +29,14 @@ export async function GET(request: Request) {
     });
     
     // Search in both course_code and course_name
-    const { data: courses, error } = await supabase
+    const { data: courses } = await supabase
       .from('courses')
-      .select('*')
-      .or(`course_code.ilike.%${query}%,course_name.ilike.%${query}%`)
-      .limit(10);
+      .select('course_code, course_name, faculty:faculties(name)')
+      .ilike('course_code', `%${query}%`)
+      .limit(5);
 
-    if (error) {
-      console.error('Search error:', error);
-      return NextResponse.json({ 
-        courses: [],
-        error: `Database error: ${error.message}`
-      }, { status: 500 });
+    if (courses.length === 0) {
+      return NextResponse.json({ courses: [] });
     }
 
     // Transform the results to match the expected structure

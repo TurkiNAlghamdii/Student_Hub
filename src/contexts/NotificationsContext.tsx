@@ -82,9 +82,14 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
       setNotifications(data || []);
       setUnreadCount(unreadNotifications.length);
       setLastFetched(Date.now());
-    } catch (err: any) {
-      console.error('Error fetching notifications:', err);
-      setError(err.message || 'Failed to fetch notifications');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error('Error fetching notifications:', error);
+        setError(error.message || 'Failed to fetch notifications');
+      } else {
+        console.error('Unknown error fetching notifications:', error);
+        setError('Failed to fetch notifications');
+      }
     } finally {
       setLoading(false);
     }
@@ -112,10 +117,14 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
       if (error) {
         throw new Error(error.message);
       }
-    } catch (err: any) {
-      console.error('Error marking notification as read:', err);
-      // Rollback on error (re-fetch to ensure consistent state)
-      fetchNotifications();
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error('Error marking notification as read:', error);
+        fetchNotifications();
+      } else {
+        console.error('Unknown error marking notification as read:', error);
+        fetchNotifications();
+      }
     }
   }, [user, fetchNotifications]);
 
@@ -137,10 +146,14 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
       if (error) {
         throw new Error(error.message);
       }
-    } catch (err: any) {
-      console.error('Error marking all notifications as read:', err);
-      // Rollback on error (re-fetch to ensure consistent state)
-      fetchNotifications();
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error('Error marking all notifications as read:', error);
+        fetchNotifications();
+      } else {
+        console.error('Unknown error marking all notifications as read:', error);
+        fetchNotifications();
+      }
     }
   }, [user, fetchNotifications]);
 

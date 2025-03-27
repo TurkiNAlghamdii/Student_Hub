@@ -56,24 +56,15 @@ export async function GET(request: NextRequest, { params }: { params: { courseCo
       // Continue without admin privileges if user data fetch fails
     }
     
-    // Check if user is admin
-    const isAdmin = userData?.user?.app_metadata?.is_admin === true || 
-                   userData?.user?.app_metadata?.is_admin === 'true' || 
-                   String(userData?.user?.app_metadata?.is_admin).toLowerCase() === 'true';
-    
     // Check if the course exists
-    try {
-      const { data: courseData, error: courseError } = await supabaseAdmin
-        .from('courses')
-        .select('course_code')
-        .eq('course_code', courseCode)
-        .single();
-        
-      if (courseError) {
-        return NextResponse.json({ error: `Course not found: ${courseError.message}` }, { status: 404 });
-      }
-    } catch (error) {
-      return NextResponse.json({ error: `Error checking course: ${(error as Error).message}` }, { status: 500 });
+    const { data: courseData, error: courseError } = await supabaseAdmin
+      .from('courses')
+      .select('*')
+      .eq('course_code', courseCode)
+      .single();
+      
+    if (courseError) {
+      return NextResponse.json({ error: 'Course not found' }, { status: 404 });
     }
     
     // Check if the course_files table exists
@@ -199,9 +190,9 @@ export async function POST(request: NextRequest, { params }: { params: { courseC
     }
     
     // Check if the course exists
-    const { data: course, error: courseError } = await supabaseAdmin
+    const { data: courseData, error: courseError } = await supabaseAdmin
       .from('courses')
-      .select('course_code, course_name')
+      .select('*')
       .eq('course_code', courseCode)
       .single();
       
@@ -248,15 +239,15 @@ export async function POST(request: NextRequest, { params }: { params: { courseC
     // Insert the file record into the database
     const { data: fileData, error: fileError } = await supabaseAdmin
       .from('course_files')
-      .insert({
-        user_id: userId,
+      .insert([{
         course_code: courseCode,
         file_name: file.name,
         file_size: file.size,
         file_type: file.type,
         file_url: publicUrl,
         description: description || null,
-      })
+        uploaded_by: userId
+      }])
       .select()
       .single();
     
@@ -267,7 +258,7 @@ export async function POST(request: NextRequest, { params }: { params: { courseC
         .from('course-files')
         .remove([filePath]);
         
-      return NextResponse.json({ error: `Failed to save file record: ${fileError.message}` }, { status: 500 });
+      return NextResponse.json({ error: 'Failed to save file metadata' }, { status: 500 });
     }
     
     // Find all students who have this course in their list
@@ -283,8 +274,8 @@ export async function POST(request: NextRequest, { params }: { params: { courseC
         .map(student => ({
           user_id: student.id,
           type: 'file_upload',
-          title: `New file in ${course.course_code}`,
-          message: `${uploaderName} uploaded "${file.name}" to ${course.course_name}`,
+          title: `New file in ${courseData.course_code}`,
+          message: `${uploaderName} uploaded "${file.name}" to ${courseData.course_name}`,
           link: `/courses/${courseCode}`,
           related_id: fileData.id,
           is_read: false

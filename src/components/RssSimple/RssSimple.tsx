@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import TwitterXIcon from '../icons/TwitterXIcon'
 import styles from './RssSimple.module.css'
+import Image from 'next/image'
 
 interface MediaItem {
   url: string
@@ -258,15 +259,12 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
                     
                     {imageUrl && (
                       <div className={styles.imageContainer}>
-                        <img 
-                          src={imageUrl} 
-                          alt="Tweet media" 
-                          className={styles.tweetImage}
-                          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                          onError={(e) => {
-                            // Hide broken images
-                            (e.target as HTMLImageElement).style.display = 'none';
-                          }}
+                        <Image
+                          src={imageUrl}
+                          alt={item.title}
+                          width={300}
+                          height={200}
+                          className="w-full h-48 object-cover rounded-lg"
                         />
                       </div>
                     )}

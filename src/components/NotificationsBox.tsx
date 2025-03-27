@@ -187,7 +187,7 @@ const NotificationsBox = () => {
                   <BellSlashIcon className="w-7 h-7 text-emerald-500/70" />
                 </div>
                 <p className="text-sm font-medium bg-gradient-to-r from-emerald-400 to-emerald-600 bg-clip-text text-transparent">No new notifications</p>
-                <p className="text-xs text-gray-500 mt-1">We'll notify you when something happens</p>
+                <p className="text-xs text-gray-500 mt-1">We&apos;ll notify you when something happens</p>
               </div>
             ) : (
               <div className="notifications-list">
