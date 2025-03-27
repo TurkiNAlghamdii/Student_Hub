@@ -9,13 +9,11 @@ const supabaseAdmin = createClient(
 
 // DELETE to remove a file
 export async function DELETE(
-  request: NextRequest, 
-  { params }: { params: { courseCode: string; fileId: string } }
+  request: NextRequest,
+  context: { params: { courseCode: string; fileId: string } }
 ) {
   try {
-    // Await params before accessing its properties
-    const resolvedParams = await Promise.resolve(params);
-    const { courseCode, fileId } = resolvedParams;
+    const { courseCode, fileId } = context.params;
     
     if (!courseCode || !fileId) {
       return NextResponse.json({ error: 'Course code and file ID are required' }, { status: 400 });
