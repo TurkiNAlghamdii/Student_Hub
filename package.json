@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "ESLINT_IGNORE_ERRORS=true next build",
-    "build:win": "set ESLINT_IGNORE_ERRORS=true && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },

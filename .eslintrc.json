@@ -1,11 +1,18 @@
 {
-  "extends": "next/core-web-vitals",
+  "extends": [
+    "next/core-web-vitals",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "plugins": ["@typescript-eslint"],
+  "parser": "@typescript-eslint/parser",
   "rules": {
+    "react/react-in-jsx-scope": "off",
     "@typescript-eslint/no-unused-vars": "warn",
     "@typescript-eslint/no-explicit-any": "warn",
-    "react/no-unescaped-entities": "warn",
-    "react-hooks/exhaustive-deps": "warn",
-    "jsx-a11y/role-supports-aria-props": "warn",
-    "@next/next/no-img-element": "warn"
+    "@typescript-eslint/no-non-null-assertion": "warn",
+    "@typescript-eslint/no-empty-function": "warn",
+    "no-undef": "off",
+    "react-hooks/exhaustive-deps": "warn"
   }
 } 
