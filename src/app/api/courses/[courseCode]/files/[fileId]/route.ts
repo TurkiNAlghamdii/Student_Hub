@@ -7,20 +7,15 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-type RouteContext = {
-  params: {
-    courseCode: string;
-    fileId: string;
-  };
-};
-
 // DELETE to remove a file
 export async function DELETE(
-  request: NextRequest,
-  { params }: RouteContext
+  request: NextRequest, 
+  { params }: { params: { courseCode: string; fileId: string } }
 ) {
   try {
-    const { courseCode, fileId } = params;
+    // Await params before accessing its properties
+    const resolvedParams = await Promise.resolve(params);
+    const { courseCode, fileId } = resolvedParams;
     
     if (!courseCode || !fileId) {
       return NextResponse.json({ error: 'Course code and file ID are required' }, { status: 400 });
