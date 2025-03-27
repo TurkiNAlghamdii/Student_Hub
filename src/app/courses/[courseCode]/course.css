@@ -20,16 +20,306 @@
 }
 
 .course-header {
-  @apply border-b border-gray-800/30 pb-6 mb-6;
+  @apply border-b border-gray-800/30 pb-6 mb-6 relative;
+  background: linear-gradient(180deg, rgba(5, 150, 105, 0.03) 0%, rgba(5, 150, 105, 0) 100%);
+  border-radius: 0.75rem 0.75rem 0 0;
+  margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+  padding: 2rem 1.5rem 1.5rem;
+}
+
+.course-header-container {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+  align-items: start;
+}
+
+.course-info-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.course-code-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .course-code {
   color: #10b981;
-  @apply text-2xl font-semibold mb-2;
+  @apply text-2xl font-semibold;
+  letter-spacing: 0.5px;
+}
+
+.enrollment-badge {
+  @apply text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded-full;
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .course-name {
-  @apply text-xl font-medium text-white mb-4;
+  @apply text-2xl font-medium text-white;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  max-width: 100%;
+}
+
+.course-metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.metadata-item {
+  @apply text-sm text-gray-300 inline-flex items-center;
+}
+
+.metadata-icon {
+  @apply h-4 w-4 mr-1.5;
+  color: #10b981;
+}
+
+.prerequisites-container {
+  margin-top: 0.5rem;
+}
+
+.prerequisites-label {
+  @apply text-sm text-gray-400 block mb-1.5;
+}
+
+.prerequisites-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.prerequisite-badge {
+  @apply text-xs font-medium py-1 px-2 rounded;
+  background-color: rgba(107, 114, 128, 0.2);
+  color: #d1d5db;
+  border: 1px solid rgba(107, 114, 128, 0.3);
+}
+
+.course-actions-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 16rem;
+}
+
+.actions-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.primary-action-button {
+  @apply flex items-center justify-center gap-2 px-5 py-2.5 text-white rounded-lg transition-all duration-300 text-sm font-medium w-full;
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.9) 0%, rgba(4, 120, 87, 1) 100%);
+  border: 1px solid rgba(5, 150, 105, 0.2);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+}
+
+.primary-action-button:hover {
+  @apply transform scale-[1.02];
+  box-shadow: 0 4px 18px rgba(5, 150, 105, 0.3);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.95) 0%, rgba(5, 150, 105, 1) 100%);
+}
+
+.primary-action-button:active {
+  @apply transform scale-[0.98];
+}
+
+.primary-action-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.enrolled-button {
+  @apply flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg transition-all duration-300 text-sm font-medium w-full;
+  background: rgba(6, 78, 59, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  cursor: default;
+}
+
+.secondary-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.chat-button {
+  @apply flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-all duration-300 text-sm flex-1;
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.8) 0%, rgba(4, 120, 87, 0.9) 100%);
+  border: 1px solid rgba(5, 150, 105, 0.2);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
+}
+
+.chat-button:hover {
+  @apply transform scale-[1.02];
+  box-shadow: 0 4px 18px rgba(5, 150, 105, 0.25);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.85) 0%, rgba(5, 150, 105, 0.95) 100%);
+}
+
+.chat-button:active {
+  @apply transform scale-[0.98];
+}
+
+.back-button {
+  @apply flex items-center gap-1 px-3 py-2 rounded-lg transition-all duration-300 text-sm;
+  background: rgba(31, 41, 55, 0.4);
+  color: #e2e8f0;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.back-button:hover {
+  background: rgba(31, 41, 55, 0.6);
+  border-color: rgba(148, 163, 184, 0.5);
+  transform: translateY(-1px);
+}
+
+.back-button:active {
+  transform: translateY(0);
+}
+
+.quick-nav-container {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+
+.quick-nav-button {
+  @apply flex flex-col items-center justify-center gap-1 py-2 px-3 rounded transition-all duration-200 text-xs flex-1;
+  background: rgba(31, 41, 55, 0.25);
+  color: #d1d5db;
+  border: 1px solid rgba(75, 85, 99, 0.2);
+}
+
+.quick-nav-button:hover {
+  background: rgba(31, 41, 55, 0.4);
+  color: #f9fafb;
+  border-color: rgba(75, 85, 99, 0.4);
+}
+
+.quick-nav-button:active {
+  transform: translateY(1px);
+}
+
+.button-spinner {
+  @apply w-5 h-5 mr-2 border-2 border-white/30 border-t-white rounded-full;
+  animation: spin 0.8s linear infinite;
+}
+
+.status-message-container {
+  @apply mb-6 mt-0;
+}
+
+.status-message {
+  @apply p-3 rounded-md text-sm;
+  background-color: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.status-message.success {
+  color: #10b981;
+}
+
+.status-message.error {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.error-message {
+  color: #ef4444;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-container {
+  @apply min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
+  background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.15) 1px, transparent 0);
+  background-size: 40px 40px;
+}
+
+@media (max-width: 768px) {
+  .course-header-container {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .course-code {
+    font-size: 1.5rem;
+  }
+  
+  .course-name {
+    font-size: 1.5rem;
+  }
+  
+  .course-actions-column {
+    min-width: auto;
+  }
+  
+  .primary-action-button, .enrolled-button {
+    @apply py-2;
+  }
+  
+  .secondary-actions {
+    flex-wrap: wrap;
+  }
+  
+  .chat-button, .back-button {
+    @apply py-1.5;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .course-section {
+    @apply p-4;
+  }
+  
+  .course-header {
+    margin: -1rem -1rem 1rem -1rem;
+    padding: 1.5rem 1rem 1rem;
+  }
+  
+  .course-metadata {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .quick-nav-container {
+    gap: 0.25rem;
+  }
+  
+  .quick-nav-button {
+    @apply px-1 py-1.5 text-[10px];
+  }
+  
+  .quick-nav-button svg {
+    @apply h-4 w-4;
+  }
+  
+  .course-code-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .enrollment-badge {
+    align-self: flex-start;
+  }
+  
+  .prerequisites-list {
+    gap: 0.25rem;
+  }
 }
 
 .course-faculty {
@@ -50,8 +340,15 @@
   @apply mt-6;
 }
 
+.section-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
 .section-title {
-  @apply text-lg font-medium mb-3 flex items-center;
+  @apply text-lg font-medium flex items-center;
   color: #10b981;
 }
 
@@ -60,9 +357,65 @@
   @apply w-1 h-4 bg-emerald-500 rounded mr-2;
 }
 
-.course-description {
+.section-divider {
+  height: 1px;
+  background: linear-gradient(to right, rgba(16, 185, 129, 0.3), rgba(16, 185, 129, 0.05));
+  margin-top: 0.25rem;
+}
+
+.description-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+}
+
+.description-content {
+  background-color: rgba(17, 24, 39, 0.3);
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(75, 85, 99, 0.2);
+}
+
+.description-paragraph {
   @apply text-gray-300 leading-relaxed text-base;
   line-height: 1.8;
+  margin-bottom: 1rem;
+}
+
+.description-paragraph:last-child {
+  margin-bottom: 0;
+}
+
+.description-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.description-action-button {
+  @apply flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 text-sm;
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.3) 0%, rgba(4, 120, 87, 0.4) 100%);
+  color: #34d399;
+  border: 1px solid rgba(5, 150, 105, 0.2);
+}
+
+.description-action-button:hover {
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.4) 0%, rgba(4, 120, 87, 0.5) 100%);
+  transform: translateY(-1px);
+}
+
+.description-action-button:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 640px) {
+  .description-content {
+    padding: 1rem;
+  }
+  
+  .description-actions {
+    justify-content: center;
+  }
 }
 
 .course-actions {
@@ -72,40 +425,6 @@
   display: flex;
   gap: 0.75rem;
   z-index: 10;
-}
-
-.back-button {
-  @apply flex items-center gap-1 px-3 py-1.5 rounded-lg transition-all duration-300 text-sm;
-  background: rgba(31, 41, 55, 0.4);
-  color: #e2e8f0;
-  border: 1px solid rgba(148, 163, 184, 0.3);
-}
-
-.back-button:hover {
-  background: rgba(31, 41, 55, 0.6);
-  border-color: rgba(148, 163, 184, 0.5);
-  transform: translateY(-1px);
-}
-
-.back-button:active {
-  transform: translateY(0);
-}
-
-.chat-button {
-  @apply flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-all duration-300 text-sm;
-  background: linear-gradient(135deg, rgba(5, 150, 105, 0.8) 0%, rgba(4, 120, 87, 0.9) 100%);
-  border: 1px solid rgba(5, 150, 105, 0.2);
-  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
-}
-
-.chat-button:hover {
-  @apply transform scale-[1.02];
-  box-shadow: 0 4px 18px rgba(5, 150, 105, 0.25);
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.85) 0%, rgba(5, 150, 105, 0.95) 100%);
-}
-
-.chat-button:active {
-  @apply transform scale-[0.98];
 }
 
 .add-button {
@@ -138,69 +457,6 @@
   cursor: default;
 }
 
-.button-spinner {
-  @apply w-4 h-4 mr-2 border-2 border-white/30 border-t-white rounded-full;
-  animation: spin 0.8s linear infinite;
-}
-
-@media (max-width: 640px) {
-  .course-section {
-    @apply p-6;
-  }
-  
-  .course-code {
-    font-size: 1.25rem;
-  }
-  
-  .course-name {
-    font-size: 1.125rem;
-  }
-  
-  .course-actions {
-    position: static;
-    margin: 0 0 1rem 0;
-    justify-content: flex-end;
-  }
-  
-  .back-button, .add-button, .added-button, .chat-button {
-    @apply px-2 py-1;
-    font-size: 0.7rem;
-  }
-  
-  .back-button .h-4, .add-button .h-4, .added-button .h-4, .chat-button .h-4 {
-    @apply h-3 w-3;
-  }
-}
-
-.status-message-container {
-  @apply mb-4 mt-2;
-}
-
-.status-message {
-  @apply p-2 rounded text-sm;
-  background-color: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-}
-
-.status-message.success {
-  color: #10b981;
-}
-
-.status-message.error {
-  background-color: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-.error-message {
-  color: #ef4444;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
 .loading-container {
   @apply min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
   background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.15) 1px, transparent 0);
@@ -219,28 +475,141 @@
 }
 
 .files-section-container {
-  @apply mt-8;
+  margin-top: 2.5rem;
 }
 
-.upload-toggle-container {
+.files-section-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.files-list-wrapper {
+  background-color: rgba(17, 24, 39, 0.3);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(75, 85, 99, 0.2);
+  overflow: hidden;
+}
+
+.files-actions {
   display: flex;
   justify-content: center;
-  margin: 1.5rem 0;
+  margin-top: 0.5rem;
 }
 
-.upload-toggle-button {
-  @apply flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-all duration-300 text-sm;
+.files-action-button {
+  @apply flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 text-sm font-medium;
   background: linear-gradient(135deg, rgba(5, 150, 105, 0.8) 0%, rgba(4, 120, 87, 0.9) 100%);
+  color: white;
   border: 1px solid rgba(5, 150, 105, 0.2);
   box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
 }
 
-.upload-toggle-button:hover {
-  @apply transform scale-[1.02];
-  box-shadow: 0 4px 18px rgba(5, 150, 105, 0.25);
+.files-action-button.upload:hover {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.85) 0%, rgba(5, 150, 105, 0.95) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 18px rgba(5, 150, 105, 0.25);
 }
 
-.upload-toggle-button:active {
-  @apply transform scale-[0.98];
+.files-action-button.cancel {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.8) 0%, rgba(185, 28, 28, 0.9) 100%);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+}
+
+.files-action-button.cancel:hover {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.85) 0%, rgba(220, 38, 38, 0.95) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 18px rgba(220, 38, 38, 0.25);
+}
+
+.files-action-button:active {
+  transform: translateY(0);
+}
+
+.button-icon {
+  @apply h-5 w-5;
+}
+
+.upload-section-wrapper {
+  margin-top: 0.5rem;
+  background-color: rgba(17, 24, 39, 0.3);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(75, 85, 99, 0.2);
+  overflow: hidden;
+}
+
+/* Override some of the existing FilesList styles */
+.files-list-section {
+  border-radius: 0 !important;
+  border: none !important;
+  background-color: transparent !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.files-list-section .section-title {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(75, 85, 99, 0.2);
+  margin-bottom: 0;
+}
+
+.files-list-section .section-title:before {
+  display: none;
+}
+
+.collapse-control {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.25rem;
+  background-color: rgba(31, 41, 55, 0.5);
+  cursor: pointer;
+  border-bottom: 1px solid rgba(75, 85, 99, 0.2);
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.collapse-control:hover {
+  background-color: rgba(31, 41, 55, 0.7);
+}
+
+.collapse-status {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #d1d5db;
+}
+
+.collapse-icon {
+  font-size: 0.75rem;
+  color: #10b981;
+  transition: transform 0.2s ease;
+}
+
+.collapse-control.collapsed .collapse-icon {
+  transform: rotate(-90deg);
+}
+
+.files-list-section .files-content {
+  padding: 1rem 1.25rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .files-action-button {
+    @apply py-1.5 px-3 w-full text-xs;
+  }
+  
+  .button-icon {
+    @apply h-4 w-4;
+  }
+  
+  .upload-section-wrapper {
+    padding: 0.5rem;
+  }
+}
+
+/* Add styling for discussion section */
+.discussion-section-container {
+  margin-top: 2rem;
 } 

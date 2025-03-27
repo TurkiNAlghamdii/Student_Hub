@@ -5,7 +5,16 @@ import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase'
 import { format } from 'date-fns'
 import Image from 'next/image'
-import { ArrowUturnLeftIcon } from '@heroicons/react/24/outline'
+import { 
+  ArrowUturnLeftIcon, 
+  ChatBubbleLeftRightIcon, 
+  PaperAirplaneIcon,
+  EllipsisVerticalIcon,
+  TrashIcon,
+  ExclamationCircleIcon,
+  ClockIcon,
+  ArrowPathIcon
+} from '@heroicons/react/24/outline'
 import './comments.css'
 
 interface Comment {
@@ -39,32 +48,33 @@ export default function CommentSection({ courseCode }: CommentSectionProps) {
   const [isAdmin, setIsAdmin] = useState(false)
   const [replyingTo, setReplyingTo] = useState<string | null>(null)
   const [deletingComments, setDeletingComments] = useState<string[]>([])
+  const [menuOpenFor, setMenuOpenFor] = useState<string | null>(null)
+
+  // Function to close any open menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuOpenFor !== null) {
+        const menuElement = document.getElementById(`menu-${menuOpenFor}`);
+        if (menuElement && !menuElement.contains(event.target as Node)) {
+          setMenuOpenFor(null);
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [menuOpenFor]);
 
   // Check if current user is an admin
   useEffect(() => {
-    const checkAdminStatus = async () => {
-      if (!user) return
-      
-      try {
-        const { data, error: supabaseError } = await supabase
-          .from('students')
-          .select('role')
-          .eq('id', user.id)
-          .single()
-          
-        if (supabaseError) {
-          console.error('Error checking admin status:', supabaseError)
-          return
-        }
-        
-        setIsAdmin(data?.role === 'admin')
-      } catch (error) {
-        console.error('Failed to check admin status:', error)
-      }
+    if (user) {
+      setIsAdmin(user.app_metadata?.is_admin === true);
+    } else {
+      setIsAdmin(false);
     }
-    
-    checkAdminStatus()
-  }, [user])
+  }, [user]);
 
   // Function to organize comments into a hierarchical structure with parent/child relationships
   const organizeComments = (allComments: Comment[]): CommentWithReplies[] => {
@@ -166,46 +176,28 @@ export default function CommentSection({ courseCode }: CommentSectionProps) {
         table: 'course_comments',
         filter: `course_code=eq.${courseCode}`
       }, payload => {
-        if (payload.eventType === 'INSERT') {
-          // When a new comment is inserted, fetch all comments to correctly organize the hierarchy
+        if (payload.eventType === 'INSERT' || payload.eventType === 'DELETE') {
+          // When a comment is inserted or deleted, fetch all comments to correctly organize the hierarchy
           const fetchAllComments = async () => {
-            const { data } = await supabase
-              .from('course_comments')
-              .select(`
-                id,
-                content,
-                created_at,
-                user_id,
-                parent_id,
-                user:students(full_name, email, avatar_url)
-              `)
-              .eq('course_code', courseCode)
-            
-            if (data) {
-              const commentsWithHierarchy = organizeComments(data as Comment[] || [])
-              setComments(commentsWithHierarchy)
-            }
-          }
-          
-          fetchAllComments()
-        } else if (payload.eventType === 'DELETE') {
-          // When a comment is deleted, refetch all comments to properly reorganize the hierarchy
-          const fetchAllComments = async () => {
-            const { data } = await supabase
-              .from('course_comments')
-              .select(`
-                id,
-                content,
-                created_at,
-                user_id,
-                parent_id,
-                user:students(full_name, email, avatar_url)
-              `)
-              .eq('course_code', courseCode)
-            
-            if (data) {
-              const commentsWithHierarchy = organizeComments(data as Comment[] || [])
-              setComments(commentsWithHierarchy)
+            try {
+              const { data } = await supabase
+                .from('course_comments')
+                .select(`
+                  id,
+                  content,
+                  created_at,
+                  user_id,
+                  parent_id,
+                  user:students(full_name, email, avatar_url)
+                `)
+                .eq('course_code', courseCode)
+              
+              if (data) {
+                const commentsWithHierarchy = organizeComments(data as Comment[] || [])
+                setComments(commentsWithHierarchy)
+              }
+            } catch (error) {
+              console.error('Error fetching comments after update:', error)
             }
           }
           
@@ -248,131 +240,111 @@ export default function CommentSection({ courseCode }: CommentSectionProps) {
         throw supabaseError
       }
       
-      setNewComment('')
+      setNewComment('') // Clear the input field on success
     } catch (error: unknown) {
       console.error('Error posting comment:', error)
-      setError('Failed to post your comment. Please try again.')
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      setError(`Failed to post comment: ${errorMessage}`)
     } finally {
       setIsSubmitting(false)
     }
   }
-
-  const handleSubmitReply = async (e: React.FormEvent, parentId: string) => {
-    e.preventDefault();
+  
+  const handleSubmitReply = async (e: React.FormEvent, parentId: string, replyContent: string) => {
+    e.preventDefault()
     
     if (!user) {
-      setError('You must be logged in to reply to a comment');
-      return;
+      setError('You must be logged in to post a reply')
+      return
     }
     
-    // Get the content directly from the form's textarea
-    const form = e.target as HTMLFormElement;
-    const textarea = form.querySelector('textarea') as HTMLTextAreaElement;
-    const content = textarea?.value.trim();
-    
-    if (!content) {
-      return;
+    if (!replyContent.trim()) {
+      return
     }
     
-    setIsSubmitting(true);
-    setError(null);
+    setIsSubmitting(true)
+    setError(null)
     
     try {
       const { error: supabaseError } = await supabase
         .from('course_comments')
         .insert({
           course_code: courseCode,
-          content: content,
+          content: replyContent.trim(),
           user_id: user.id,
           parent_id: parentId
-        });
+        })
         
       if (supabaseError) {
-        throw supabaseError;
+        throw supabaseError
       }
       
-      // Reset states after successful submission
-      setReplyingTo(null);
+      // Clear the reply state
+      setReplyingTo(null)
     } catch (error: unknown) {
-      console.error('Error posting reply:', error);
-      setError('Failed to post your reply. Please try again.');
+      console.error('Error posting reply:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      setError(`Failed to post reply: ${errorMessage}`)
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
   
-  // Helper function to recursively remove a comment and its replies
   const removeCommentFromState = (commentId: string, commentsArray: CommentWithReplies[]): CommentWithReplies[] => {
-    // First, check if the comment is at this level
-    const filtered = commentsArray.filter(comment => comment.id !== commentId);
-    
-    // Then, recursively check each comment's replies
-    return filtered.map(comment => {
-      if (comment.replies && comment.replies.length > 0) {
-        return {
-          ...comment,
-          replies: removeCommentFromState(commentId, comment.replies)
-        };
+    return commentsArray.filter(comment => {
+      if (comment.id === commentId) {
+        return false;
       }
-      return comment;
+      
+      if (comment.replies && comment.replies.length > 0) {
+        comment.replies = removeCommentFromState(commentId, comment.replies);
+      }
+      
+      return true;
     });
   };
-
+  
   const handleDeleteComment = async (commentId: string, isUserComment: boolean) => {
-    if (!user) return;
+    if (!user) return
     
-    if (!isUserComment && !isAdmin) {
-      setError('You do not have permission to delete this comment.');
-      return;
-    }
-
-    // Add this comment ID to the deleting state
-    setDeletingComments(prev => [...prev, commentId]);
+    // Only admins or the user who posted the comment can delete it
+    if (!isAdmin && !isUserComment) return
+    
+    // Add to the list of comments being deleted
+    setDeletingComments(prev => [...prev, commentId])
     
     try {
-      // For admin deleting someone else's comment
-      if (isAdmin && !isUserComment) {
-        const { error: adminDeleteError } = await supabase
-          .from('course_comments')
-          .delete()
-          .eq('id', commentId)
-          .eq('course_code', courseCode);
-          
-        if (adminDeleteError) {
-          throw adminDeleteError;
-        }
-      } 
-      // For regular users or admins deleting their own comments
-      else {
-        const { error: userDeleteError } = await supabase
-          .from('course_comments')
-          .delete()
-          .eq('id', commentId)
-          .eq('user_id', user.id)
-          .eq('course_code', courseCode);
-          
-        if (userDeleteError) {
-          throw userDeleteError;
-        }
+      const { error: supabaseError } = await supabase
+        .from('course_comments')
+        .delete()
+        .eq('id', commentId)
+        // Only admins can delete other users' comments
+        .match(isAdmin ? {} : { user_id: user.id })
+      
+      if (supabaseError) {
+        throw supabaseError
       }
       
-      // Update the UI immediately without waiting for the real-time subscription
-      setComments(prev => removeCommentFromState(commentId, prev));
+      // Optimistically update state immediately
+      setComments(prev => removeCommentFromState(commentId, [...prev]))
       
-      console.log('Comment deleted successfully');
+      // Close menu if it was open for this comment
+      if (menuOpenFor === commentId) {
+        setMenuOpenFor(null)
+      }
     } catch (error: unknown) {
-      console.error('Error deleting comment:', error);
-      setError('Failed to delete comment. Please try again.');
+      console.error('Error deleting comment:', error)
+      // You may want to show an error message here
     } finally {
-      // Remove this comment ID from the deleting state
-      setDeletingComments(prev => prev.filter(id => id !== commentId));
+      // Remove from the deleting list
+      setDeletingComments(prev => prev.filter(id => id !== commentId))
     }
-  };
+  }
   
   const formatDate = (dateString: string) => {
     try {
       return format(new Date(dateString), 'MMM d, yyyy • h:mm a')
-    } catch {
+    } catch (e) {
       return dateString
     }
   }
@@ -388,13 +360,18 @@ export default function CommentSection({ courseCode }: CommentSectionProps) {
     
     return 'Anonymous'
   }
-
+  
   const getAvatarUrl = (comment: Comment) => {
     return comment.user?.avatar_url || null
   }
-
+  
   // Component to render a single comment with its replies
   const CommentItem = ({ comment, isReply = false }: { comment: CommentWithReplies, isReply?: boolean }) => {
+    const isAuthor = user && comment.user_id === user.id
+    const canDelete = isAdmin || isAuthor
+    const isDeleting: boolean = Boolean(deletingComments.includes(comment.id))
+    const isMenuOpen = menuOpenFor === comment.id
+    
     return (
       <div 
         className={`comment-item ${isReply ? 'comment-reply' : ''}`}
@@ -405,8 +382,8 @@ export default function CommentSection({ courseCode }: CommentSectionProps) {
               <Image 
                 src={getAvatarUrl(comment)!} 
                 alt={`${getUserName(comment)}'s avatar`}
-                width={32}
-                height={32}
+                width={40}
+                height={40}
                 className="avatar-image"
               />
             ) : (
@@ -418,39 +395,67 @@ export default function CommentSection({ courseCode }: CommentSectionProps) {
           <div className="comment-meta">
             <div className="comment-author">
               {getUserName(comment)}
-              {isAdmin && comment.user_id === user?.id && " (Admin)"}
+              {isAdmin && comment.user_id === user?.id && (
+                <span className="author-badge">Admin</span>
+              )}
             </div>
-            <div className="comment-date">{formatDate(comment.created_at)}</div>
+            <div className="comment-date">
+              <ClockIcon className="h-3 w-3 inline-block mr-1 text-gray-400" />
+              {formatDate(comment.created_at)}
+            </div>
           </div>
-          {user && (comment.user_id === user.id || isAdmin) && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation(); // Prevent event bubbling
-                handleDeleteComment(comment.id, comment.user_id === user.id);
-              }}
-              className={`comment-delete ${!isAdmin && comment.user_id !== user.id ? 'hidden' : ''} ${isAdmin && comment.user_id !== user.id ? 'admin-delete' : ''} ${deletingComments.includes(comment.id) ? 'deleting' : ''}`}
-              aria-label="Delete comment"
-              title={isAdmin && comment.user_id !== user.id ? "Delete as admin" : "Delete your comment"}
-              disabled={deletingComments.includes(comment.id)}
-            >
-              {deletingComments.includes(comment.id) ? '...' : '×'}
-            </button>
+          
+          {canDelete && (
+            <div className="comment-actions-menu" id={`menu-${comment.id}`}>
+              <button 
+                className="comment-menu-button"
+                onClick={() => {
+                  if (isMenuOpen) {
+                    setMenuOpenFor(null);
+                  } else {
+                    setMenuOpenFor(comment.id);
+                  }
+                }}
+                disabled={Boolean(isDeleting)}
+                aria-label="Comment options"
+              >
+                {isDeleting ? (
+                  <ArrowPathIcon className="h-5 w-5 animate-spin" />
+                ) : (
+                  <EllipsisVerticalIcon className="h-5 w-5" />
+                )}
+              </button>
+              
+              {isMenuOpen && (
+                <div className="comment-menu">
+                  <button
+                    onClick={() => handleDeleteComment(comment.id, Boolean(isAuthor))}
+                    className={`comment-menu-item ${!isAdmin && isAuthor ? 'delete' : 'admin-delete'}`}
+                    disabled={isDeleting}
+                  >
+                    <TrashIcon className="menu-icon" />
+                    {isAdmin && !isAuthor ? "Delete as Admin" : "Delete Comment"}
+                  </button>
+                </div>
+              )}
+            </div>
           )}
         </div>
+        
         <div className="comment-content">{comment.content}</div>
         
-        {/* Reply button - now available on all comments, not just top-level ones */}
+        {/* Reply button - only show if user is logged in */}
         {user && (
           <div className="comment-actions">
             <button 
               onClick={() => {
-                // Only set replyingTo if we're not already replying to this comment
-                if (replyingTo !== comment.id) {
+                if (replyingTo === comment.id) {
+                  setReplyingTo(null);
+                } else {
                   setReplyingTo(comment.id);
                 }
               }}
               className="reply-button"
-              style={{ display: replyingTo === comment.id ? 'none' : 'flex' }}
             >
               <ArrowUturnLeftIcon className="reply-icon" />
               Reply
@@ -479,18 +484,17 @@ export default function CommentSection({ courseCode }: CommentSectionProps) {
     )
   }
 
-  // Separate Reply Form component to better isolate its functionality
+  // Separate Reply Form component
   const ReplyForm = ({ 
     commentId, 
     onSubmit, 
     onCancel 
   }: { 
     commentId: string, 
-    onSubmit: (e: React.FormEvent, commentId: string) => Promise<void>,
+    onSubmit: (e: React.FormEvent, commentId: string, replyContent: string) => Promise<void>,
     onCancel: () => void
   }) => {
-    // Use local state only, not tied to parent state
-    const [localReplyContent, setLocalReplyContent] = useState('');
+    const [replyContent, setReplyContent] = useState('');
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     
     // Focus the textarea when the component mounts
@@ -503,22 +507,18 @@ export default function CommentSection({ courseCode }: CommentSectionProps) {
     // Handle the form submission
     const handleLocalSubmit = (e: React.FormEvent) => {
       e.preventDefault();
-      // Pass the local content to the parent's onSubmit
-      // We'll update the parent's replyContent in handleSubmitReply
-      onSubmit(e, commentId);
-      // We don't need to clear localReplyContent here as the component will unmount on success
+      onSubmit(e, commentId, replyContent);
     };
     
     return (
       <form 
         onSubmit={handleLocalSubmit} 
         className="reply-form"
-        onClick={(e) => e.stopPropagation()} // Prevent clicks from bubbling up
       >
         <textarea
           ref={textareaRef}
-          value={localReplyContent}
-          onChange={(e) => setLocalReplyContent(e.target.value)}
+          value={replyContent}
+          onChange={(e) => setReplyContent(e.target.value)}
           placeholder="Write your reply..."
           className="reply-input"
           disabled={isSubmitting}
@@ -528,51 +528,99 @@ export default function CommentSection({ courseCode }: CommentSectionProps) {
             type="button" 
             onClick={onCancel}
             className="reply-cancel"
+            disabled={isSubmitting}
           >
             Cancel
           </button>
           <button
             type="submit"
             className={`reply-submit ${isSubmitting ? 'loading' : ''}`}
-            disabled={isSubmitting || !localReplyContent.trim()}
+            disabled={isSubmitting || !replyContent.trim()}
           >
-            {isSubmitting ? 'Posting...' : 'Post Reply'}
+            {isSubmitting ? (
+              ""
+            ) : (
+              <>
+                <PaperAirplaneIcon className="h-4 w-4" />
+                Post Reply
+              </>
+            )}
           </button>
         </div>
       </form>
     );
   };
 
+  // Calculate total comments count (including replies)
+  const getTotalCommentsCount = (comments: CommentWithReplies[]): number => {
+    let count = comments.length;
+    
+    for (const comment of comments) {
+      if (comment.replies && comment.replies.length > 0) {
+        count += comment.replies.length;
+      }
+    }
+    
+    return count;
+  };
+
+  const totalCommentsCount = getTotalCommentsCount(comments);
+
   return (
     <div className="comments-section">
-      <h3 className="section-title">Comments & Discussion</h3>
+      <div className="comments-header">
+        <h3 className="section-title">
+          <ChatBubbleLeftRightIcon className="title-icon" />
+          Comments & Discussion
+          <span className="comments-count">{totalCommentsCount} {totalCommentsCount === 1 ? 'comment' : 'comments'}</span>
+        </h3>
+      </div>
       
       <form onSubmit={handleSubmitComment} className="comment-form">
         <textarea
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
-          placeholder="Share your thoughts or ask a question..."
+          placeholder={user ? "Share your thoughts or ask a question..." : "Please log in to join the discussion..."}
           className="comment-input"
           disabled={isSubmitting || !user}
         />
         <div className="comment-form-footer">
-          {error && <p className="comment-error">{error}</p>}
+          {error && (
+            <div className="comment-error">
+              <ExclamationCircleIcon className="comment-error-icon" />
+              {error}
+            </div>
+          )}
           <button
             type="submit"
             className={`comment-submit ${isSubmitting ? 'loading' : ''}`}
             disabled={isSubmitting || !newComment.trim() || !user}
           >
-            {isSubmitting ? 'Posting...' : 'Post Comment'}
+            {isSubmitting ? (
+              ""
+            ) : (
+              <>
+                <PaperAirplaneIcon className="h-5 w-5" />
+                Post Comment
+              </>
+            )}
           </button>
         </div>
       </form>
       
       <div className="comments-list">
         {isLoading ? (
-          <div className="comments-loading">Loading comments...</div>
+          <div className="comments-loading">
+            <ArrowPathIcon className="loading-icon" />
+            <p>Loading comments...</p>
+          </div>
         ) : comments.length === 0 ? (
           <div className="comments-empty">
-            No comments yet. Be the first to start a discussion!
+            <ChatBubbleLeftRightIcon className="empty-icon" />
+            <h4 className="comments-empty-title">No comments yet</h4>
+            <p className="comments-empty-description">
+              Be the first to start a discussion about this course!
+            </p>
           </div>
         ) : (
           comments.map(comment => (

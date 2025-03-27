@@ -100,43 +100,49 @@ export async function GET(request: NextRequest, { params }: { params: { courseCo
       
       // For each file, get the user details separately
       if (files && files.length > 0) {
-        const filesWithUserInfo = await Promise.all(
-          files.map(async (file) => {
-            try {
-              const { data: userData, error: userError } = await supabaseAdmin
-                .from('students')
-                .select('id, first_name, last_name')
-                .eq('id', file.user_id)
-                .single();
-                
-              if (userError || !userData) {
-                return {
-                  ...file,
-                  user_info: {
-                    first_name: 'Unknown',
-                    last_name: 'User'
-                  }
-                };
+        // Create a Set of unique user IDs to fetch
+        const userIds = new Set(files.map(file => file.user_id));
+        
+        // Fetch all user details in one query
+        const { data: allUserData, error: allUserError } = await supabaseAdmin
+          .from('students')
+          .select('id, full_name, avatar_url')
+          .in('id', Array.from(userIds));
+          
+        if (allUserError) {
+          console.error('Error fetching all user data:', allUserError);
+        }
+        
+        // Create a map of user id to user data for quick lookup
+        const userMap: Record<string, { id: string; full_name?: string; avatar_url?: string }> = {};
+        if (allUserData) {
+          allUserData.forEach(user => {
+            userMap[user.id] = user;
+          });
+        }
+        
+        // Add user_info to each file
+        const filesWithUserInfo = files.map(file => {
+          const user = userMap[file.user_id];
+          
+          if (!user) {
+            return {
+              ...file,
+              user_info: {
+                full_name: 'Unknown User',
+                avatar_url: null
               }
-              
-              return {
-                ...file,
-                user_info: {
-                  first_name: userData.first_name,
-                  last_name: userData.last_name
-                }
-              };
-            } catch (error) {
-              return {
-                ...file,
-                user_info: {
-                  first_name: 'Unknown',
-                  last_name: 'User'
-                }
-              };
+            };
+          }
+          
+          return {
+            ...file,
+            user_info: {
+              full_name: user.full_name || 'Unknown User',
+              avatar_url: user.avatar_url || null
             }
-          })
-        );
+          };
+        });
         
         return NextResponse.json({ files: filesWithUserInfo });
       }
