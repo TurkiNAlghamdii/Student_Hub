@@ -112,78 +112,90 @@ export default function Navbar({ showBack = false }: NavbarProps) {
   // Search for courses when query changes
   useEffect(() => {
     if (searchQuery.trim().length < 2) {
-      setSearchResults([])
-      setShowResults(false)
-      return
+      setSearchResults([]);
+      setShowResults(false);
+      return;
     }
 
     // Clear previous timeout
     if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current)
+      clearTimeout(searchTimeoutRef.current);
     }
 
     // Set a timeout to avoid making too many requests while typing
     searchTimeoutRef.current = setTimeout(async () => {
-      setIsSearching(true)
+      setIsSearching(true);
       try {
         // Add a timeout to the fetch to prevent hanging requests
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
         
+        // Format the search query to handle special characters and spaces
+        const formattedQuery = searchQuery.trim().replace(/[%_]/g, '\\$&');
+        
         const response = await fetch(
-          `/api/search?query=${encodeURIComponent(searchQuery)}`,
-          { signal: controller.signal }
+          `/api/search?query=${encodeURIComponent(formattedQuery)}`,
+          { 
+            signal: controller.signal,
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            method: 'GET',
+            cache: 'no-store'
+          }
         );
         
         clearTimeout(timeoutId);
         
         if (!response.ok) {
-          console.error('Search API error:', response.status, response.statusText)
-          setSearchResults([])
-          setShowResults(false)
-          return
+          const errorData = await response.json().catch(() => ({}));
+          console.error('Search API error:', response.status, response.statusText, errorData);
+          setSearchResults([]);
+          setShowResults(false);
+          return;
         }
         
-        const data = await response.json()
+        const data = await response.json();
         
         if (data.courses) {
-          setSearchResults(data.courses)
-          setShowResults(data.courses.length > 0)
+          setSearchResults(data.courses);
+          setShowResults(data.courses.length > 0);
         } else {
-          setSearchResults([])
-          setShowResults(false)
+          setSearchResults([]);
+          setShowResults(false);
         }
       } catch (error) {
         // Handle AbortError separately
         if (error instanceof DOMException && error.name === 'AbortError') {
           console.error('Search request timed out');
         } else {
-          console.error('Error searching courses:', error)
+          console.error('Error searching courses:', error);
         }
-        setSearchResults([])
-        setShowResults(false)
+        setSearchResults([]);
+        setShowResults(false);
       } finally {
-        setIsSearching(false)
+        setIsSearching(false);
       }
-    }, 300)
+    }, 300);
 
     return () => {
       if (searchTimeoutRef.current) {
-        clearTimeout(searchTimeoutRef.current)
+        clearTimeout(searchTimeoutRef.current);
       }
-    }
-  }, [searchQuery])
+    };
+  }, [searchQuery]);
 
   const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     
     if (searchQuery.trim() && searchResults.length > 0) {
       // Navigate to the first result
-      router.push(`/courses/${searchResults[0].course_code}`)
-      setSearchQuery('')
-      setShowResults(false)
+      router.push(`/courses/${searchResults[0].course_code}`);
+      setSearchQuery('');
+      setShowResults(false);
     }
-  }
+  };
 
   const handleLogout = async () => {
     try {

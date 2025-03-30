@@ -15,6 +15,7 @@ export async function GET(request: Request) {
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     
     if (!supabaseUrl || !supabaseKey) {
+      console.error('Missing Supabase configuration');
       return NextResponse.json({ 
         courses: [],
         error: 'Missing Supabase configuration'
@@ -28,14 +29,25 @@ export async function GET(request: Request) {
       }
     });
     
+    // Format the search query for SQL LIKE
+    const formattedQuery = query.trim();
+    
     // Search in both course_code and course_name
-    const { data: courses } = await supabase
+    const { data: courses, error } = await supabase
       .from('courses')
-      .select('course_code, course_name, faculty:faculties(name)')
-      .ilike('course_code', `%${query}%`)
+      .select('course_code, course_name')
+      .or(`course_code.ilike.%${formattedQuery}%,course_name.ilike.%${formattedQuery}%`)
       .limit(5);
 
-    if (courses.length === 0) {
+    if (error) {
+      console.error('Supabase error:', error);
+      return NextResponse.json({ 
+        courses: [],
+        error: error.message || 'Database error'
+      }, { status: 500 });
+    }
+
+    if (!courses || courses.length === 0) {
       return NextResponse.json({ courses: [] });
     }
 
@@ -44,15 +56,16 @@ export async function GET(request: Request) {
       course_code: course.course_code,
       course_name: course.course_name,
       faculty: {
-        name: course.faculty?.name || 'Faculty of Computing'
+        name: 'Faculty of Computing' // Default faculty name since we don't have faculty_id
       }
     }));
 
     return NextResponse.json({ courses: formattedCourses });
   } catch (error) {
+    console.error('Search error:', error);
     return NextResponse.json({ 
       courses: [],
-      error: 'Unexpected error'
+      error: error instanceof Error ? error.message : 'Unexpected error'
     }, { status: 500 });
   }
 } 
