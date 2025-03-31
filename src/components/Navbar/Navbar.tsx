@@ -14,7 +14,8 @@ import {
   ChatBubbleLeftRightIcon,
   ArrowRightOnRectangleIcon,
   CalculatorIcon,
-  BriefcaseIcon
+  BriefcaseIcon,
+  BuildingOfficeIcon
 } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
@@ -227,6 +228,7 @@ export default function Navbar({ showBack = false }: NavbarProps) {
   const menuItems = [
     { label: 'Home', href: '/', icon: <HomeIcon className="w-5 h-5" /> },
     { label: 'Profile', href: '/profile', icon: <UserCircleIcon className="w-5 h-5" /> },
+    { label: 'Faculty', href: '/faculty', icon: <BuildingOfficeIcon className="w-5 h-5" /> },
     { label: 'Courses', href: '/courses', icon: <AcademicCapIcon className="w-5 h-5" /> },
     { label: 'GPA Calculator', href: '/gpa-calculator', icon: <CalculatorIcon className="w-5 h-5" /> },
     { label: 'Notifications', href: '/notifications', icon: <BellIcon className="w-5 h-5" /> },
