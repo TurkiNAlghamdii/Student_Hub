@@ -16,7 +16,9 @@ import {
   BookOpenIcon, 
   UserCircleIcon, 
   CalendarIcon, 
-  ChatBubbleLeftRightIcon
+  ChatBubbleLeftRightIcon,
+  AcademicCapIcon,
+  ComputerDesktopIcon
 } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 
@@ -118,6 +120,20 @@ export default function Home() {
       description: "Get intelligent assistance",
       icon: <ChatBubbleLeftRightIcon className="shortcut-icon" />,
       path: "/chat"
+    },
+    {
+      title: "ODUS Plus",
+      description: "Access KAU ODUS Plus Portal",
+      icon: <AcademicCapIcon className="shortcut-icon" />,
+      path: "https://iam.kau.edu.sa/oamsso-bin/kaulogin.pl?resource_url=https%3A%2F%2Fodusplus-ss.kau.edu.sa%252Fprod%252Ftwbkwbis.p_wwwlogin",
+      external: true
+    },
+    {
+      title: "Blackboard",
+      description: "Access KAU Blackboard LMS",
+      icon: <ComputerDesktopIcon className="shortcut-icon" />,
+      path: "https://iam.kau.edu.sa/oamsso-bin/kaulogin-fed.pl?contextType=external&username=string&OverrideRetryLimit=0&password=secure_string&challenge_url=%2Foamsso-bin%2Fkaulogin-fed.pl&request_id=1602137698833632064&authn_try_count=0&locale=en_US&resource_url=%252Fuser%252Floginsso",
+      external: true
     }
   ];
 
@@ -175,15 +191,32 @@ export default function Home() {
           <div className="shortcuts-grid">
             {!shortcutsReady ? renderSkeletonShortcuts() : (
               shortcuts.map((shortcut, index) => (
-                <Link href={shortcut.path} key={index} legacyBehavior>
-                  <a className="shortcut-item" aria-label={shortcut.title}>
+                shortcut.external ? (
+                  <a 
+                    href={shortcut.path} 
+                    key={index} 
+                    className="shortcut-item" 
+                    aria-label={shortcut.title}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <div className="shortcut-icon-container">
                       {shortcut.icon}
                     </div>
                     <h3 className="shortcut-title">{shortcut.title}</h3>
                     <p className="shortcut-description">{shortcut.description}</p>
                   </a>
-                </Link>
+                ) : (
+                  <Link href={shortcut.path} key={index} legacyBehavior>
+                    <a className="shortcut-item" aria-label={shortcut.title}>
+                      <div className="shortcut-icon-container">
+                        {shortcut.icon}
+                      </div>
+                      <h3 className="shortcut-title">{shortcut.title}</h3>
+                      <p className="shortcut-description">{shortcut.description}</p>
+                    </a>
+                  </Link>
+                )
               ))
             )}
           </div>
