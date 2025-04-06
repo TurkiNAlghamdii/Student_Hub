@@ -259,11 +259,13 @@ export default function Navbar({ showBack = false }: NavbarProps) {
     
     try {
       setIsLoggingOut(true);
+      // Call the auth context signOut function - don't do any navigation here
+      // as the AuthContext already handles it
       await signOut();
     } catch (error) {
       console.error('Error logging out:', error);
-      // Force reload as a fallback if the normal logout fails
-      window.location.href = '/login';
+      // Only use this as a last resort if signOut completely fails
+      router.push('/login');
     } finally {
       setIsLoggingOut(false);
     }

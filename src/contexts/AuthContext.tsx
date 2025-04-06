@@ -98,14 +98,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
       setSession(null);
       
-      // Use a small delay to ensure all cleanup happens before navigation
+      // Instead of using both setTimeout and window.location,
+      // use the router with a small delay to prevent conflicts
       setTimeout(() => {
-        // Force reload instead of just navigate to ensure all client state is cleared
-        window.location.href = '/login';
+        router.push('/login');
+        // Avoid additional navigation attempts
+        router.refresh();
       }, 100);
     } catch (error) {
       console.error('Error signing out:', error);
-      // Fallback to direct navigation in case of error
       router.push('/login');
     }
   };
