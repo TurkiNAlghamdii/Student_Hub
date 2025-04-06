@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo, memo } from 'react';
+import { useState, useEffect, useCallback, useMemo, memo, Suspense } from 'react';
 import { createPortal } from 'react-dom';
 import { HeartIcon, XMarkIcon, QuestionMarkCircleIcon, PaperAirplaneIcon } from '@heroicons/react/24/solid';
 import './Footer.css';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface SupportFormData {
@@ -161,43 +161,134 @@ const ContactModal = memo(function ContactModal({
   );
 });
 
-export default function Footer() {
-  const [isContactOpen, setIsContactOpen] = useState(false);
-  const [formData, setFormData] = useState<SupportFormData>({
-    email: '',
-    issue: '',
-    description: ''
-  });
-  const [formErrors, setFormErrors] = useState<FormErrors>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitMessage, setSubmitMessage] = useState<string | null>(null);
-  const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null);
-  const [mounted, setMounted] = useState(false);
-  const [pageLoaded, setPageLoaded] = useState(false);
-  const [footerStable, setFooterStable] = useState(false);
-  const [isNavigating, setIsNavigating] = useState(false);
-  
-  // Get auth context to monitor login/logout state
-  const { user } = useAuth();
-  
-  // Track current pathname for navigation changes
+// Separate component that uses search params to ensure Suspense boundary
+function FooterContent({
+  isContactOpen,
+  closeContactModal,
+  submitMessage,
+  submitStatus,
+  formData,
+  formErrors,
+  handleInputChange,
+  handleSubmit,
+  isSubmitting,
+  openContactModal
+}: {
+  isContactOpen: boolean;
+  closeContactModal: () => void;
+  submitMessage: string | null;
+  submitStatus: 'success' | 'error' | null;
+  formData: SupportFormData;
+  formErrors: FormErrors;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+  handleSubmit: (e: React.FormEvent) => Promise<void>;
+  isSubmitting: boolean;
+  openContactModal: () => void;
+}) {
+  // This component will contain the actual footer content
+  return (
+    <>
+      <footer className="footer">
+        <div className="footer-container">
+          <div className="footer-credits">
+            Made with <HeartIcon className="heart-icon" /> by{' '}
+            <span className="author-name">Turki</span>,{' '}
+            <span className="author-name">Khalid</span>,{' '}
+            <span className="author-name">Husam</span>
+          </div>
+          
+          <div className="footer-actions">
+            <a 
+              href="https://discord.gg/rn8jzRH6"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="discord-button"
+              aria-label="Join our Discord server"
+            >
+              <svg className="discord-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
+                <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
+              </svg>
+              Join Discord
+            </a>
+            
+            <button 
+              className="contact-button"
+              onClick={openContactModal}
+            >
+              <QuestionMarkCircleIcon className="w-4 h-4" />
+              Contact Support
+            </button>
+          </div>
+        </div>
+      </footer>
+
+      {isContactOpen && createPortal(
+        <ContactModal
+          closeContactModal={closeContactModal}
+          submitMessage={submitMessage}
+          submitStatus={submitStatus}
+          formData={formData}
+          formErrors={formErrors}
+          handleInputChange={handleInputChange}
+          handleSubmit={handleSubmit}
+          isSubmitting={isSubmitting}
+        />,
+        document.getElementById('modal-root') || document.body
+      )}
+    </>
+  );
+}
+
+// Component that uses searchParams and needs to be wrapped in Suspense
+function FooterWithNavigation({ 
+  mounted, 
+  footerStable,
+  setFooterStable,
+  setIsNavigating,
+  isContactOpen,
+  closeContactModal,
+  submitMessage,
+  submitStatus,
+  formData,
+  formErrors,
+  handleInputChange,
+  handleSubmit,
+  isSubmitting,
+  openContactModal
+}: {
+  mounted: boolean;
+  footerStable: boolean;
+  setFooterStable: (stable: boolean) => void;
+  setIsNavigating: (navigating: boolean) => void;
+  isContactOpen: boolean;
+  closeContactModal: () => void;
+  submitMessage: string | null;
+  submitStatus: 'success' | 'error' | null;
+  formData: SupportFormData;
+  formErrors: FormErrors;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+  handleSubmit: (e: React.FormEvent) => Promise<void>;
+  isSubmitting: boolean;
+  openContactModal: () => void;
+}) {
+  // Import hooks that require client-side rendering and suspense
+  const { useSearchParams } = require('next/navigation');
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { user } = useAuth();
 
-  // Monitor auth state changes to properly hide footer during login/logout
+  // This hook monitors authentication state changes
   useEffect(() => {
     // When auth state changes, hide footer temporarily
     setFooterStable(false);
     
     // Wait for auth state to stabilize
     const authStateTimer = setTimeout(() => {
-      if (!isNavigating) {
-        setFooterStable(true);
-      }
+      setFooterStable(true);
     }, 1000); // Longer delay to ensure auth transition completes
     
     return () => clearTimeout(authStateTimer);
-  }, [user, isNavigating]);
+  }, [user, setFooterStable]);
 
   // Track navigation state changes
   useEffect(() => {
@@ -217,53 +308,7 @@ export default function Footer() {
     }, 800); // Longer delay to ensure complete transition
     
     return () => clearTimeout(navigationTimer);
-  }, [pathname, searchParams]);
-
-  // Set mounted state after component mounts and detect page loaded state
-  useEffect(() => {
-    setMounted(true);
-    
-    // Check if document is already loaded
-    if (document.readyState === 'complete') {
-      setPageLoaded(true);
-      // Add a small delay to ensure footer only appears after authentication state is stable
-      const stableTimer = setTimeout(() => {
-        if (!isNavigating && !checkAuthRelatedPath()) {
-          setFooterStable(true);
-        }
-      }, 300);
-      return () => clearTimeout(stableTimer);
-    } else {
-      // Set up listener for when the page finishes loading
-      const handleLoad = () => {
-        setPageLoaded(true);
-        // Add a small delay to ensure footer only appears after authentication state is stable
-        const stableTimer = setTimeout(() => {
-          if (!isNavigating && !checkAuthRelatedPath()) {
-            setFooterStable(true);
-          }
-        }, 300);
-      };
-      
-      window.addEventListener('load', handleLoad);
-      
-      // Also set a safety timeout that will show the footer if load event never fires
-      const safetyTimeout = setTimeout(() => {
-        if (!pageLoaded) {
-          setPageLoaded(true);
-          if (!isNavigating && !checkAuthRelatedPath()) {
-            setFooterStable(true);
-          }
-        }
-      }, 2500);
-      
-      return () => {
-        window.removeEventListener('load', handleLoad);
-        clearTimeout(safetyTimeout);
-        setMounted(false);
-      };
-    }
-  }, [isNavigating]);
+  }, [pathname, searchParams, setFooterStable, setIsNavigating]);
 
   // Check for auth-related paths that should hide the footer
   const checkAuthRelatedPath = useCallback(() => {
@@ -277,7 +322,72 @@ export default function Footer() {
     if (checkAuthRelatedPath()) {
       setFooterStable(false);
     }
-  }, [checkAuthRelatedPath]);
+  }, [checkAuthRelatedPath, setFooterStable]);
+
+  // If the page isn't fully loaded or the footer isn't stable during auth transitions, don't render
+  if (!mounted || !footerStable || checkAuthRelatedPath()) return null;
+
+  return (
+    <FooterContent
+      isContactOpen={isContactOpen}
+      closeContactModal={closeContactModal}
+      submitMessage={submitMessage}
+      submitStatus={submitStatus}
+      formData={formData}
+      formErrors={formErrors}
+      handleInputChange={handleInputChange}
+      handleSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
+      openContactModal={openContactModal}
+    />
+  );
+}
+
+export default function Footer() {
+  const [isContactOpen, setIsContactOpen] = useState(false);
+  const [formData, setFormData] = useState<SupportFormData>({
+    email: '',
+    issue: '',
+    description: ''
+  });
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState<string | null>(null);
+  const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const [pageLoaded, setPageLoaded] = useState(false);
+  const [footerStable, setFooterStable] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
+  
+  // Set mounted state after component mounts and detect page loaded state
+  useEffect(() => {
+    setMounted(true);
+    
+    // Check if document is already loaded
+    if (document.readyState === 'complete') {
+      setPageLoaded(true);
+    } else {
+      // Set up listener for when the page finishes loading
+      const handleLoad = () => {
+        setPageLoaded(true);
+      };
+      
+      window.addEventListener('load', handleLoad);
+      
+      // Also set a safety timeout that will show the footer if load event never fires
+      const safetyTimeout = setTimeout(() => {
+        if (!pageLoaded) {
+          setPageLoaded(true);
+        }
+      }, 2500);
+      
+      return () => {
+        window.removeEventListener('load', handleLoad);
+        clearTimeout(safetyTimeout);
+        setMounted(false);
+      };
+    }
+  }, [pageLoaded]);
 
   // Listen for specific logout event
   useEffect(() => {
@@ -293,12 +403,6 @@ export default function Footer() {
       if (e.key === 'sessionStartTime' || e.key === 'lastActivity') {
         // Hide footer during potential auth state changes
         setFooterStable(false);
-        
-        setTimeout(() => {
-          if (!checkAuthRelatedPath()) {
-            setFooterStable(true);
-          }
-        }, 800);
       }
     };
     
@@ -308,7 +412,7 @@ export default function Footer() {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, [checkAuthRelatedPath]);
+  }, []);
 
   // Prevent body scrolling when modal is open
   useEffect(() => {
@@ -322,9 +426,6 @@ export default function Footer() {
       document.body.style.overflow = '';
     };
   }, [isContactOpen]);
-
-  // If the page isn't fully loaded or the footer isn't stable during auth transitions, don't render
-  if (!mounted || !pageLoaded || !footerStable || isNavigating || checkAuthRelatedPath()) return null;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -436,56 +537,27 @@ export default function Footer() {
     setIsContactOpen(false);
   };
 
-  return (
-    <>
-      <footer className="footer">
-        <div className="footer-container">
-          <div className="footer-credits">
-            Made with <HeartIcon className="heart-icon" /> by{' '}
-            <span className="author-name">Turki</span>,{' '}
-            <span className="author-name">Khalid</span>,{' '}
-            <span className="author-name">Husam</span>
-          </div>
-          
-          <div className="footer-actions">
-            <a 
-              href="https://discord.gg/rn8jzRH6"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="discord-button"
-              aria-label="Join our Discord server"
-            >
-              <svg className="discord-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
-                <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
-              </svg>
-              Join Discord
-            </a>
-            
-            <button 
-              className="contact-button"
-              onClick={openContactModal}
-            >
-              <QuestionMarkCircleIcon className="w-4 h-4" />
-              Contact Support
-            </button>
-          </div>
-        </div>
-      </footer>
+  // If page hasn't loaded yet, don't render anything
+  if (!mounted || !pageLoaded) return null;
 
-      {/* Render modal using portal */}
-      {mounted && isContactOpen && createPortal(
-        <ContactModal
-          closeContactModal={closeContactModal}
-          submitMessage={submitMessage}
-          submitStatus={submitStatus}
-          formData={formData}
-          formErrors={formErrors}
-          handleInputChange={handleInputChange}
-          handleSubmit={handleSubmit}
-          isSubmitting={isSubmitting}
-        />,
-        document.getElementById('modal-root') || document.body
-      )}
-    </>
+  return (
+    <Suspense fallback={null}>
+      <FooterWithNavigation
+        mounted={mounted}
+        footerStable={footerStable}
+        setFooterStable={setFooterStable}
+        setIsNavigating={setIsNavigating}
+        isContactOpen={isContactOpen}
+        closeContactModal={closeContactModal}
+        submitMessage={submitMessage}
+        submitStatus={submitStatus}
+        formData={formData}
+        formErrors={formErrors}
+        handleInputChange={handleInputChange}
+        handleSubmit={handleSubmit}
+        isSubmitting={isSubmitting}
+        openContactModal={openContactModal}
+      />
+    </Suspense>
   );
 } 
