@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { motion } from 'framer-motion'
 import { EyeIcon, EyeSlashIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline'
 import { supabase } from '@/lib/supabase'
@@ -10,7 +10,8 @@ import { useAuth } from '@/contexts/AuthContext'
 import './login.css'
 import { FormEvent } from 'react'
 
-export default function Login() {
+// A wrapper component to safely use useSearchParams
+function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -269,4 +270,29 @@ export default function Login() {
       </motion.div>
     </div>
   )
+}
+
+// Add a loading state component
+function LoginFormFallback() {
+  return (
+    <div className="login-container">
+      <div className="login-card-skeleton">
+        <div className="title-skeleton"></div>
+        <div className="form-skeleton">
+          <div className="input-skeleton"></div>
+          <div className="input-skeleton"></div>
+          <div className="button-skeleton"></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Main component with Suspense
+export default function Login() {
+  return (
+    <Suspense fallback={<LoginFormFallback />}>
+      <LoginForm />
+    </Suspense>
+  );
 }

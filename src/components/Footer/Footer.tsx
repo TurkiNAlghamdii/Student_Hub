@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import { createPortal } from 'react-dom';
 import { HeartIcon, XMarkIcon, QuestionMarkCircleIcon, PaperAirplaneIcon } from '@heroicons/react/24/solid';
 import './Footer.css';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface SupportFormData {
   email: string;
@@ -172,35 +174,141 @@ export default function Footer() {
   const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null);
   const [mounted, setMounted] = useState(false);
   const [pageLoaded, setPageLoaded] = useState(false);
+  const [footerStable, setFooterStable] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
+  
+  // Get auth context to monitor login/logout state
+  const { user } = useAuth();
+  
+  // Track current pathname for navigation changes
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // Monitor auth state changes to properly hide footer during login/logout
+  useEffect(() => {
+    // When auth state changes, hide footer temporarily
+    setFooterStable(false);
+    
+    // Wait for auth state to stabilize
+    const authStateTimer = setTimeout(() => {
+      if (!isNavigating) {
+        setFooterStable(true);
+      }
+    }, 1000); // Longer delay to ensure auth transition completes
+    
+    return () => clearTimeout(authStateTimer);
+  }, [user, isNavigating]);
+
+  // Track navigation state changes
+  useEffect(() => {
+    setIsNavigating(true);
+    
+    // Hide footer during navigation
+    setFooterStable(false);
+    
+    // Wait for page to stabilize after navigation
+    const navigationTimer = setTimeout(() => {
+      setIsNavigating(false);
+      if (checkAuthRelatedPath()) {
+        setFooterStable(false);
+      } else {
+        setFooterStable(true);
+      }
+    }, 800); // Longer delay to ensure complete transition
+    
+    return () => clearTimeout(navigationTimer);
+  }, [pathname, searchParams]);
 
   // Set mounted state after component mounts and detect page loaded state
   useEffect(() => {
     setMounted(true);
     
-    // Timeout to ensure footer eventually appears even if load event doesn't fire
-    const timeoutId = setTimeout(() => {
-      setPageLoaded(true);
-    }, 2500); // Force appear after 2.5 seconds regardless of load state
-    
     // Check if document is already loaded
     if (document.readyState === 'complete') {
       setPageLoaded(true);
-      clearTimeout(timeoutId);
+      // Add a small delay to ensure footer only appears after authentication state is stable
+      const stableTimer = setTimeout(() => {
+        if (!isNavigating && !checkAuthRelatedPath()) {
+          setFooterStable(true);
+        }
+      }, 300);
+      return () => clearTimeout(stableTimer);
     } else {
       // Set up listener for when the page finishes loading
       const handleLoad = () => {
         setPageLoaded(true);
-        clearTimeout(timeoutId);
+        // Add a small delay to ensure footer only appears after authentication state is stable
+        const stableTimer = setTimeout(() => {
+          if (!isNavigating && !checkAuthRelatedPath()) {
+            setFooterStable(true);
+          }
+        }, 300);
       };
+      
       window.addEventListener('load', handleLoad);
+      
+      // Also set a safety timeout that will show the footer if load event never fires
+      const safetyTimeout = setTimeout(() => {
+        if (!pageLoaded) {
+          setPageLoaded(true);
+          if (!isNavigating && !checkAuthRelatedPath()) {
+            setFooterStable(true);
+          }
+        }
+      }, 2500);
       
       return () => {
         window.removeEventListener('load', handleLoad);
-        clearTimeout(timeoutId);
+        clearTimeout(safetyTimeout);
         setMounted(false);
       };
     }
-  }, []);
+  }, [isNavigating]);
+
+  // Check for auth-related paths that should hide the footer
+  const checkAuthRelatedPath = useCallback(() => {
+    const authPaths = ['/login', '/register', '/logout'];
+    return authPaths.some(path => pathname.includes(path));
+  }, [pathname]);
+
+  // Monitor authentication-related URL changes to prevent footer flashing
+  useEffect(() => {
+    // If we're on an auth page, hide the footer
+    if (checkAuthRelatedPath()) {
+      setFooterStable(false);
+    }
+  }, [checkAuthRelatedPath]);
+
+  // Listen for specific logout event
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      // This helps with transitions when the page is about to unload during logout
+      setFooterStable(false);
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    // Listen for storage events that might indicate auth changes (like logout)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'sessionStartTime' || e.key === 'lastActivity') {
+        // Hide footer during potential auth state changes
+        setFooterStable(false);
+        
+        setTimeout(() => {
+          if (!checkAuthRelatedPath()) {
+            setFooterStable(true);
+          }
+        }, 800);
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [checkAuthRelatedPath]);
 
   // Prevent body scrolling when modal is open
   useEffect(() => {
@@ -214,6 +322,9 @@ export default function Footer() {
       document.body.style.overflow = '';
     };
   }, [isContactOpen]);
+
+  // If the page isn't fully loaded or the footer isn't stable during auth transitions, don't render
+  if (!mounted || !pageLoaded || !footerStable || isNavigating || checkAuthRelatedPath()) return null;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -324,9 +435,6 @@ export default function Footer() {
   const closeContactModal = () => {
     setIsContactOpen(false);
   };
-
-  // Don't render the footer until the page has loaded
-  if (!pageLoaded) return null;
 
   return (
     <>

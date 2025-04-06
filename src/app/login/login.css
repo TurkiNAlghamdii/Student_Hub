@@ -206,4 +206,66 @@
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+/* Loading Skeleton Styles */
+.login-card-skeleton {
+  max-width: 400px;
+  width: 100%;
+  background: rgba(17, 24, 39, 0.5);
+  backdrop-filter: blur(8px);
+  padding: 2.5rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(6, 78, 59, 0.1);
+  box-shadow: 0 0 40px rgba(6, 78, 59, 0.1), 0 0 80px rgba(0, 0, 0, 0.3);
+  min-height: 450px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title-skeleton {
+  width: 180px;
+  height: 40px;
+  background: linear-gradient(90deg, rgba(31, 41, 55, 0.5), rgba(55, 65, 81, 0.5), rgba(31, 41, 55, 0.5));
+  background-size: 200% 100%;
+  border-radius: 0.5rem;
+  margin-bottom: 2.5rem;
+  margin-top: 1rem;
+  animation: shimmer 1.5s infinite;
+}
+
+.form-skeleton {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.input-skeleton {
+  width: 100%;
+  height: 50px;
+  background: linear-gradient(90deg, rgba(31, 41, 55, 0.5), rgba(55, 65, 81, 0.5), rgba(31, 41, 55, 0.5));
+  background-size: 200% 100%;
+  border-radius: 0.75rem;
+  animation: shimmer 1.5s infinite;
+}
+
+.button-skeleton {
+  width: 100%;
+  height: 50px;
+  margin-top: 1.5rem;
+  background: linear-gradient(90deg, rgba(14, 159, 110, 0.3), rgba(9, 121, 83, 0.3), rgba(14, 159, 110, 0.3));
+  background-size: 200% 100%;
+  border-radius: 0.75rem;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 } 
