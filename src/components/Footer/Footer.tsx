@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import { createPortal } from 'react-dom';
 import { HeartIcon, XMarkIcon, QuestionMarkCircleIcon, PaperAirplaneIcon } from '@heroicons/react/24/solid';
 import './Footer.css';
-import { useRouter, usePathname } from 'next/navigation';
 
 interface SupportFormData {
   email: string;
@@ -172,71 +171,12 @@ export default function Footer() {
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
   const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null);
   const [mounted, setMounted] = useState(false);
-  const [pageLoaded, setPageLoaded] = useState(false);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const router = useRouter();
-  const pathname = usePathname();
 
-  // Check if the current page should exclude footer
-  const shouldExcludeFooter = pathname === '/login' || pathname === '/register';
-
-  // Set mounted state after component mounts and detect page loaded state
+  // Set mounted state
   useEffect(() => {
     setMounted(true);
-    
-    // Timeout to ensure footer eventually appears even if load event doesn't fire
-    const timeoutId = setTimeout(() => {
-      setPageLoaded(true);
-    }, 2500); // Force appear after 2.5 seconds regardless of load state
-    
-    // Check if document is already loaded
-    if (document.readyState === 'complete') {
-      setPageLoaded(true);
-      clearTimeout(timeoutId);
-    } else {
-      // Set up listener for when the page finishes loading
-      const handleLoad = () => {
-        setPageLoaded(true);
-        clearTimeout(timeoutId);
-      };
-      window.addEventListener('load', handleLoad);
-      
-      return () => {
-        window.removeEventListener('load', handleLoad);
-        clearTimeout(timeoutId);
-        setMounted(false);
-      };
-    }
-  }, []);
-
-  // Listen for route changes to prevent footer flash during transitions
-  useEffect(() => {
-    const handleRouteChangeStart = () => {
-      setIsTransitioning(true);
-    };
-    
-    const handleRouteChangeComplete = () => {
-      setTimeout(() => setIsTransitioning(false), 100);
-    };
-    
-    // We can't use Next.js router events directly, so we'll use a MutationObserver
-    // to watch for DOM changes indicating navigation
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-          // A significant DOM change happened, likely a navigation
-          handleRouteChangeStart();
-          // Reset after a brief delay
-          setTimeout(handleRouteChangeComplete, 300);
-        }
-      });
-    });
-    
-    // Start observing the document body for changes
-    observer.observe(document.body, { childList: true, subtree: true });
-    
     return () => {
-      observer.disconnect();
+      setMounted(false);
     };
   }, []);
 
@@ -362,9 +302,6 @@ export default function Footer() {
   const closeContactModal = () => {
     setIsContactOpen(false);
   };
-
-  // Don't render the footer during transitions, on excluded pages, or when page is not loaded
-  if (isTransitioning || shouldExcludeFooter || !pageLoaded) return null;
 
   return (
     <>

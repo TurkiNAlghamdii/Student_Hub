@@ -10,6 +10,7 @@ import RssSimple from '@/components/RssSimple/RssSimple'
 import CourseWidget from '@/components/CourseWidget/CourseWidget'
 import AIAssistantWidget from '@/components/AIAssistantWidget/AIAssistantWidget'
 import SalaryCounterWidget from '@/components/SalaryCounterWidget/SalaryCounterWidget'
+import Footer from '@/components/Footer/Footer'
 import './home.css'
 import NotificationsBox from '@/components/NotificationsBox'
 import { 
@@ -245,6 +246,7 @@ export default function Home() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   )
 }
