@@ -535,4 +535,89 @@
     /* The hack for Safari */
     height: -webkit-fill-available;
   }
+}
+
+.form-group input.input-error,
+.form-group select.input-error,
+.form-group textarea.input-error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.2);
+  background-color: rgba(239, 68, 68, 0.05);
+}
+
+.field-error-message {
+  color: #ef4444;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.field-error-message::before {
+  content: "!";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.5rem;
+  width: 16px;
+  height: 16px;
+  background-color: #ef4444;
+  color: white;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.form-error.general-error {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 0.5rem;
+  border-left: 4px solid #ef4444;
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  font-size: 0.875rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.submit-message.error {
+  padding: 1rem;
+  margin: 1.5rem;
+  border-radius: 0.5rem;
+  border-left: 4px solid #ef4444;
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  text-align: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.submit-message.success {
+  padding: 1.5rem;
+  margin: 1.5rem;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #34d399;
+  text-align: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.success-icon-container {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: rgba(16, 185, 129, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.success-icon {
+  width: 28px;
+  height: 28px;
+  fill: #10b981;
 } 

@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
+import { EyeIcon, EyeSlashIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline'
 import { supabase } from '@/lib/supabase'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import './login.css'
@@ -15,9 +15,20 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [formErrors, setFormErrors] = useState<{email?: string; password?: string}>({})
   const [loading, setLoading] = useState(false)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { session } = useAuth()
+
+  // Check for success message from redirect
+  useEffect(() => {
+    const message = searchParams?.get('message')
+    if (message) {
+      setSuccessMessage(message)
+    }
+  }, [searchParams])
 
   useEffect(() => {
     if (session) {
@@ -25,10 +36,45 @@ export default function Login() {
     }
   }, [session, router])
 
+  const validateForm = (): boolean => {
+    const errors: {email?: string; password?: string} = {}
+    let isValid = true
+    
+    // Email validation
+    if (!email) {
+      errors.email = 'Email is required'
+      isValid = false
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      errors.email = 'Please enter a valid email address'
+      isValid = false
+    }
+    
+    // Password validation
+    if (!password) {
+      errors.password = 'Password is required'
+      isValid = false
+    }
+    
+    setFormErrors(errors)
+    return isValid
+  }
+
+  const clearFieldError = (field: string) => {
+    setFormErrors(prev => ({...prev, [field]: undefined}))
+  }
+
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setLoading(true)
+    
     setError(null)
+    setSuccessMessage(null)
+    
+    // Validate form first
+    if (!validateForm()) {
+      return
+    }
+    
+    setLoading(true)
 
     try {
       const { error } = await supabase.auth.signInWithPassword({
@@ -36,14 +82,26 @@ export default function Login() {
         password,
       })
 
-      if (error) throw error
+      if (error) {
+        // Handle different error types with more user-friendly messages
+        if (error.message.includes('Invalid login')) {
+          throw new Error('Incorrect email or password. Please try again.')
+        } else if (error.message.includes('Email not confirmed')) {
+          throw new Error('Please verify your email address before logging in.')
+        } else {
+          throw error
+        }
+      }
 
       // Store login timestamp for session management (8 hour limit)
       localStorage.setItem('sessionStartTime', Date.now().toString())
       
       router.push('/')
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred during login';
+      const errorMessage = err instanceof Error 
+        ? err.message 
+        : 'An unexpected error occurred during login. Please try again.';
+      
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -69,12 +127,24 @@ export default function Login() {
         >
           Welcome Back
         </motion.h2>
+        
+        {successMessage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="success-message"
+          >
+            {successMessage}
+          </motion.div>
+        )}
+        
         <form className="login-form" onSubmit={handleLogin}>
           <div className="input-container">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
+              className="form-field"
             >
               <label htmlFor="email" className="sr-only">
                 Email address
@@ -85,16 +155,26 @@ export default function Login() {
                 type="email"
                 required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="input-field"
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  clearFieldError('email');
+                }}
+                className={`input-field ${formErrors.email ? 'input-error' : ''}`}
                 placeholder="Email address"
               />
+              {formErrors.email && (
+                <div className="field-error-message">
+                  <ExclamationCircleIcon className="error-icon" />
+                  {formErrors.email}
+                </div>
+              )}
             </motion.div>
+            
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
-              className="relative"
+              className="form-field relative"
             >
               <label htmlFor="password" className="sr-only">
                 Password
@@ -105,8 +185,11 @@ export default function Login() {
                 type={showPassword ? 'text' : 'password'}
                 required
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="input-field"
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  clearFieldError('password');
+                }}
+                className={`input-field ${formErrors.password ? 'input-error' : ''}`}
                 placeholder="Password"
               />
               <button
@@ -120,6 +203,12 @@ export default function Login() {
                   <EyeIcon className="h-5 w-5" />
                 )}
               </button>
+              {formErrors.password && (
+                <div className="field-error-message">
+                  <ExclamationCircleIcon className="error-icon" />
+                  {formErrors.password}
+                </div>
+              )}
             </motion.div>
           </div>
 
@@ -137,6 +226,7 @@ export default function Login() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
+            className="mt-4"
           >
             <button
               type="submit"
@@ -145,6 +235,20 @@ export default function Login() {
             >
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="forgot-password"
+          >
+            <Link
+              href="/forgot-password"
+              className="forgot-password-link"
+            >
+              Forgot your password?
+            </Link>
           </motion.div>
         </form>
 
