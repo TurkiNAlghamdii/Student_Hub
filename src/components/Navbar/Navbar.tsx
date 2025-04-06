@@ -59,7 +59,6 @@ export default function Navbar({ showBack = false }: NavbarProps) {
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const searchContainerRef = useRef<HTMLDivElement>(null)
   const sidebarRef = useRef<HTMLDivElement>(null)
-  const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   // Fetch student profile including avatar
   useEffect(() => {
@@ -255,19 +254,10 @@ export default function Navbar({ showBack = false }: NavbarProps) {
   };
 
   const handleLogout = async () => {
-    if (isLoggingOut) return; // Prevent multiple clicks
-    
     try {
-      setIsLoggingOut(true);
-      // Call the auth context signOut function - don't do any navigation here
-      // as the AuthContext already handles it
-      await signOut();
+      await signOut()
     } catch (error) {
-      console.error('Error logging out:', error);
-      // Only use this as a last resort if signOut completely fails
-      router.push('/login');
-    } finally {
-      setIsLoggingOut(false);
+      console.error('Error logging out:', error)
     }
   }
 
@@ -300,14 +290,7 @@ export default function Navbar({ showBack = false }: NavbarProps) {
     { label: 'Summer Training', href: '/summer-training', icon: <BriefcaseIcon className="w-5 h-5" /> },
     { label: 'Events', href: '/events', icon: <CalendarIcon className="w-5 h-5" /> },
     { label: 'AI Chat', href: '/chat', icon: <ChatBubbleLeftRightIcon className="w-5 h-5" /> },
-    { 
-      label: isLoggingOut ? 'Logging out...' : 'Logout', 
-      action: handleLogout, 
-      icon: isLoggingOut ? 
-        <div className="h-5 w-5 rounded-full border-2 border-gray-400 border-t-emerald-500 animate-spin"></div> : 
-        <ArrowRightOnRectangleIcon className="w-5 h-5" />,
-      disabled: isLoggingOut
-    }
+    { label: 'Logout', action: handleLogout, icon: <ArrowRightOnRectangleIcon className="w-5 h-5" /> }
   ]
 
   return (
@@ -468,14 +451,11 @@ export default function Navbar({ showBack = false }: NavbarProps) {
                     </Link>
                   ) : (
                     <button 
-                      onClick={() => {
-                        if (!item.disabled && item.action) {
-                          item.action();
-                        }
-                        closeSidebar();
+                      onClick={() => { 
+                        closeSidebar(); 
+                        if (item.action) item.action(); 
                       }}
-                      className={`flex items-center gap-3 w-full text-left ${item.disabled ? 'opacity-70 cursor-not-allowed' : ''}`}
-                      disabled={item.disabled}
+                      className="flex items-center gap-3 w-full"
                     >
                       {item.icon}
                       <span>{item.label}</span>

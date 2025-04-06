@@ -82,32 +82,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const handleSignOut = async () => {
     try {
-      // Clear client-side auth data first to prevent state inconsistencies
-      localStorage.removeItem('sessionStartTime');
-      localStorage.removeItem('lastActivity');
-      
-      // Sign out from Supabase
-      const { error } = await supabase.auth.signOut();
-      
-      if (error) {
-        console.error('Supabase signOut error:', error);
-        throw error;
-      }
-      
-      // Reset local state
-      setUser(null);
-      setSession(null);
-      
-      // Instead of using both setTimeout and window.location,
-      // use the router with a small delay to prevent conflicts
-      setTimeout(() => {
-        router.push('/login');
-        // Avoid additional navigation attempts
-        router.refresh();
-      }, 100);
+      await supabase.auth.signOut();
+      router.push('/login');
     } catch (error) {
       console.error('Error signing out:', error);
-      router.push('/login');
     }
   };
 
