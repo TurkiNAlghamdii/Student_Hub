@@ -16,6 +16,9 @@ interface Course {
   instructor?: string
 }
 
+// Cache expiration time in milliseconds (10 minutes)
+const CACHE_EXPIRATION = 10 * 60 * 1000;
+
 export default function CourseWidget() {
   const { user } = useAuth()
   const [courses, setCourses] = useState<Course[]>([])
@@ -28,6 +31,32 @@ export default function CourseWidget() {
 
     const fetchUserCourses = async () => {
       setLoading(true)
+      
+      // Try to get data from cache first
+      const cachedData = localStorage.getItem('userCourses');
+      const cachedTimestamp = localStorage.getItem('userCoursesTimestamp');
+      
+      // Check if we have valid cached data
+      if (cachedData && cachedTimestamp) {
+        const timestamp = parseInt(cachedTimestamp);
+        const now = Date.now();
+        
+        // If cache is still valid (less than 10 minutes old)
+        if (now - timestamp < CACHE_EXPIRATION) {
+          try {
+            const parsedData = JSON.parse(cachedData);
+            setCourses(parsedData);
+            setLoading(false);
+            setTimeout(() => setAnimationReady(true), 100);
+            return;
+          } catch (err) {
+            // If parsing fails, continue to fetch fresh data
+            console.error('Error parsing cached course data:', err);
+          }
+        }
+      }
+      
+      // If no valid cache or parsing failed, fetch fresh data
       try {
         const response = await fetch('/api/user/courses', {
           headers: {
@@ -46,7 +75,12 @@ export default function CourseWidget() {
         const data = await response.json()
 
         if (data.courses) {
+          // Store in state
           setCourses(data.courses)
+          
+          // Cache the data
+          localStorage.setItem('userCourses', JSON.stringify(data.courses));
+          localStorage.setItem('userCoursesTimestamp', Date.now().toString());
         } else {
           setCourses([])
         }
