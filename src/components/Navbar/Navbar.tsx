@@ -22,6 +22,8 @@ import { useAuth } from '@/contexts/AuthContext'
 import './Navbar.css'
 import SearchResults from '../SearchResults/SearchResults'
 import '../SearchResults/SearchResults.css'
+import Image from 'next/image'
+import { supabase } from '@/lib/supabase'
 
 interface NavbarProps {
   showBack?: boolean
@@ -35,9 +37,16 @@ interface Course {
   }
 }
 
+interface StudentProfile {
+  id: string
+  full_name?: string
+  avatar_url?: string
+  // Other profile fields can be added as needed
+}
+
 export default function Navbar({ showBack = false }: NavbarProps) {
   const router = useRouter()
-  const { signOut } = useAuth()
+  const { user, signOut } = useAuth()
   const [searchQuery, setSearchQuery] = useState('')
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [isSidebarClosing, setIsSidebarClosing] = useState(false)
@@ -46,9 +55,55 @@ export default function Navbar({ showBack = false }: NavbarProps) {
   const [searchResults, setSearchResults] = useState<Course[]>([])
   const [showResults, setShowResults] = useState(false)
   const [isSearching, setIsSearching] = useState(false)
+  const [studentProfile, setStudentProfile] = useState<StudentProfile | null>(null)
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const searchContainerRef = useRef<HTMLDivElement>(null)
   const sidebarRef = useRef<HTMLDivElement>(null)
+
+  // Fetch student profile including avatar
+  useEffect(() => {
+    const fetchStudentProfile = async () => {
+      if (!user) return;
+
+      try {
+        // First check if we have a cached avatar in localStorage
+        const savedAvatar = localStorage.getItem(`avatar_${user.id}`);
+        
+        if (savedAvatar) {
+          setStudentProfile({
+            id: user.id,
+            avatar_url: savedAvatar
+          });
+          return;
+        }
+        
+        // If no cached avatar, fetch from database
+        const { data, error } = await supabase
+          .from('students')
+          .select('id, full_name, avatar_url')
+          .eq('id', user.id)
+          .single();
+        
+        if (error) {
+          console.error('Error fetching student profile:', error);
+          return;
+        }
+        
+        if (data) {
+          setStudentProfile(data);
+          
+          // Cache the avatar if available
+          if (data.avatar_url) {
+            localStorage.setItem(`avatar_${user.id}`, data.avatar_url);
+          }
+        }
+      } catch (error) {
+        console.error('Error in profile fetch:', error);
+      }
+    };
+    
+    fetchStudentProfile();
+  }, [user]);
 
   // Handle clicks outside of search results
   useEffect(() => {
@@ -301,13 +356,44 @@ export default function Navbar({ showBack = false }: NavbarProps) {
         {/* Sidebar toggle on the right */}
         <div className="nav-right">
           <div className="nav-buttons">
-            <button
-              onClick={() => router.push('/profile')}
-              className="user-profile-button"
-              aria-label="Go to profile"
-            >
-              <UserCircleIcon className="h-6 w-6" />
-            </button>
+            {studentProfile?.avatar_url ? (
+              <div 
+                className="profile-avatar-wrapper"
+                onClick={() => router.push('/profile')}
+                tabIndex={0}
+                role="button"
+                aria-label="View your profile"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    router.push('/profile');
+                  }
+                }}
+              >
+                <Image 
+                  src={studentProfile.avatar_url} 
+                  alt={`${studentProfile.full_name || 'User'}'s profile`}
+                  width={40} 
+                  height={40}
+                  className="profile-avatar-image" 
+                  priority
+                />
+              </div>
+            ) : (
+              <div 
+                className="profile-avatar-fallback"
+                onClick={() => router.push('/profile')}
+                tabIndex={0}
+                role="button"
+                aria-label="View your profile"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    router.push('/profile');
+                  }
+                }}
+              >
+                <UserCircleIcon className="h-6 w-6" />
+              </div>
+            )}
             <button
               onClick={openSidebar}
               className="sidebar-toggle-button"

@@ -8,7 +8,6 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import './login.css'
-import Logo from '@/components/Logo'
 import { FormEvent } from 'react'
 
 export default function Login() {
@@ -62,14 +61,6 @@ export default function Login() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <motion.div
-          className="logo-container"
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.3 }}
-        >
-          <Logo />
-        </motion.div>
         <motion.h2
           className="login-title"
           initial={{ opacity: 0 }}
