@@ -59,6 +59,7 @@ export default function Navbar({ showBack = false }: NavbarProps) {
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const searchContainerRef = useRef<HTMLDivElement>(null)
   const sidebarRef = useRef<HTMLDivElement>(null)
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   // Fetch student profile including avatar
   useEffect(() => {
@@ -254,10 +255,17 @@ export default function Navbar({ showBack = false }: NavbarProps) {
   };
 
   const handleLogout = async () => {
+    if (isLoggingOut) return; // Prevent multiple clicks
+    
     try {
-      await signOut()
+      setIsLoggingOut(true);
+      await signOut();
     } catch (error) {
-      console.error('Error logging out:', error)
+      console.error('Error logging out:', error);
+      // Force reload as a fallback if the normal logout fails
+      window.location.href = '/login';
+    } finally {
+      setIsLoggingOut(false);
     }
   }
 
@@ -290,7 +298,14 @@ export default function Navbar({ showBack = false }: NavbarProps) {
     { label: 'Summer Training', href: '/summer-training', icon: <BriefcaseIcon className="w-5 h-5" /> },
     { label: 'Events', href: '/events', icon: <CalendarIcon className="w-5 h-5" /> },
     { label: 'AI Chat', href: '/chat', icon: <ChatBubbleLeftRightIcon className="w-5 h-5" /> },
-    { label: 'Logout', action: handleLogout, icon: <ArrowRightOnRectangleIcon className="w-5 h-5" /> }
+    { 
+      label: isLoggingOut ? 'Logging out...' : 'Logout', 
+      action: handleLogout, 
+      icon: isLoggingOut ? 
+        <div className="h-5 w-5 rounded-full border-2 border-gray-400 border-t-emerald-500 animate-spin"></div> : 
+        <ArrowRightOnRectangleIcon className="w-5 h-5" />,
+      disabled: isLoggingOut
+    }
   ]
 
   return (
@@ -451,11 +466,14 @@ export default function Navbar({ showBack = false }: NavbarProps) {
                     </Link>
                   ) : (
                     <button 
-                      onClick={() => { 
-                        closeSidebar(); 
-                        if (item.action) item.action(); 
+                      onClick={() => {
+                        if (!item.disabled && item.action) {
+                          item.action();
+                        }
+                        closeSidebar();
                       }}
-                      className="flex items-center gap-3 w-full"
+                      className={`flex items-center gap-3 w-full text-left ${item.disabled ? 'opacity-70 cursor-not-allowed' : ''}`}
+                      disabled={item.disabled}
                     >
                       {item.icon}
                       <span>{item.label}</span>
