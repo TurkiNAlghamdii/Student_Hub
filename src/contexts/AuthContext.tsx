@@ -42,6 +42,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           handleSignOut();
           return;
         }
+
+        // Check if user is disabled
+        if (session.user?.user_metadata?.is_disabled) {
+          handleSignOut();
+          return;
+        }
         
         setSession(session);
         setUser(session?.user ?? null);
@@ -53,14 +59,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      setLoading(false)
-      
-      // If we get a new session, store the login timestamp
       if (session) {
+        // Check if user is disabled
+        if (session.user?.user_metadata?.is_disabled) {
+          handleSignOut();
+          return;
+        }
+        
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        // If we get a new session, store the login timestamp
         localStorage.setItem('sessionStartTime', Date.now().toString());
+      } else {
+        setSession(null);
+        setUser(null);
       }
+      setLoading(false);
     })
 
     return () => subscription.unsubscribe()

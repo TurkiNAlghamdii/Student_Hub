@@ -15,7 +15,8 @@ import {
   ArrowRightOnRectangleIcon,
   CalculatorIcon,
   BriefcaseIcon,
-  BuildingOfficeIcon
+  BuildingOfficeIcon,
+  ShieldCheckIcon
 } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
@@ -56,6 +57,7 @@ export default function Navbar({ showBack = false }: NavbarProps) {
   const [showResults, setShowResults] = useState(false)
   const [isSearching, setIsSearching] = useState(false)
   const [studentProfile, setStudentProfile] = useState<StudentProfile | null>(null)
+  const [isAdmin, setIsAdmin] = useState(false)
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const searchContainerRef = useRef<HTMLDivElement>(null)
   const sidebarRef = useRef<HTMLDivElement>(null)
@@ -104,6 +106,16 @@ export default function Navbar({ showBack = false }: NavbarProps) {
     
     fetchStudentProfile();
   }, [user]);
+
+  // Check if user is admin
+  useEffect(() => {
+    if (user) {
+      const isUserAdmin = user.app_metadata?.is_admin === true || 
+                         user.app_metadata?.is_admin === 'true' || 
+                         String(user.app_metadata?.is_admin).toLowerCase() === 'true'
+      setIsAdmin(isUserAdmin)
+    }
+  }, [user])
 
   // Handle clicks outside of search results
   useEffect(() => {
@@ -290,6 +302,7 @@ export default function Navbar({ showBack = false }: NavbarProps) {
     { label: 'Summer Training', href: '/summer-training', icon: <BriefcaseIcon className="w-5 h-5" /> },
     { label: 'Events', href: '/events', icon: <CalendarIcon className="w-5 h-5" /> },
     { label: 'AI Chat', href: '/chat', icon: <ChatBubbleLeftRightIcon className="w-5 h-5" /> },
+    ...(isAdmin ? [{ label: 'Admin', href: '/admin', icon: <ShieldCheckIcon className="w-5 h-5" /> }] : []),
     { label: 'Logout', action: handleLogout, icon: <ArrowRightOnRectangleIcon className="w-5 h-5" /> }
   ]
 
@@ -435,7 +448,7 @@ export default function Navbar({ showBack = false }: NavbarProps) {
             style={{ overscrollBehavior: 'contain' }}
           >
             <ul className="sidebar-menu">
-              {menuItems.map((item, index) => (
+              {menuItems.map((item) => (
                 <li 
                   key={item.label} 
                   className={`menu-item ${isSidebarMounted && !isSidebarClosing ? 'menu-item-visible' : ''}`}
@@ -444,7 +457,7 @@ export default function Navbar({ showBack = false }: NavbarProps) {
                     <Link 
                       href={item.href} 
                       onClick={closeSidebar}
-                      className="flex items-center gap-3"
+                      className="flex items-center gap-3 w-full p-3 rounded-lg hover:bg-emerald-500/10 hover:border-emerald-500/20 transition-all duration-200"
                     >
                       {item.icon}
                       <span>{item.label}</span>
@@ -455,7 +468,7 @@ export default function Navbar({ showBack = false }: NavbarProps) {
                         closeSidebar(); 
                         if (item.action) item.action(); 
                       }}
-                      className="flex items-center gap-3 w-full"
+                      className="flex items-center gap-3 w-full p-3 rounded-lg hover:bg-emerald-500/10 hover:border-emerald-500/20 transition-all duration-200"
                     >
                       {item.icon}
                       <span>{item.label}</span>

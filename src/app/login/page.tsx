@@ -31,12 +31,18 @@ export default function Login() {
     setError(null)
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
 
       if (error) throw error
+
+      // Check if user is disabled
+      if (data.user?.user_metadata?.is_disabled) {
+        await supabase.auth.signOut()
+        throw new Error('This account has been disabled. Please contact support for assistance.')
+      }
 
       // Store login timestamp for session management (8 hour limit)
       localStorage.setItem('sessionStartTime', Date.now().toString())

@@ -424,6 +424,8 @@
 .sidebar-menu li:nth-child(8) { animation-delay: 0.45s; }
 .sidebar-menu li:nth-child(9) { animation-delay: 0.50s; }
 .sidebar-menu li:nth-child(10) { animation-delay: 0.55s; }
+.sidebar-menu li:nth-child(11) { animation-delay: 0.60s; }
+.sidebar-menu li:nth-child(12) { animation-delay: 0.65s; }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {

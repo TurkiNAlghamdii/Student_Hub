@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo, memo } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { createPortal } from 'react-dom';
 import { HeartIcon, XMarkIcon, QuestionMarkCircleIcon, PaperAirplaneIcon } from '@heroicons/react/24/solid';
 import './Footer.css';
@@ -79,7 +79,7 @@ const ContactModal = memo(function ContactModal({
           ) : (
             <form onSubmit={handleSubmit} className="contact-form">
               <p className="form-description">
-                We're here to help! Fill out the form below and we'll get back to you as soon as possible.
+                We&apos;re here to help! Fill out the form below and we&apos;ll get back to you as soon as possible.
               </p>
               
               {formErrors.general && (
