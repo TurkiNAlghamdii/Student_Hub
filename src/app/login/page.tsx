@@ -143,6 +143,7 @@ export default function Login() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
+            className="flex flex-col space-y-4"
           >
             <button
               type="submit"
@@ -151,6 +152,17 @@ export default function Login() {
             >
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
+            
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="text-center"
+            >
+              <Link href="/forgot-password" className="forgot-password-link">
+                Forgot your password?
+              </Link>
+            </motion.div>
           </motion.div>
         </form>
 

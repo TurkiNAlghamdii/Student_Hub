@@ -11,6 +11,7 @@ interface AuthContextType {
   loading: boolean
   signOut: () => Promise<void>
   checkSessionExpiry: () => boolean
+  isPasswordRecovery: boolean
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -18,13 +19,15 @@ const AuthContext = createContext<AuthContextType>({
   session: null,
   loading: true,
   signOut: async () => {},
-  checkSessionExpiry: () => false
+  checkSessionExpiry: () => false,
+  isPasswordRecovery: false
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isPasswordRecovery, setIsPasswordRecovery] = useState(false)
   const router = useRouter()
 
   // Set the session duration to 8 hours in milliseconds
@@ -54,6 +57,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       setLoading(false);
     })
+
+    // Check if we're in a password recovery flow by looking at the URL
+    if (typeof window !== 'undefined') {
+      const isRecoveryFlow = window.location.hash.includes('#access_token') && 
+                            window.location.hash.includes('type=recovery');
+      setIsPasswordRecovery(isRecoveryFlow);
+      
+      if (isRecoveryFlow) {
+        console.log("Password recovery flow detected in AuthContext");
+      }
+    }
 
     // Listen for auth changes
     const {
@@ -118,7 +132,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       session, 
       loading, 
       signOut: handleSignOut,
-      checkSessionExpiry
+      checkSessionExpiry,
+      isPasswordRecovery
     }}>
       {children}
     </AuthContext.Provider>

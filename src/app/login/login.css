@@ -125,6 +125,11 @@
   text-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
 }
 
+.forgot-password-link {
+  @apply text-sm text-gray-400 hover:text-emerald-400 transition-all duration-200;
+  text-shadow: 0 0 10px rgba(6, 78, 59, 0.2);
+}
+
 /* These classes are no longer needed but keeping them for reference in case they're used elsewhere
 .logo-container {
   width: 100%;
