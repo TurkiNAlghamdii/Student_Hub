@@ -1,0 +1,85 @@
+/* Academic Calendar Page Styles */
+
+/* Import home page styles to ensure consistency */
+@import '../home.css';
+
+/* Override specific styles for the academic calendar page */
+.home-container {
+  @apply min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
+  background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.15) 1px, transparent 0);
+  background-size: 40px 40px;
+}
+
+.welcome-section {
+  background-color: rgba(16, 22, 36, 0.6);
+  border-radius: 1rem;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.1),
+    0 5px 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.welcome-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, transparent 50%, rgba(16, 185, 129, 0.05) 100%);
+  border-radius: inherit;
+  z-index: 0;
+}
+
+.welcome-section:hover {
+  box-shadow: 
+    0 15px 30px rgba(0, 0, 0, 0.15),
+    0 5px 15px rgba(0, 0, 0, 0.1);
+  border-color: rgba(16, 185, 129, 0.3);
+  transform: translateY(-2px);
+}
+
+.pdf-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: rgba(17, 24, 39, 0.8);
+  backdrop-filter: blur(10px);
+}
+
+.pdf-container iframe {
+  flex-grow: 1;
+  background-color: rgba(17, 24, 39, 0.4);
+  transition: all 0.3s ease-in-out;
+}
+
+/* Ensure PDF iframe fits correctly */
+@media (max-width: 1024px) {
+  .pdf-container iframe {
+    min-height: 500px;
+  }
+}
+
+/* Add subtle glow effect to the PDF container */
+.pdf-container:hover {
+  box-shadow: 0 6px 12px rgba(16, 185, 129, 0.1);
+}
+
+/* Add animation for loading spinner */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+} 

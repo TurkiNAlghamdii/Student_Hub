@@ -111,6 +111,12 @@ export default function Home() {
       path: "/profile"
     },
     {
+      title: "Academic Calendar",
+      description: "View and download academic calendars",
+      icon: <CalendarIcon className="shortcut-icon" />,
+      path: "/academic-calendar"
+    },
+    {
       title: "Events",
       description: "See upcoming events",
       icon: <CalendarIcon className="shortcut-icon" />,

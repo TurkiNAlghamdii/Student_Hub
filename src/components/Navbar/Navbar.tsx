@@ -298,6 +298,7 @@ export default function Navbar({ showBack = false }: NavbarProps) {
     { label: 'Faculty', href: '/faculty', icon: <BuildingOfficeIcon className="w-5 h-5" /> },
     { label: 'Courses', href: '/courses', icon: <AcademicCapIcon className="w-5 h-5" /> },
     { label: 'GPA Calculator', href: '/gpa-calculator', icon: <CalculatorIcon className="w-5 h-5" /> },
+    { label: 'Academic Calendar', href: '/academic-calendar', icon: <CalendarIcon className="w-5 h-5" /> },
     { label: 'Notifications', href: '/notifications', icon: <BellIcon className="w-5 h-5" /> },
     { label: 'Summer Training', href: '/summer-training', icon: <BriefcaseIcon className="w-5 h-5" /> },
     { label: 'Events', href: '/events', icon: <CalendarIcon className="w-5 h-5" /> },

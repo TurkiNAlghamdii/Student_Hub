@@ -10,6 +10,7 @@ import CourseManagement from '@/components/Admin/CourseManagement'
 import ContentModeration from '@/components/Admin/ContentModeration'
 import FileManagement from '@/components/Admin/FileManagement'
 import SupportRequests from '@/components/Admin/SupportRequests'
+import AcademicCalendarManagement from '@/components/Admin/AcademicCalendarManagement'
 import './admin-styles.css'
 import { 
   UserGroupIcon, 
@@ -17,7 +18,8 @@ import {
   ArrowLeftIcon,
   ShieldExclamationIcon,
   DocumentIcon,
-  QuestionMarkCircleIcon
+  QuestionMarkCircleIcon,
+  CalendarIcon
 } from '@heroicons/react/24/outline'
 
 export default function AdminPage() {
@@ -25,7 +27,7 @@ export default function AdminPage() {
   const { user, loading: authLoading } = useAuth()
   const [isAdmin, setIsAdmin] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [activeSection, setActiveSection] = useState<'dashboard' | 'users' | 'courses' | 'contentMod' | 'fileManagement' | 'supportRequests'>('dashboard')
+  const [activeSection, setActiveSection] = useState<'dashboard' | 'users' | 'courses' | 'contentMod' | 'fileManagement' | 'supportRequests' | 'academicCalendar'>('dashboard')
 
   // Check if user is admin
   useEffect(() => {
@@ -165,6 +167,21 @@ export default function AdminPage() {
                   </div>
                 </div>
 
+                <div 
+                  onClick={() => setActiveSection('academicCalendar')}
+                  className="admin-card"
+                >
+                  <div className="p-6 flex flex-col items-center text-center h-full">
+                    <div className="admin-card-icon bg-emerald-500/10 rounded-full p-4">
+                      <CalendarIcon className="h-10 w-10 text-emerald-400" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-white mb-2">Academic Calendar</h3>
+                    <p className="text-gray-400 text-sm">
+                      Manage the academic calendar PDF files for student reference
+                    </p>
+                  </div>
+                </div>
+
                 {/* Add more admin function cards here in the future */}
               </div>
             </div>
@@ -183,6 +200,7 @@ export default function AdminPage() {
               {activeSection === 'contentMod' && <ContentModeration />}
               {activeSection === 'fileManagement' && <FileManagement />}
               {activeSection === 'supportRequests' && <SupportRequests />}
+              {activeSection === 'academicCalendar' && <AcademicCalendarManagement />}
             </>
           )}
         </div>
