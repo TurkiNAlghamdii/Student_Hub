@@ -255,6 +255,9 @@ export default function Home() {
                 count={3}
               />
             </div>
+            <div className="col">
+              {/* Empty column to maintain grid layout */}
+            </div>
           </div>
         </div>
       </main>
