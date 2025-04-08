@@ -10,6 +10,7 @@ import RssSimple from '@/components/RssSimple/RssSimple'
 import CourseWidget from '@/components/CourseWidget/CourseWidget'
 import AIAssistantWidget from '@/components/AIAssistantWidget/AIAssistantWidget'
 import SalaryCounterWidget from '@/components/SalaryCounterWidget/SalaryCounterWidget'
+import StudentCountWidget from '@/components/StudentCountWidget/StudentCountWidget'
 import Footer from '@/components/Footer/Footer'
 import './home.css'
 import NotificationsBox from '@/components/NotificationsBox'
@@ -242,6 +243,11 @@ export default function Home() {
             <div className="col">
               <SalaryCounterWidget />
             </div>
+            <div className="col">
+              <StudentCountWidget />
+            </div>
+          </div>
+          <div className="row mt-6">
             <div className="col">
               <RssSimple 
                 url="https://rss.app/feeds/pcVOetZC9dx4E4dt.xml" 
