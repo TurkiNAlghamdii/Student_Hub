@@ -191,11 +191,10 @@ export default function ResetPassword() {
           setLoading(false);
           return;
         }
-        
         // Handle other specific error cases
-        if (error?.message?.includes('auth')) {
+        if (errorObj.message?.includes('auth')) {
           setError('Authentication error. Your reset session may have expired. Please request a new reset link.');
-        } else if (error?.message?.includes('weak')) {
+        } else if (errorObj.message?.includes('weak')) {
           setError('Password is too weak. Please choose a stronger password.');
         } else {
           // Rethrow any other errors to be caught by the outer catch block
