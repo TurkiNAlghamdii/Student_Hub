@@ -16,7 +16,9 @@ import {
   CalculatorIcon,
   BriefcaseIcon,
   BuildingOfficeIcon,
-  ShieldCheckIcon
+  ShieldCheckIcon,
+  ChevronDoubleLeftIcon,
+  ChevronDoubleRightIcon
 } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
@@ -58,9 +60,24 @@ export default function Navbar({ showBack = false }: NavbarProps) {
   const [isSearching, setIsSearching] = useState(false)
   const [studentProfile, setStudentProfile] = useState<StudentProfile | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
+  const [isCompactMode, setIsCompactMode] = useState(() => {
+    // Check localStorage for saved preference, default to false
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('sidebarCompact')
+      return saved === 'true'
+    }
+    return false
+  })
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const searchContainerRef = useRef<HTMLDivElement>(null)
   const sidebarRef = useRef<HTMLDivElement>(null)
+
+  // Save compact mode preference
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('sidebarCompact', isCompactMode.toString())
+    }
+  }, [isCompactMode])
 
   // Fetch student profile including avatar
   useEffect(() => {
@@ -273,6 +290,10 @@ export default function Navbar({ showBack = false }: NavbarProps) {
     }
   }
 
+  const toggleCompactMode = () => {
+    setIsCompactMode(prev => !prev)
+  }
+
   const openSidebar = () => {
     setIsSidebarOpen(true)
     setIsSidebarClosing(false)
@@ -291,20 +312,33 @@ export default function Navbar({ showBack = false }: NavbarProps) {
     setIsBackdropActive(false)
   }
 
-  // Menu items with staggered animation
+  // Group menu items by category
   const menuItems = [
-    { label: 'Home', href: '/', icon: <HomeIcon className="w-5 h-5" /> },
-    { label: 'Profile', href: '/profile', icon: <UserCircleIcon className="w-5 h-5" /> },
-    { label: 'Faculty', href: '/faculty', icon: <BuildingOfficeIcon className="w-5 h-5" /> },
-    { label: 'Courses', href: '/courses', icon: <AcademicCapIcon className="w-5 h-5" /> },
-    { label: 'GPA Calculator', href: '/gpa-calculator', icon: <CalculatorIcon className="w-5 h-5" /> },
-    { label: 'Academic Calendar', href: '/academic-calendar', icon: <CalendarIcon className="w-5 h-5" /> },
-    { label: 'Notifications', href: '/notifications', icon: <BellIcon className="w-5 h-5" /> },
-    { label: 'Summer Training', href: '/summer-training', icon: <BriefcaseIcon className="w-5 h-5" /> },
-    { label: 'Events', href: '/events', icon: <CalendarIcon className="w-5 h-5" /> },
-    { label: 'AI Chat', href: '/chat', icon: <ChatBubbleLeftRightIcon className="w-5 h-5" /> },
-    ...(isAdmin ? [{ label: 'Admin', href: '/admin', icon: <ShieldCheckIcon className="w-5 h-5" /> }] : []),
-    { label: 'Logout', action: handleLogout, icon: <ArrowRightOnRectangleIcon className="w-5 h-5" /> }
+    // Dashboard
+    { label: 'Home', href: '/', icon: <HomeIcon className="sidebar-icon" />, category: 'dashboard' },
+    
+    // Academic
+    { label: 'Courses', href: '/courses', icon: <AcademicCapIcon className="sidebar-icon" />, category: 'academic' },
+    { label: 'GPA Calculator', href: '/gpa-calculator', icon: <CalculatorIcon className="sidebar-icon" />, category: 'academic' },
+    { label: 'Academic Calendar', href: '/academic-calendar', icon: <CalendarIcon className="sidebar-icon" />, category: 'academic' },
+    
+    // Communication
+    { label: 'Notifications', href: '/notifications', icon: <BellIcon className="sidebar-icon" />, category: 'communication' },
+    { label: 'AI Chat', href: '/chat', icon: <ChatBubbleLeftRightIcon className="sidebar-icon" />, category: 'communication' },
+    
+    // Career
+    { label: 'Faculty', href: '/faculty', icon: <BuildingOfficeIcon className="sidebar-icon" />, category: 'career' },
+    { label: 'Summer Training', href: '/summer-training', icon: <BriefcaseIcon className="sidebar-icon" />, category: 'career' },
+    { label: 'Events', href: '/events', icon: <CalendarIcon className="sidebar-icon" />, category: 'career' },
+    
+    // Profile
+    { label: 'Profile', href: '/profile', icon: <UserCircleIcon className="sidebar-icon" />, category: 'profile' },
+    
+    // Admin (conditional)
+    ...(isAdmin ? [{ label: 'Admin', href: '/admin', icon: <ShieldCheckIcon className="sidebar-icon" />, category: 'admin' }] : []),
+    
+    // Logout
+    { label: 'Logout', action: handleLogout, icon: <ArrowRightOnRectangleIcon className="sidebar-icon" />, category: 'logout' }
   ]
 
   return (
@@ -432,52 +466,321 @@ export default function Navbar({ showBack = false }: NavbarProps) {
       {(isSidebarOpen || isSidebarClosing) && (
         <div 
           ref={sidebarRef}
-          className={`sidebar ${!isSidebarMounted ? 'sidebar-enter' : 'sidebar-enter-active'} ${isSidebarClosing ? 'sidebar-closing' : ''}`}
+          className={`sidebar ${!isSidebarMounted ? 'sidebar-enter' : 'sidebar-enter-active'} ${isSidebarClosing ? 'sidebar-closing' : ''} ${isCompactMode ? 'sidebar-compact' : ''}`}
         >
           <div className="sidebar-header">
             <h2 className="sidebar-title">Menu</h2>
-            <button 
-              onClick={closeSidebar}
-              className="sidebar-close-button"
-              aria-label="Close menu"
-            >
-              <XMarkIcon className="h-6 w-6" />
-            </button>
+            <div className="sidebar-actions">
+              <button 
+                onClick={toggleCompactMode}
+                className="sidebar-compact-toggle"
+                aria-label={isCompactMode ? "Expand sidebar" : "Collapse sidebar"}
+                title={isCompactMode ? "Expand sidebar" : "Collapse sidebar"}
+              >
+                {isCompactMode ? (
+                  <ChevronDoubleRightIcon className="h-5 w-5" />
+                ) : (
+                  <ChevronDoubleLeftIcon className="h-5 w-5" />
+                )}
+              </button>
+              <button 
+                onClick={closeSidebar}
+                className="sidebar-close-button"
+                aria-label="Close menu"
+              >
+                <XMarkIcon className="h-6 w-6" />
+              </button>
+            </div>
           </div>
           <div 
             className="sidebar-content"
             style={{ overscrollBehavior: 'contain' }}
           >
-            <ul className="sidebar-menu">
-              {menuItems.map((item) => (
-                <li 
-                  key={item.label} 
-                  className={`menu-item ${isSidebarMounted && !isSidebarClosing ? 'menu-item-visible' : ''}`}
-                >
-                  {item.href ? (
-                    <Link 
-                      href={item.href} 
-                      onClick={closeSidebar}
-                      className="flex items-center gap-3 w-full p-3 rounded-lg hover:bg-emerald-500/10 hover:border-emerald-500/20 transition-all duration-200"
+            {/* Dashboard */}
+            <div className="menu-category">
+              <div className="category-divider">
+                <span className={`category-label ${isCompactMode ? 'category-label-hidden' : ''}`}>Dashboard</span>
+              </div>
+              <ul className="sidebar-menu">
+                {menuItems
+                  .filter(item => item.category === 'dashboard')
+                  .map((item) => (
+                    <li 
+                      key={item.label} 
+                      className={`menu-item ${isSidebarMounted && !isSidebarClosing ? 'menu-item-visible' : ''}`}
                     >
-                      {item.icon}
-                      <span>{item.label}</span>
-                    </Link>
-                  ) : (
-                    <button 
-                      onClick={() => { 
-                        closeSidebar(); 
-                        if (item.action) item.action(); 
-                      }}
-                      className="flex items-center gap-3 w-full p-3 rounded-lg hover:bg-emerald-500/10 hover:border-emerald-500/20 transition-all duration-200"
+                      {item.href ? (
+                        <Link 
+                          href={item.href} 
+                          onClick={closeSidebar}
+                          className={`menu-link ${isCompactMode ? 'menu-link-compact' : ''}`}
+                          title={isCompactMode ? item.label : undefined}
+                        >
+                          {item.icon}
+                          <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
+                        </Link>
+                      ) : (
+                        <button 
+                          onClick={() => { 
+                            closeSidebar(); 
+                            if (item.action) item.action(); 
+                          }}
+                          className={`menu-link ${isCompactMode ? 'menu-link-compact' : ''}`}
+                          title={isCompactMode ? item.label : undefined}
+                        >
+                          {item.icon}
+                          <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
+                        </button>
+                      )}
+                    </li>
+                  ))}
+              </ul>
+            </div>
+
+            {/* Academic */}
+            <div className="menu-category">
+              <div className="category-divider">
+                <span className={`category-label ${isCompactMode ? 'category-label-hidden' : ''}`}>Academic</span>
+              </div>
+              <ul className="sidebar-menu">
+                {menuItems
+                  .filter(item => item.category === 'academic')
+                  .map((item) => (
+                    <li 
+                      key={item.label} 
+                      className={`menu-item ${isSidebarMounted && !isSidebarClosing ? 'menu-item-visible' : ''}`}
                     >
-                      {item.icon}
-                      <span>{item.label}</span>
-                    </button>
-                  )}
-                </li>
-              ))}
-            </ul>
+                      {item.href ? (
+                        <Link 
+                          href={item.href} 
+                          onClick={closeSidebar}
+                          className={`menu-link ${isCompactMode ? 'menu-link-compact' : ''}`}
+                          title={isCompactMode ? item.label : undefined}
+                        >
+                          {item.icon}
+                          <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
+                        </Link>
+                      ) : (
+                        <button 
+                          onClick={() => { 
+                            closeSidebar(); 
+                            if (item.action) item.action(); 
+                          }}
+                          className={`menu-link ${isCompactMode ? 'menu-link-compact' : ''}`}
+                          title={isCompactMode ? item.label : undefined}
+                        >
+                          {item.icon}
+                          <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
+                        </button>
+                      )}
+                    </li>
+                  ))}
+              </ul>
+            </div>
+
+            {/* Communication */}
+            <div className="menu-category">
+              <div className="category-divider">
+                <span className={`category-label ${isCompactMode ? 'category-label-hidden' : ''}`}>Communication</span>
+              </div>
+              <ul className="sidebar-menu">
+                {menuItems
+                  .filter(item => item.category === 'communication')
+                  .map((item) => (
+                    <li 
+                      key={item.label} 
+                      className={`menu-item ${isSidebarMounted && !isSidebarClosing ? 'menu-item-visible' : ''}`}
+                    >
+                      {item.href ? (
+                        <Link 
+                          href={item.href} 
+                          onClick={closeSidebar}
+                          className={`menu-link ${isCompactMode ? 'menu-link-compact' : ''}`}
+                          title={isCompactMode ? item.label : undefined}
+                        >
+                          {item.icon}
+                          <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
+                        </Link>
+                      ) : (
+                        <button 
+                          onClick={() => { 
+                            closeSidebar(); 
+                            if (item.action) item.action(); 
+                          }}
+                          className={`menu-link ${isCompactMode ? 'menu-link-compact' : ''}`}
+                          title={isCompactMode ? item.label : undefined}
+                        >
+                          {item.icon}
+                          <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
+                        </button>
+                      )}
+                    </li>
+                  ))}
+              </ul>
+            </div>
+
+            {/* Career */}
+            <div className="menu-category">
+              <div className="category-divider">
+                <span className={`category-label ${isCompactMode ? 'category-label-hidden' : ''}`}>Career</span>
+              </div>
+              <ul className="sidebar-menu">
+                {menuItems
+                  .filter(item => item.category === 'career')
+                  .map((item) => (
+                    <li 
+                      key={item.label} 
+                      className={`menu-item ${isSidebarMounted && !isSidebarClosing ? 'menu-item-visible' : ''}`}
+                    >
+                      {item.href ? (
+                        <Link 
+                          href={item.href} 
+                          onClick={closeSidebar}
+                          className={`menu-link ${isCompactMode ? 'menu-link-compact' : ''}`}
+                          title={isCompactMode ? item.label : undefined}
+                        >
+                          {item.icon}
+                          <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
+                        </Link>
+                      ) : (
+                        <button 
+                          onClick={() => { 
+                            closeSidebar(); 
+                            if (item.action) item.action(); 
+                          }}
+                          className={`menu-link ${isCompactMode ? 'menu-link-compact' : ''}`}
+                          title={isCompactMode ? item.label : undefined}
+                        >
+                          {item.icon}
+                          <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
+                        </button>
+                      )}
+                    </li>
+                  ))}
+              </ul>
+            </div>
+
+            {/* Profile */}
+            <div className="menu-category">
+              <div className="category-divider">
+                <span className={`category-label ${isCompactMode ? 'category-label-hidden' : ''}`}>Profile</span>
+              </div>
+              <ul className="sidebar-menu">
+                {menuItems
+                  .filter(item => item.category === 'profile')
+                  .map((item) => (
+                    <li 
+                      key={item.label} 
+                      className={`menu-item ${isSidebarMounted && !isSidebarClosing ? 'menu-item-visible' : ''}`}
+                    >
+                      {item.href ? (
+                        <Link 
+                          href={item.href} 
+                          onClick={closeSidebar}
+                          className={`menu-link ${isCompactMode ? 'menu-link-compact' : ''}`}
+                          title={isCompactMode ? item.label : undefined}
+                        >
+                          {item.icon}
+                          <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
+                        </Link>
+                      ) : (
+                        <button 
+                          onClick={() => { 
+                            closeSidebar(); 
+                            if (item.action) item.action(); 
+                          }}
+                          className={`menu-link ${isCompactMode ? 'menu-link-compact' : ''}`}
+                          title={isCompactMode ? item.label : undefined}
+                        >
+                          {item.icon}
+                          <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
+                        </button>
+                      )}
+                    </li>
+                  ))}
+              </ul>
+            </div>
+
+            {/* Admin (conditional) */}
+            {isAdmin && (
+              <div className="menu-category">
+                <div className="category-divider">
+                  <span className={`category-label ${isCompactMode ? 'category-label-hidden' : ''}`}>Admin</span>
+                </div>
+                <ul className="sidebar-menu">
+                  {menuItems
+                    .filter(item => item.category === 'admin')
+                    .map((item) => (
+                      <li 
+                        key={item.label} 
+                        className={`menu-item ${isSidebarMounted && !isSidebarClosing ? 'menu-item-visible' : ''}`}
+                      >
+                        {item.href ? (
+                          <Link 
+                            href={item.href} 
+                            onClick={closeSidebar}
+                            className={`menu-link ${isCompactMode ? 'menu-link-compact' : ''}`}
+                            title={isCompactMode ? item.label : undefined}
+                          >
+                            {item.icon}
+                            <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
+                          </Link>
+                        ) : (
+                          <button 
+                            onClick={() => { 
+                              closeSidebar(); 
+                              if (item.action) item.action(); 
+                            }}
+                            className={`menu-link ${isCompactMode ? 'menu-link-compact' : ''}`}
+                            title={isCompactMode ? item.label : undefined}
+                          >
+                            {item.icon}
+                            <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
+                          </button>
+                        )}
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Logout */}
+            <div className="menu-category mt-auto">
+              <ul className="sidebar-menu">
+                {menuItems
+                  .filter(item => item.category === 'logout')
+                  .map((item) => (
+                    <li 
+                      key={item.label} 
+                      className={`menu-item ${isSidebarMounted && !isSidebarClosing ? 'menu-item-visible' : ''}`}
+                    >
+                      {item.href ? (
+                        <Link 
+                          href={item.href} 
+                          onClick={closeSidebar}
+                          className={`menu-link menu-link-logout ${isCompactMode ? 'menu-link-compact' : ''}`}
+                          title={isCompactMode ? item.label : undefined}
+                        >
+                          {item.icon}
+                          <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
+                        </Link>
+                      ) : (
+                        <button 
+                          onClick={() => { 
+                            closeSidebar(); 
+                            if (item.action) item.action(); 
+                          }}
+                          className={`menu-link menu-link-logout ${isCompactMode ? 'menu-link-compact' : ''}`}
+                          title={isCompactMode ? item.label : undefined}
+                        >
+                          {item.icon}
+                          <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
+                        </button>
+                      )}
+                    </li>
+                  ))}
+              </ul>
+            </div>
           </div>
         </div>
       )}
