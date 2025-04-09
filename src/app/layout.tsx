@@ -5,6 +5,7 @@ import "./chat-styles.css";
 import { AuthProvider } from '@/contexts/AuthContext'
 import { NotificationsProvider } from '@/contexts/NotificationsContext'
 import SessionChecker from '@/components/SessionChecker'
+import { Toaster } from 'react-hot-toast'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,7 +19,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Student Hub",
-  description: "Student Hub",
+  description: "Student Hub - Your all-in-one academic platform",
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({
@@ -40,6 +44,7 @@ export default function RootLayout({
             <div id="modal-root"></div>
           </NotificationsProvider>
         </AuthProvider>
+        <Toaster position="top-right" />
       </body>
     </html>
   );
