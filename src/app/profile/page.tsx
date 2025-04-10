@@ -117,15 +117,12 @@ interface StudentProfile {
                   
                 if (error) {
                   console.error('Error updating avatar in database:', error)
-                } else {
-                  console.log('Avatar URL saved to database')
                 }
               } catch (dbError) {
                 console.error('Database error:', dbError)
               }
             }
             
-            console.log('Avatar saved to localStorage')
             setUpdateMessage('Avatar updated successfully!')
             
             setTimeout(() => {
@@ -157,8 +154,6 @@ interface StudentProfile {
       const fetchStudentProfile = async () => {
         if (!user) return
   
-        console.log('Fetching profile for user:', user.id)
-        
         // Fetch the student profile using the id from auth
         const { data, error } = await supabase
           .from('students')
@@ -171,8 +166,6 @@ interface StudentProfile {
         }
   
         if (data) {
-          console.log('Student profile found:', data)
-          
           // Check if we have an avatar in localStorage (it might be more recent)
           const savedAvatar = localStorage.getItem(`avatar_${user.id}`)
           
@@ -205,10 +198,16 @@ interface StudentProfile {
       return <LoadingSpinner />
     }
     if (!user) return null
+    
+    // Display error message if there is one
+    if (error && !updateMessage) {
+      setUpdateMessage(`Error: ${error}`)
+    }
+    
     return (
       <div className="profile-container">
         <Navbar />
-        <main className="flex justify-center items-center p-6">
+        <main className="flex justify-center p-6 pt-32">
           <div className="max-w-2xl w-full">
             <div className="profile-card">
               <h2 className="profile-title">My Information</h2>
@@ -230,8 +229,8 @@ interface StudentProfile {
                           <Image 
                             src={studentProfile.avatar_url} 
                             alt="Profile" 
-                            width={96} 
-                            height={96} 
+                            width={128} 
+                            height={128} 
                             className="avatar-image"
                           />
                           <div className="avatar-overlay">
@@ -269,14 +268,16 @@ interface StudentProfile {
                   </div>
   
                   <div className="form-group">
-                    <label htmlFor="student_id">Student ID</label>
+                    <label htmlFor="student_id">Student ID <span className="field-note">(Cannot be changed)</span></label>
                     <input
                       type="text"
                       id="student_id"
                       name="student_id"
                       value={formData.student_id || ''}
-                      onChange={handleChange}
-                      required
+                      readOnly
+                      disabled
+                      className="disabled-input"
+                      title="Student ID cannot be changed after registration"
                     />
                   </div>
   
@@ -308,8 +309,8 @@ interface StudentProfile {
                         <Image 
                           src={studentProfile.avatar_url} 
                           alt="Profile" 
-                          width={96} 
-                          height={96} 
+                          width={128} 
+                          height={128} 
                           className="avatar-image"
                         />
                       </div>
@@ -348,9 +349,9 @@ interface StudentProfile {
                             <p>{studentProfile.faculty}</p>
                           </div>
   
-                          <div className="info-item email">
+                          <div className="info-item">
                             <label>Email</label>
-                            <p>{user.email}</p>
+                            <p className="email-display">{user.email}</p>
                           </div>
                         </>
                       )}

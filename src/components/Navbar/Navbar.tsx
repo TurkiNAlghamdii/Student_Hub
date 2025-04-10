@@ -341,6 +341,28 @@ export default function Navbar({ showBack = false }: NavbarProps) {
     { label: 'Logout', action: handleLogout, icon: <ArrowRightOnRectangleIcon className="sidebar-icon" />, category: 'logout' }
   ]
 
+  // Add a useEffect to close sidebar when links are clicked
+  useEffect(() => {
+    if (!isSidebarOpen) return;
+
+    const handleLinkClicks = (e: MouseEvent) => {
+      // Find if the click is on a link inside the sidebar
+      let target = e.target as Node;
+      while (target && target !== document) {
+        if ((target as HTMLElement).tagName === 'A' && sidebarRef.current?.contains(target as HTMLElement)) {
+          closeSidebar();
+          break;
+        }
+        target = (target as HTMLElement).parentNode as Node;
+      }
+    };
+
+    document.addEventListener('click', handleLinkClicks);
+    return () => {
+      document.removeEventListener('click', handleLinkClicks);
+    };
+  }, [isSidebarOpen, closeSidebar]);
+
   return (
     <nav className="navbar">
       <div className="nav-content">
@@ -496,6 +518,73 @@ export default function Navbar({ showBack = false }: NavbarProps) {
             className="sidebar-content"
             style={{ overscrollBehavior: 'contain' }}
           >
+            {/* Mobile search bar - only visible on mobile devices */}
+            <div className="mobile-search-container" onClick={(e) => e.stopPropagation()}>
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleSearch(e);
+              }} className="mobile-search-form">
+                <div className="mobile-search-input-container">
+                  <input
+                    type="text"
+                    placeholder="Search courses..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="mobile-search-input"
+                    onFocus={(e) => {
+                      e.stopPropagation();
+                      if (searchResults.length > 0) {
+                        setShowResults(true)
+                      }
+                    }}
+                  />
+                  {isSearching ? (
+                    <div className="search-loading"></div>
+                  ) : (
+                    <button 
+                      type="submit" 
+                      className="mobile-search-button"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <MagnifyingGlassIcon className="h-5 w-5" />
+                    </button>
+                  )}
+                </div>
+              </form>
+              
+              {/* Mobile Search Results */}
+              {showResults && (
+                <div className="mobile-search-results" onClick={(e) => e.stopPropagation()}>
+                  {searchResults.length === 0 ? (
+                    <div className="mobile-no-results">No courses found</div>
+                  ) : (
+                    <ul className="mobile-results-list">
+                      {searchResults.map((result) => (
+                        <li key={result.course_code} className="mobile-result-item">
+                          <div
+                            className="mobile-result-link w-full text-left block"
+                            style={{ display: 'flex', flexDirection: 'column', cursor: 'pointer' }}
+                            onClick={() => {
+                              // Close sidebar and immediately navigate
+                              closeSidebar();
+                              
+                              // Most direct way to navigate
+                              window.location.replace(`/courses/${result.course_code}`);
+                            }}
+                          >
+                            <span className="mobile-result-code">{result.course_code}</span>
+                            <span className="mobile-result-name">{result.course_name}</span>
+                            <span className="mobile-result-faculty">{result.faculty.name}</span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
+            </div>
+
             {/* Dashboard */}
             <div className="menu-category">
               <div className="category-divider">
@@ -510,23 +599,26 @@ export default function Navbar({ showBack = false }: NavbarProps) {
                       className={`menu-item ${isSidebarMounted && !isSidebarClosing ? 'menu-item-visible' : ''}`}
                     >
                       {item.href ? (
-                        <Link 
-                          href={item.href} 
-                          onClick={closeSidebar}
-                          className={`menu-link ${isCompactMode ? 'menu-link-compact' : ''}`}
+                        <a 
+                          href={item.href}
+                          className={`menu-link w-full text-left ${isCompactMode ? 'menu-link-compact' : ''}`}
                           title={isCompactMode ? item.label : undefined}
+                          style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+                          onClick={() => closeSidebar()}
                         >
                           {item.icon}
                           <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
-                        </Link>
+                        </a>
                       ) : (
-                        <button 
-                          onClick={() => { 
+                        <button
+                          onClick={(e) => { 
+                            e.stopPropagation(); // Prevent event bubbling
                             closeSidebar(); 
                             if (item.action) item.action(); 
                           }}
                           className={`menu-link ${isCompactMode ? 'menu-link-compact' : ''}`}
                           title={isCompactMode ? item.label : undefined}
+                          style={{ cursor: 'pointer' }}
                         >
                           {item.icon}
                           <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
@@ -551,23 +643,26 @@ export default function Navbar({ showBack = false }: NavbarProps) {
                       className={`menu-item ${isSidebarMounted && !isSidebarClosing ? 'menu-item-visible' : ''}`}
                     >
                       {item.href ? (
-                        <Link 
-                          href={item.href} 
-                          onClick={closeSidebar}
-                          className={`menu-link ${isCompactMode ? 'menu-link-compact' : ''}`}
+                        <a 
+                          href={item.href}
+                          className={`menu-link w-full text-left ${isCompactMode ? 'menu-link-compact' : ''}`}
                           title={isCompactMode ? item.label : undefined}
+                          style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+                          onClick={() => closeSidebar()}
                         >
                           {item.icon}
                           <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
-                        </Link>
+                        </a>
                       ) : (
-                        <button 
-                          onClick={() => { 
+                        <button
+                          onClick={(e) => { 
+                            e.stopPropagation(); // Prevent event bubbling
                             closeSidebar(); 
                             if (item.action) item.action(); 
                           }}
                           className={`menu-link ${isCompactMode ? 'menu-link-compact' : ''}`}
                           title={isCompactMode ? item.label : undefined}
+                          style={{ cursor: 'pointer' }}
                         >
                           {item.icon}
                           <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
@@ -592,23 +687,26 @@ export default function Navbar({ showBack = false }: NavbarProps) {
                       className={`menu-item ${isSidebarMounted && !isSidebarClosing ? 'menu-item-visible' : ''}`}
                     >
                       {item.href ? (
-                        <Link 
-                          href={item.href} 
-                          onClick={closeSidebar}
-                          className={`menu-link ${isCompactMode ? 'menu-link-compact' : ''}`}
+                        <a 
+                          href={item.href}
+                          className={`menu-link w-full text-left ${isCompactMode ? 'menu-link-compact' : ''}`}
                           title={isCompactMode ? item.label : undefined}
+                          style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+                          onClick={() => closeSidebar()}
                         >
                           {item.icon}
                           <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
-                        </Link>
+                        </a>
                       ) : (
-                        <button 
-                          onClick={() => { 
+                        <button
+                          onClick={(e) => { 
+                            e.stopPropagation(); // Prevent event bubbling
                             closeSidebar(); 
                             if (item.action) item.action(); 
                           }}
                           className={`menu-link ${isCompactMode ? 'menu-link-compact' : ''}`}
                           title={isCompactMode ? item.label : undefined}
+                          style={{ cursor: 'pointer' }}
                         >
                           {item.icon}
                           <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
@@ -633,23 +731,26 @@ export default function Navbar({ showBack = false }: NavbarProps) {
                       className={`menu-item ${isSidebarMounted && !isSidebarClosing ? 'menu-item-visible' : ''}`}
                     >
                       {item.href ? (
-                        <Link 
-                          href={item.href} 
-                          onClick={closeSidebar}
-                          className={`menu-link ${isCompactMode ? 'menu-link-compact' : ''}`}
+                        <a 
+                          href={item.href}
+                          className={`menu-link w-full text-left ${isCompactMode ? 'menu-link-compact' : ''}`}
                           title={isCompactMode ? item.label : undefined}
+                          style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+                          onClick={() => closeSidebar()}
                         >
                           {item.icon}
                           <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
-                        </Link>
+                        </a>
                       ) : (
-                        <button 
-                          onClick={() => { 
+                        <button
+                          onClick={(e) => { 
+                            e.stopPropagation(); // Prevent event bubbling
                             closeSidebar(); 
                             if (item.action) item.action(); 
                           }}
                           className={`menu-link ${isCompactMode ? 'menu-link-compact' : ''}`}
                           title={isCompactMode ? item.label : undefined}
+                          style={{ cursor: 'pointer' }}
                         >
                           {item.icon}
                           <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
@@ -674,23 +775,26 @@ export default function Navbar({ showBack = false }: NavbarProps) {
                       className={`menu-item ${isSidebarMounted && !isSidebarClosing ? 'menu-item-visible' : ''}`}
                     >
                       {item.href ? (
-                        <Link 
-                          href={item.href} 
-                          onClick={closeSidebar}
-                          className={`menu-link ${isCompactMode ? 'menu-link-compact' : ''}`}
+                        <a 
+                          href={item.href}
+                          className={`menu-link w-full text-left ${isCompactMode ? 'menu-link-compact' : ''}`}
                           title={isCompactMode ? item.label : undefined}
+                          style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+                          onClick={() => closeSidebar()}
                         >
                           {item.icon}
                           <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
-                        </Link>
+                        </a>
                       ) : (
-                        <button 
-                          onClick={() => { 
+                        <button
+                          onClick={(e) => { 
+                            e.stopPropagation(); // Prevent event bubbling
                             closeSidebar(); 
                             if (item.action) item.action(); 
                           }}
                           className={`menu-link ${isCompactMode ? 'menu-link-compact' : ''}`}
                           title={isCompactMode ? item.label : undefined}
+                          style={{ cursor: 'pointer' }}
                         >
                           {item.icon}
                           <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
@@ -716,23 +820,26 @@ export default function Navbar({ showBack = false }: NavbarProps) {
                         className={`menu-item ${isSidebarMounted && !isSidebarClosing ? 'menu-item-visible' : ''}`}
                       >
                         {item.href ? (
-                          <Link 
-                            href={item.href} 
-                            onClick={closeSidebar}
-                            className={`menu-link ${isCompactMode ? 'menu-link-compact' : ''}`}
+                          <a 
+                            href={item.href}
+                            className={`menu-link w-full text-left ${isCompactMode ? 'menu-link-compact' : ''}`}
                             title={isCompactMode ? item.label : undefined}
+                            style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+                            onClick={() => closeSidebar()}
                           >
                             {item.icon}
                             <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
-                          </Link>
+                          </a>
                         ) : (
-                          <button 
-                            onClick={() => { 
+                          <button
+                            onClick={(e) => { 
+                              e.stopPropagation(); // Prevent event bubbling
                               closeSidebar(); 
                               if (item.action) item.action(); 
                             }}
                             className={`menu-link ${isCompactMode ? 'menu-link-compact' : ''}`}
                             title={isCompactMode ? item.label : undefined}
+                            style={{ cursor: 'pointer' }}
                           >
                             {item.icon}
                             <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
@@ -755,23 +862,26 @@ export default function Navbar({ showBack = false }: NavbarProps) {
                       className={`menu-item ${isSidebarMounted && !isSidebarClosing ? 'menu-item-visible' : ''}`}
                     >
                       {item.href ? (
-                        <Link 
-                          href={item.href} 
-                          onClick={closeSidebar}
-                          className={`menu-link menu-link-logout ${isCompactMode ? 'menu-link-compact' : ''}`}
+                        <a 
+                          href={item.href}
+                          className={`menu-link menu-link-logout w-full text-left ${isCompactMode ? 'menu-link-compact' : ''}`}
                           title={isCompactMode ? item.label : undefined}
+                          style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+                          onClick={() => closeSidebar()}
                         >
                           {item.icon}
                           <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
-                        </Link>
+                        </a>
                       ) : (
-                        <button 
-                          onClick={() => { 
+                        <button
+                          onClick={(e) => { 
+                            e.stopPropagation(); // Prevent event bubbling
                             closeSidebar(); 
                             if (item.action) item.action(); 
                           }}
                           className={`menu-link menu-link-logout ${isCompactMode ? 'menu-link-compact' : ''}`}
                           title={isCompactMode ? item.label : undefined}
+                          style={{ cursor: 'pointer' }}
                         >
                           {item.icon}
                           <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>

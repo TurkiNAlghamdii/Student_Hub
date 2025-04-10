@@ -33,6 +33,9 @@
     0 10px 40px rgba(0, 0, 0, 0.25),
     0 0 60px rgba(6, 78, 59, 0.1);
   transition: all 0.4s ease;
+  margin-top: 1rem;
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
 }
 
 .profile-card:hover {
@@ -53,16 +56,17 @@
 
 .profile-content {
   @apply flex flex-col items-center;
+  padding: 0.75rem 0;
 }
 
 .profile-avatar {
-  @apply mb-6 flex justify-center;
+  @apply mb-8 flex justify-center;
 }
 
 .avatar-container {
   position: relative;
-  width: 6rem;
-  height: 6rem;
+  width: 8rem;
+  height: 8rem;
   border-radius: 9999px;
   cursor: pointer;
   overflow: hidden;
@@ -114,8 +118,8 @@
 }
 
 .uploading-indicator {
-  width: 96px;
-  height: 96px;
+  width: 128px;
+  height: 128px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -134,7 +138,7 @@
 }
 
 .avatar-circle {
-  @apply w-24 h-24 rounded-full flex items-center justify-center text-3xl font-bold text-white;
+  @apply w-32 h-32 rounded-full flex items-center justify-center text-4xl font-bold text-white;
   background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
   border: 3px solid rgba(16, 185, 129, 0.2);
   box-shadow: 0 0 20px rgba(6, 78, 59, 0.2);
@@ -147,50 +151,54 @@
 }
 
 .profile-details {
-  @apply w-full mt-4;
+  @apply w-full mt-6;
 }
 
 .info-grid {
-  @apply grid gap-6 md:grid-cols-2 w-full;
+  @apply grid gap-8 md:grid-cols-2 w-full;
 }
 
 .info-item {
-  @apply space-y-2;
+  @apply space-y-3;
 }
 
 .info-item label {
   @apply text-sm font-medium text-emerald-400;
   text-shadow: 0 0 20px rgba(6, 78, 59, 0.2);
+  margin-bottom: 0.25rem;
+  display: block;
 }
+
 .info-item p {
-  @apply text-white text-lg p-3 rounded-xl bg-gray-800/50 border border-gray-700/50;
+  @apply text-white text-lg p-4 rounded-xl bg-gray-800/50 border border-gray-700/50;
   overflow-wrap: break-word;
   word-break: break-word;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.info-item.email p {
-  font-size: 0.95rem;
-  word-break: break-all;
-  max-width: 100%;
-  white-space: normal;
-  overflow-wrap: break-word;
-  @apply text-white p-3 rounded-xl bg-gray-800/50 border border-gray-700/50;
+
+.email-display {
+  font-size: 0.95rem !important;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 1.4;
 }
 
 /* Add responsive adjustments for small screens */
 @media (max-width: 640px) {
-  .info-item.email p {
-    font-size: 0.85rem;
+  .email-display {
+    font-size: 0.85rem !important;
   }
   
   .info-grid {
     @apply grid-cols-1;
   }
+  
+  .profile-card {
+    padding: 1.5rem;
+  }
 }
+
 .profile-header {
   @apply flex justify-between items-center mb-6;
 }
@@ -226,7 +234,15 @@
 
 .form-group input,
 .form-group select {
-  @apply w-full p-3 bg-gray-800/50 border border-gray-700/50 rounded-xl text-white;
+  @apply w-full p-4 bg-gray-800/50 border border-gray-700/50 rounded-xl text-white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.form-group input[type="email"],
+.form-group input.email-input {
+  font-size: 0.95rem;
 }
 
 .update-message {
@@ -252,4 +268,20 @@
 
 .back-button:active {
   @apply transform scale-[0.98];
+}
+
+.disabled-input {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background-color: rgba(55, 65, 81, 0.5) !important;
+  border-color: rgba(75, 85, 99, 0.4) !important;
+}
+
+.field-note {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  font-weight: normal;
+  font-style: italic;
+  margin-left: 0.5rem;
+  color: #9ca3af;
 }

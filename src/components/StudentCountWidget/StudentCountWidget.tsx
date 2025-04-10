@@ -1,32 +1,34 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
-import { UsersIcon, ArrowTrendingUpIcon, AcademicCapIcon } from '@heroicons/react/24/outline'
+import { UsersIcon, ArrowTrendingUpIcon } from '@heroicons/react/24/outline'
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner'
-import { motion } from 'framer-motion'
+import './StudentCountWidget.css'
 
 export default function StudentCountWidget() {
   const [studentCount, setStudentCount] = useState<number>(0)
+  const [displayCount, setDisplayCount] = useState<number>(0)
+  const [previousCount, setPreviousCount] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [growthRate, setGrowthRate] = useState<number>(0)
+  const countRef = useRef<number>(0)
+  const animationRef = useRef<number | null>(null)
 
   useEffect(() => {
     const fetchStudentCount = async () => {
       try {
+        // Fetch from database
         const { count, error } = await supabase
           .from('students')
           .select('*', { count: 'exact', head: true })
 
         if (error) throw error
-
-        setStudentCount(count || 0)
         
-        // Simulate growth rate (in a real app, you'd calculate this from historical data)
-        setGrowthRate(Math.floor(Math.random() * 15) + 5) // Random growth between 5-20%
-      } catch (err) {
-        console.error('Error fetching student count:', err)
+        // Store previous count before updating
+        setPreviousCount(studentCount)
+        setStudentCount(count || 0)
+      } catch (err: any) {
         setError('Failed to fetch student count')
       } finally {
         setLoading(false)
@@ -34,12 +36,69 @@ export default function StudentCountWidget() {
     }
 
     fetchStudentCount()
-  }, [])
+    
+    // Set up interval to refresh data every 5 minutes
+    const intervalId = setInterval(fetchStudentCount, 5 * 60 * 1000)
+    
+    // Clean up interval on component unmount
+    return () => clearInterval(intervalId)
+  }, [studentCount])
 
+  // Animate the counter when studentCount changes
+  useEffect(() => {
+    if (loading) return
+
+    // Cancel any ongoing animation
+    if (animationRef.current !== null) {
+      cancelAnimationFrame(animationRef.current)
+    }
+
+    const startValue = countRef.current
+    const endValue = studentCount
+    const duration = 1500  // ms
+    const startTime = performance.now()
+    
+    const animateCount = (timestamp: number) => {
+      const elapsed = timestamp - startTime
+      const progress = Math.min(elapsed / duration, 1)
+      
+      // Easing function for smoother animation
+      const easeOutQuart = (x: number): number => 1 - Math.pow(1 - x, 4)
+      const easedProgress = easeOutQuart(progress)
+      
+      const currentCount = Math.floor(startValue + (endValue - startValue) * easedProgress)
+      countRef.current = currentCount
+      setDisplayCount(currentCount)
+      
+      if (progress < 1) {
+        animationRef.current = requestAnimationFrame(animateCount)
+      } else {
+        animationRef.current = null
+      }
+    }
+    
+    animationRef.current = requestAnimationFrame(animateCount)
+    
+    return () => {
+      if (animationRef.current !== null) {
+        cancelAnimationFrame(animationRef.current)
+      }
+    }
+  }, [studentCount, loading])
+  
+  // Format the student count with a thousands separator
+  const formattedCount = displayCount.toLocaleString()
+  
+  // Calculate growth percentage if we have previous data
+  const growthPercent = previousCount ? ((studentCount - previousCount) / previousCount * 100).toFixed(1) : null
+  
+  // Calculate monthly growth rate (for demo purposes)
+  const monthlyGrowthRate = 5.8;
+  
   if (loading) {
     return (
-      <div className="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-800/50 relative overflow-hidden h-full">
-        <div className="flex items-center justify-center h-32">
+      <div className="student-count-widget">
+        <div className="flex items-center justify-center h-full">
           <LoadingSpinner />
         </div>
       </div>
@@ -48,63 +107,57 @@ export default function StudentCountWidget() {
 
   if (error) {
     return (
-      <div className="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-800/50 relative overflow-hidden h-full">
-        <div className="flex items-center justify-center h-32 text-red-400">
+      <div className="student-count-widget">
+        <div className="flex items-center justify-center h-full text-red-400">
           {error}
         </div>
       </div>
     )
   }
 
+  // Only show growth if there's a non-zero change
+  const showGrowth = growthPercent && parseFloat(growthPercent) !== 0;
+
   return (
-    <motion.div 
-      className="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-800/50 relative overflow-hidden h-full hover:border-emerald-500/20 transition-all duration-300"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-50"></div>
+    <div className="student-count-widget">
+      <div className="widget-header">
+        <div className="widget-title-container">
+          <UsersIcon className="widget-icon" />
+          <h3 className="widget-title">Registered Students</h3>
+        </div>
+        <div className="active-status-indicator">
+          <span className="pulse-dot"></span>
+          <span>Live</span>
+        </div>
+      </div>
       
-      <div className="relative z-10 flex flex-col h-full">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center">
-            <div className="bg-emerald-500/10 rounded-full p-2 mr-2">
-              <UsersIcon className="w-5 h-5 text-emerald-400" />
-            </div>
-            <h3 className="text-lg font-medium text-white">Student Population</h3>
+      <div className="widget-content">
+        <div className="counts-row">
+          <div className="count-section">
+            <div className="count-number">{formattedCount}</div>
+            <div className="count-title">Total</div>
           </div>
-          <div className="flex items-center bg-emerald-500/10 px-2 py-1 rounded-full">
-            <ArrowTrendingUpIcon className="w-4 h-4 text-emerald-400 mr-1" />
-            <span className="text-xs text-emerald-400">+{growthRate}%</span>
+          <div className="count-section">
+            <div className="count-number">
+              <ArrowTrendingUpIcon className="trend-icon" />
+              {monthlyGrowthRate}%
+            </div>
+            <div className="count-title">Growth/Month</div>
           </div>
         </div>
         
-        <div className="flex-1 flex flex-col justify-center items-center">
-          <motion.h3 
-            className="text-4xl font-bold text-white mb-1"
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-          >
-            {studentCount.toLocaleString()}
-          </motion.h3>
-          <p className="text-gray-400 text-sm font-medium mb-4">Registered Students</p>
-          
-          <div className="w-full bg-gray-800/50 rounded-full h-2 overflow-hidden mb-4">
-            <motion.div 
-              className="h-full bg-gradient-to-r from-emerald-500/70 to-emerald-400/70 rounded-full"
-              initial={{ width: 0 }}
-              animate={{ width: "100%" }}
-              transition={{ delay: 0.5, duration: 1 }}
-            ></motion.div>
+        {showGrowth && (
+          <div className="growth-indicator">
+            <div className={`growth-pill ${parseFloat(growthPercent) > 0 ? 'positive' : 'negative'}`}>
+              <span className="growth-value">
+                {parseFloat(growthPercent) > 0 
+                  ? `↑ ${growthPercent}%` 
+                  : `↓ ${Math.abs(parseFloat(growthPercent))}%`}
+              </span>
+            </div>
           </div>
-          
-          <div className="flex items-center justify-center text-xs text-gray-400">
-            <AcademicCapIcon className="w-4 h-4 mr-1" />
-            <span>Active students across all departments</span>
-          </div>
-        </div>
+        )}
       </div>
-    </motion.div>
+    </div>
   )
 } 
