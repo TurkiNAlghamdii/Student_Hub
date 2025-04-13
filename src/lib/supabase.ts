@@ -26,3 +26,11 @@ export const supabaseAdmin = createClient(
     },
   }
 )
+
+// Helper function to check if we're in a password reset flow
+export const isPasswordResetFlow = () => {
+  if (typeof window === 'undefined') return false
+  
+  const hashParams = window.location.hash
+  return hashParams.includes('#access_token') && hashParams.includes('type=recovery')
+}

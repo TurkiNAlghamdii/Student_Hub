@@ -129,54 +129,82 @@ export default function ForgotPassword() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            <p>Password reset email sent! Check your inbox for a link to reset your password.</p>
-            <p className="mt-2 text-sm text-gray-400">
-              If you don&apos;t see the email, check your spam folder or try again in a few minutes.
-            </p>
-            <div className="mt-4 text-center">
-              <p className="text-sm text-gray-400 mb-2">
-                When you receive the email:
-              </p>
-              <ol className="text-sm text-gray-400 list-decimal list-inside">
+            <div className="bg-emerald-500/20 text-emerald-400 p-3 rounded-lg mb-4 flex items-center gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              <p>Password reset email sent!</p>
+            </div>
+            <p className="text-gray-300 mb-4">Check your inbox for a link to reset your password.</p>
+            <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700/50 mb-5">
+              <p className="text-sm text-gray-400 mb-3 font-medium">Next steps:</p>
+              <ol className="text-sm text-gray-400 list-decimal list-inside space-y-2">
+                <li>Open the email from Student Hub</li>
                 <li>Click the reset link in the email</li>
-                <li>Enter your new password on the reset page</li>
-                <li>Submit to update your password</li>
+                <li>Create a new password on the reset page</li>
+                <li>Log in with your new password</li>
               </ol>
             </div>
-            <Link href="/login" className="back-to-login">
-              Back to login
+            <p className="text-xs text-gray-500 italic mb-4">
+              If you don&apos;t see the email within a few minutes, check your spam folder or try again.
+            </p>
+            <Link href="/login" className="inline-block px-4 py-2 bg-gradient-to-r from-gray-700 to-gray-800 text-white rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all border border-gray-700/50 w-full text-center">
+              Back to Login
             </Link>
           </motion.div>
         ) : (
           <form className="login-form" onSubmit={handleResetPassword}>
-            <motion.p
-              className="reset-instructions"
+            <motion.div
+              className="bg-gray-800/40 rounded-lg p-4 border border-gray-700/50 mb-6"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
             >
-              Enter your KAU email address (@stu.kau.edu.sa or @kau.edu.sa) and we&apos;ll send you a link to reset your password.
-            </motion.p>
+              <div className="flex items-start gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                  <p className="text-sm text-gray-300 mb-1">
+                    Enter your KAU email address and we&apos;ll send you a link to reset your password.
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    Only <span className="text-emerald-400 font-medium">@stu.kau.edu.sa</span> and <span className="text-emerald-400 font-medium">@kau.edu.sa</span> domains are accepted.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
             
             <div className="input-container">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 }}
+                transition={{ delay: 0.4 }}
               >
-                <label htmlFor="email" className="sr-only">
-                  KAU Email address
+                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-300">
+                  Email Address
                 </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="input-field"
-                  placeholder="yourname@stu.kau.edu.sa"
-                />
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="input-field pl-10"
+                    placeholder="yourname@stu.kau.edu.sa"
+                  />
+                </div>
+                <div className="flex items-center justify-between mt-1">
+                  <p className="text-xs text-gray-500">Example: john.doe@stu.kau.edu.sa</p>
+                  <p className="text-xs text-gray-500">{email.length > 0 ? email.length : 0} / 50</p>
+                </div>
               </motion.div>
             </div>
 
@@ -186,13 +214,20 @@ export default function ForgotPassword() {
                 animate={{ opacity: 1 }}
                 className="error-message"
               >
-                {error}
-                {errorDetails && (
-                  <details className="error-details">
-                    <summary>Technical details</summary>
-                    <p>{errorDetails}</p>
-                  </details>
-                )}
+                <div className="flex items-start gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  <div>
+                    <p className="text-sm">{error}</p>
+                    {errorDetails && (
+                      <details className="error-details mt-1 text-xs">
+                        <summary className="cursor-pointer">Technical details</summary>
+                        <p className="mt-1 pl-2 border-l-2 border-red-400/30">{errorDetails}</p>
+                      </details>
+                    )}
+                  </div>
+                </div>
               </motion.div>
             )}
 
@@ -200,30 +235,46 @@ export default function ForgotPassword() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
+              className="mt-6"
             >
               <button
                 type="submit"
                 disabled={loading || attemptCount >= 10}
-                className="submit-button"
+                className="submit-button flex items-center justify-center gap-2"
               >
-                {loading ? 'Sending...' : 'Send Reset Link'}
+                {loading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    </svg>
+                    Send Reset Link
+                  </>
+                )}
               </button>
             </motion.div>
             
-            <motion.p
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
-              className="back-link-text"
+              className="mt-6 text-center border-t border-gray-800 pt-4"
             >
-              Remember your password?{' '}
+              <p className="text-sm text-gray-400 mb-2">Remember your password?</p>
               <Link
                 href="/login"
-                className="back-link"
+                className="inline-block text-sm text-emerald-400 hover:text-emerald-300 transition-colors"
               >
-                Back to login
+                Back to Login
               </Link>
-            </motion.p>
+            </motion.div>
           </form>
         )}
       </motion.div>

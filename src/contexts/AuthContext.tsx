@@ -60,12 +60,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Check if we're in a password recovery flow by looking at the URL
     if (typeof window !== 'undefined') {
-      const isRecoveryFlow = window.location.hash.includes('#access_token') && 
-                            window.location.hash.includes('type=recovery');
+      const hashParams = window.location.hash;
+      const isRecoveryFlow = hashParams.includes('#access_token') && 
+                            hashParams.includes('type=recovery');
+      
       setIsPasswordRecovery(isRecoveryFlow);
       
       if (isRecoveryFlow) {
         console.log("Password recovery flow detected in AuthContext");
+        
+        // Listen specifically for auth state changes during recovery flow
+        const handleRecoveryStateChange = async () => {
+          try {
+            // Get current session after token processing
+            const { data, error } = await supabase.auth.getSession();
+            
+            if (error) {
+              console.error("Error getting session during recovery flow:", error);
+            } else if (data.session) {
+              console.log("Recovery session established in AuthContext");
+              setSession(data.session);
+              setUser(data.session.user);
+            } else {
+              console.log("No session found during recovery flow");
+            }
+          } catch (err) {
+            console.error("Error in recovery flow handling:", err);
+          }
+        };
+        
+        // Initial check
+        handleRecoveryStateChange();
       }
     }
 
@@ -73,6 +98,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log("Auth state change detected, event:", _event);
+      
+      // Special handling for password recovery flow
+      if (_event === 'PASSWORD_RECOVERY' || _event === 'USER_UPDATED') {
+        // If we're in a password recovery flow and the user just updated their password
+        if (isPasswordRecovery && window.location.pathname.includes('/reset-password')) {
+          console.log("Detected password update during recovery flow");
+          // Do not update session state - this will be handled by the reset-password page
+          return;
+        }
+      }
+      
       if (session) {
         // Check if user is disabled
         if (session.user?.user_metadata?.is_disabled) {
@@ -85,6 +122,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         // If we get a new session, store the login timestamp
         localStorage.setItem('sessionStartTime', Date.now().toString());
+        localStorage.setItem('lastActivity', Date.now().toString());
       } else {
         setSession(null);
         setUser(null);
