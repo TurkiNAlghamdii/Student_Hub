@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { XMarkIcon, PlusIcon } from '@heroicons/react/24/outline';

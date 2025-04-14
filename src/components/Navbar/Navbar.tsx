@@ -18,7 +18,8 @@ import {
   BuildingOfficeIcon,
   ShieldCheckIcon,
   ChevronDoubleLeftIcon,
-  ChevronDoubleRightIcon
+  ChevronDoubleRightIcon,
+  ClockIcon
 } from '@heroicons/react/24/outline'
 import ThemeToggle from '@/components/ThemeToggle/ThemeToggle'
 import Link from 'next/link'
@@ -313,11 +314,21 @@ export default function Navbar({ showBack = false }: NavbarProps) {
     setIsBackdropActive(false)
   }
 
-  // Group menu items by category
+  // Setup menu items
   const menuItems = [
-    // Dashboard
-    { label: 'Home', href: '/', icon: <HomeIcon className="sidebar-icon" />, category: 'dashboard' },
-    
+    // Dashboard category
+    { 
+      category: 'dashboard',
+      label: 'Home', 
+      icon: <HomeIcon className="sidebar-icon" />, 
+      href: '/' 
+    },
+    {
+      category: 'dashboard',
+      label: 'Pomodoro Timer',
+      icon: <ClockIcon className="sidebar-icon" />,
+      href: '/pomodoro'
+    },
     // Academic
     { label: 'Courses', href: '/courses', icon: <AcademicCapIcon className="sidebar-icon" />, category: 'academic' },
     { label: 'GPA Calculator', href: '/gpa-calculator', icon: <CalculatorIcon className="sidebar-icon" />, category: 'academic' },
@@ -429,6 +440,20 @@ export default function Navbar({ showBack = false }: NavbarProps) {
         <div className="nav-right">
           <div className="nav-buttons">
             <ThemeToggle />
+            <button
+              onClick={handleLogout}
+              className="logout-button"
+              aria-label="Logout"
+              title="Logout"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  handleLogout();
+                }
+              }}
+            >
+              <ArrowRightOnRectangleIcon className="h-4 w-4" />
+            </button>
             {studentProfile?.avatar_url ? (
               <div 
                 className="profile-avatar-wrapper"

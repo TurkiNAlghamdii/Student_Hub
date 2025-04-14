@@ -246,7 +246,7 @@ export async function POST(request: NextRequest, { params }: { params: { courseC
         file_type: file.type,
         file_url: publicUrl,
         description: description || null,
-        uploaded_by: userId
+        user_id: userId
       }])
       .select()
       .single();

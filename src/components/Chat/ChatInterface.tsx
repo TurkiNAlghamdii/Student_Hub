@@ -292,17 +292,12 @@ export default function ChatInterface({
     };
   }, [messages, handleAIResponse]);
 
+  // Keep the streaming effect but add a check to prevent duplicates
   useEffect(() => {
-    if (messages.length > 0 && messages[messages.length - 1].role === 'user') {
+    if (isStreamingRef.current && !isLoading) {
       handleAIResponse();
     }
-  }, [messages, handleAIResponse]);
-
-  useEffect(() => {
-    if (isStreamingRef.current) {
-      handleAIResponse();
-    }
-  }, [handleAIResponse]);
+  }, [handleAIResponse, isLoading]);
 
   return (
     <div className="chat-container">

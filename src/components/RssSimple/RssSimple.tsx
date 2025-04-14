@@ -44,6 +44,13 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
   const [isViewMoreHovered, setIsViewMoreHovered] = useState(false)
   const { theme } = useTheme()
   
+  // Create inline styles based on theme
+  const darkModeStyles = theme === 'dark' ? {
+    backgroundColor: 'rgba(17, 24, 39, 0.7)',
+    borderColor: 'rgba(55, 65, 81, 0.5)',
+    color: '#f9fafb'
+  } : {}
+  
   // Force dark mode styles to match app theme
   useEffect(() => {
     const rssContainer = document.querySelector(`.${styles.container}`);
@@ -180,7 +187,7 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
 
   if (loading) {
     return (
-      <div className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`}>
+      <div className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`} style={darkModeStyles}>
         <div className={styles.widgetHeader}>
           <div className={styles.widgetTitleContainer}>
             <TwitterXIcon className={styles.widgetIcon} />
@@ -190,7 +197,7 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
             >{title}</h3>
           </div>
         </div>
-        <div className={styles.loading}>
+        <div className={styles.loading} style={theme === 'dark' ? { color: '#d1d5db' } : {}}>
           <div className={styles.spinner}></div>
           <p>Loading X posts...</p>
         </div>
@@ -200,7 +207,7 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
 
   if (error) {
     return (
-      <div className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`}>
+      <div className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`} style={darkModeStyles}>
         <div className={styles.widgetHeader}>
           <div className={styles.widgetTitleContainer}>
             <TwitterXIcon className={styles.widgetIcon} />
@@ -210,7 +217,7 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
             >{title}</h3>
           </div>
         </div>
-        <div className={styles.error}>
+        <div className={styles.error} style={theme === 'dark' ? { color: '#f87171' } : {}}>
           <p>{error}</p>
         </div>
       </div>
@@ -219,7 +226,7 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
 
   if (!feedData || !feedData.items || feedData.items.length === 0) {
     return (
-      <div className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`}>
+      <div className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`} style={darkModeStyles}>
         <div className={styles.widgetHeader}>
           <div className={styles.widgetTitleContainer}>
             <TwitterXIcon className={styles.widgetIcon} />
@@ -229,7 +236,7 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
             >{title}</h3>
           </div>
         </div>
-        <div className={styles.empty}>
+        <div className={styles.empty} style={theme === 'dark' ? { color: '#d1d5db' } : {}}>
           <p>No X posts found.</p>
         </div>
       </div>
@@ -239,13 +246,6 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
   // Only display the requested number of items
   const displayItems = feedData.items.slice(0, count)
 
-  // Create inline styles based on theme
-  const darkModeStyles = theme === 'dark' ? {
-    backgroundColor: 'rgba(17, 24, 39, 0.7)',
-    borderColor: 'rgba(55, 65, 81, 0.5)',
-    color: '#f9fafb'
-  } : {}
-  
   return (
     <div 
       className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`}
@@ -253,7 +253,7 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
       <div className={styles.widgetHeader}>
         <div className={styles.widgetTitleContainer}>
           <TwitterXIcon className={styles.widgetIcon} />
-          <h3 className={styles.title}>{title}</h3>
+          <h3 className={styles.title} style={theme === 'dark' ? { color: '#f9fafb' } : {}}>{title}</h3>
         </div>
         <div className={styles.widgetActions}>
           <a 
@@ -263,6 +263,10 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
             className={styles.viewButton}
             onMouseEnter={() => setIsViewMoreHovered(true)}
             onMouseLeave={() => setIsViewMoreHovered(false)}
+            style={theme === 'dark' ? { 
+              background: 'linear-gradient(135deg, #059669 0%, #064e3b 100%)',
+              color: '#f9fafb'
+            } : {}}
           >
             <span>View X</span>
             <ArrowRightIcon 
@@ -296,7 +300,15 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
                           style={theme === 'dark' ? { color: '#9ca3af' } : {}}
                         >{formatDate(item.pubDate)}</span>
                       )}
-                      <span className={isRetweet(item.description, item.title) ? styles.retweetBadge : styles.tweetBadge}>
+                      <span 
+                        className={isRetweet(item.description, item.title) ? styles.retweetBadge : styles.tweetBadge}
+                        style={theme === 'dark' && isRetweet(item.description, item.title) 
+                          ? { backgroundColor: 'rgba(99, 102, 241, 0.2)', borderColor: 'rgba(99, 102, 241, 0.4)', color: '#a5b4fc' } 
+                          : theme === 'dark' 
+                            ? { backgroundColor: 'rgba(16, 185, 129, 0.2)', borderColor: 'rgba(16, 185, 129, 0.4)', color: '#34d399' } 
+                            : {}
+                        }
+                      >
                         {isRetweet(item.description, item.title) ? 'Retweet' : 'Post'}
                       </span>
                     </div>
@@ -307,7 +319,10 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
                       dangerouslySetInnerHTML={{ __html: cleanedDescription }}></p>
                     
                     {imageUrl && (
-                      <div className={styles.imageContainer}>
+                      <div 
+                        className={styles.imageContainer}
+                        style={theme === 'dark' ? { backgroundColor: 'rgba(15, 23, 42, 0.6)', borderColor: 'rgba(51, 65, 85, 0.5)' } : {}}
+                      >
                         <Image
                           src={imageUrl}
                           alt={item.title}

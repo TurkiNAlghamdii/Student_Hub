@@ -28,7 +28,8 @@ export default function StudentCountWidget() {
         // Store previous count before updating
         setPreviousCount(studentCount)
         setStudentCount(count || 0)
-      } catch (err: any) {
+      } catch (error: unknown) {
+        console.error('Error fetching student count:', error)
         setError('Failed to fetch student count')
       } finally {
         setLoading(false)

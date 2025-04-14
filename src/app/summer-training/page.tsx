@@ -1,24 +1,19 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import Navbar from '@/components/Navbar/Navbar'
+import SummerTrainingNavbar from '@/components/Navbar/SummerTrainingNavbar'
 import SummerTrainingGuide from '@/components/SummerTrainingGuide/SummerTrainingGuide'
 import TrainingInstitutionsTable from '@/components/TrainingInstitutionsTable/TrainingInstitutionsTable'
 import { BriefcaseIcon } from '@heroicons/react/24/outline'
+import AnimatedContent from '@/components/AnimatedContent'
 import './summer-training.css'
 
 export default function SummerTrainingPage() {
   return (
     <div className="summer-training-container">
-      <Navbar />
+      <SummerTrainingNavbar />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <motion.div 
-          className="space-y-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+        <AnimatedContent>
           {/* Header Section */}
           <div className="welcome-section rounded-2xl p-6 relative overflow-hidden">
             <div className="welcome-container relative z-1">
@@ -43,7 +38,7 @@ export default function SummerTrainingPage() {
               <TrainingInstitutionsTable />
             </div>
           </div>
-        </motion.div>
+        </AnimatedContent>
       </main>
     </div>
   )

@@ -310,8 +310,8 @@ export default function Footer() {
           <div className="footer-credits">
             Made with <HeartIcon className="heart-icon" /> by{' '}
             <span className="author-name">Turki</span>,{' '}
-            <span className="author-name">Khalid</span>,{' '}
-            <span className="author-name">Husam</span>
+            <span className="author-name">Khaled</span>,{' '}
+            <span className="author-name">Hussam</span>
           </div>
           
           <div className="footer-actions">

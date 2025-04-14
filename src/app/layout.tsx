@@ -32,33 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <head>
-        {/* This script prevents flash of unstyled content (FOUC) when switching between themes */}
-        <script dangerouslySetInnerHTML={{ __html: `
-          (function() {
-            try {
-              const storedTheme = localStorage.getItem('theme');
-              if (storedTheme === 'dark') {
-                document.documentElement.classList.add('dark');
-                document.documentElement.style.backgroundColor = '#111827';
-              } else if (storedTheme === 'light') {
-                document.documentElement.classList.add('light');
-              } else {
-                // Check system preference if no stored theme
-                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                document.documentElement.classList.add(prefersDark ? 'dark' : 'light');
-                if (prefersDark) {
-                  document.documentElement.style.backgroundColor = '#111827';
-                }
-              }
-            } catch (e) {
-              // Fail silently if localStorage is not available
-              console.error('Error accessing localStorage:', e);
-            }
-          })();
-        ` }} />
-      </head>
+    <html lang="en" className="light">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
