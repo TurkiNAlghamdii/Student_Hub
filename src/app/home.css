@@ -19,13 +19,15 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 /* Dark mode specific styles */
 .dark .home-container {
   @apply bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
-  background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.15) 1px, transparent 0);
+  background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.15) 1px, transparent 0) !important;
+  background-size: 40px 40px !important;
 }
 
 /* Light mode specific styles */
 :root:not(.dark) .home-container {
   @apply bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50;
-  background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.05) 1px, transparent 0);
+  background-image: radial-gradient(circle at 1px 1px, rgb(156, 163, 175, 0.15) 1px, transparent 0) !important;
+  background-size: 40px 40px !important;
 }
 
 .navbar {
