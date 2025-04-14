@@ -116,7 +116,7 @@ const FilesList: React.FC<FilesListProps> = ({ courseCode, refreshTrigger }) => 
     if (!user) return;
     
     fetchFavorites();
-  }, [user, refreshTrigger, fetchFavorites]);
+  }, [user, refreshTrigger]);
 
   useEffect(() => {
     const fetchFiles = async () => {

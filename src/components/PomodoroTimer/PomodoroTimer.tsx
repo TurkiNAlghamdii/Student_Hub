@@ -124,7 +124,7 @@ export default function PomodoroTimer() {
         clearInterval(timerRef.current)
       }
     }
-  }, [timerState.isActive, playNotificationSound])
+  }, [timerState.isActive])
 
   // Request notification permission
   useEffect(() => {

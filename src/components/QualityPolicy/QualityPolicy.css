@@ -433,42 +433,4 @@
   border-color: rgba(5, 150, 105, 0.3);
   transform: translateY(-2px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* PDF Container for embedded display */
-.pdf-container {
-  width: 100%;
-  margin: 1.5rem 0;
-  border-radius: 0.5rem;
-  overflow: hidden;
-}
-
-/* Dark theme PDF container */
-:root.dark .pdf-container {
-  border: 1px solid rgb(55, 65, 81);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-/* Light theme PDF container */
-:root:not(.dark) .pdf-container {
-  border: 1px solid rgb(229, 231, 235);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.pdf-display {
-  border: none;
-  display: block;
-  background-color: white;
-}
-
-@media (max-width: 768px) {
-  .pdf-display {
-    height: 500px;
-  }
-}
-
-@media (max-width: 480px) {
-  .pdf-display {
-    height: 400px;
-  }
 } 

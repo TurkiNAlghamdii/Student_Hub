@@ -4,6 +4,8 @@ import { useState, KeyboardEvent, type ReactElement } from 'react';
 import { MapPin, Building2, Phone, Mail, Globe } from 'lucide-react';
 import Navbar from '@/components/Navbar/Navbar';
 import './faculty.css';
+import Link from 'next/link';
+import { AcademicCapIcon, UserGroupIcon, BookOpenIcon, BeakerIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import QualityPolicy from '@/components/QualityPolicy/QualityPolicy';
 
 interface Department {
