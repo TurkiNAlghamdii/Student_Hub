@@ -46,13 +46,21 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
   
   // Force dark mode styles to match app theme
   useEffect(() => {
-    const rssContainer = document.querySelector(`.${styles.container}`);
-    if (rssContainer) {
-      if (theme === 'dark') {
-        document.documentElement.classList.add('force-dark-rss');
-      } else {
-        document.documentElement.classList.remove('force-dark-rss');
-      }
+    // Apply theme class to document for global CSS selectors to work
+    if (theme === 'dark') {
+      document.documentElement.classList.add('force-dark-rss');
+      // Also add dark class to any RSS containers that might be in the DOM
+      const rssContainers = document.querySelectorAll(`.${styles.container}`);
+      rssContainers.forEach(container => {
+        container.classList.add('dark-rss');
+      });
+    } else {
+      document.documentElement.classList.remove('force-dark-rss');
+      // Remove dark class from RSS containers
+      const rssContainers = document.querySelectorAll(`.${styles.container}`);
+      rssContainers.forEach(container => {
+        container.classList.remove('dark-rss');
+      });
     }
     
     return () => {
@@ -180,7 +188,19 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
 
   if (loading) {
     return (
-      <div className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`}>
+      <div 
+        className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`}
+        style={theme === 'dark' ? {
+          backgroundColor: 'rgba(17, 24, 39, 0.7)',
+          borderColor: 'rgba(55, 65, 81, 0.5)',
+          color: '#f9fafb',
+          boxShadow: '0 0 30px rgba(6, 78, 59, 0.05), 0 0 60px rgba(0, 0, 0, 0.2)'
+        } : {
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+          borderColor: 'rgba(203, 213, 225, 0.5)',
+          color: '#1e293b',
+          boxShadow: '0 0 20px rgba(6, 78, 59, 0.03), 0 0 40px rgba(0, 0, 0, 0.05)'
+        }}>
         <div className={styles.widgetHeader}>
           <div className={styles.widgetTitleContainer}>
             <TwitterXIcon className={styles.widgetIcon} />
@@ -200,7 +220,19 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
 
   if (error) {
     return (
-      <div className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`}>
+      <div 
+        className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`}
+        style={theme === 'dark' ? {
+          backgroundColor: 'rgba(17, 24, 39, 0.7)',
+          borderColor: 'rgba(55, 65, 81, 0.5)',
+          color: '#f9fafb',
+          boxShadow: '0 0 30px rgba(6, 78, 59, 0.05), 0 0 60px rgba(0, 0, 0, 0.2)'
+        } : {
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+          borderColor: 'rgba(203, 213, 225, 0.5)',
+          color: '#1e293b',
+          boxShadow: '0 0 20px rgba(6, 78, 59, 0.03), 0 0 40px rgba(0, 0, 0, 0.05)'
+        }}>
         <div className={styles.widgetHeader}>
           <div className={styles.widgetTitleContainer}>
             <TwitterXIcon className={styles.widgetIcon} />
@@ -219,7 +251,19 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
 
   if (!feedData || !feedData.items || feedData.items.length === 0) {
     return (
-      <div className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`}>
+      <div 
+        className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`}
+        style={theme === 'dark' ? {
+          backgroundColor: 'rgba(17, 24, 39, 0.7)',
+          borderColor: 'rgba(55, 65, 81, 0.5)',
+          color: '#f9fafb',
+          boxShadow: '0 0 30px rgba(6, 78, 59, 0.05), 0 0 60px rgba(0, 0, 0, 0.2)'
+        } : {
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+          borderColor: 'rgba(203, 213, 225, 0.5)',
+          color: '#1e293b',
+          boxShadow: '0 0 20px rgba(6, 78, 59, 0.03), 0 0 40px rgba(0, 0, 0, 0.05)'
+        }}>
         <div className={styles.widgetHeader}>
           <div className={styles.widgetTitleContainer}>
             <TwitterXIcon className={styles.widgetIcon} />
@@ -239,17 +283,23 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
   // Only display the requested number of items
   const displayItems = feedData.items.slice(0, count)
 
-  // Create inline styles based on theme
-  const darkModeStyles = theme === 'dark' ? {
+  // Create more comprehensive inline styles based on theme
+  const themeStyles = theme === 'dark' ? {
     backgroundColor: 'rgba(17, 24, 39, 0.7)',
     borderColor: 'rgba(55, 65, 81, 0.5)',
-    color: '#f9fafb'
-  } : {}
+    color: '#f9fafb',
+    boxShadow: '0 0 30px rgba(6, 78, 59, 0.05), 0 0 60px rgba(0, 0, 0, 0.2)'
+  } : {
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderColor: 'rgba(203, 213, 225, 0.5)',
+    color: '#1e293b',
+    boxShadow: '0 0 20px rgba(6, 78, 59, 0.03), 0 0 40px rgba(0, 0, 0, 0.05)'
+  }
   
   return (
     <div 
       className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`}
-      style={darkModeStyles}>
+      style={themeStyles}>
       <div className={styles.widgetHeader}>
         <div className={styles.widgetTitleContainer}>
           <TwitterXIcon className={styles.widgetIcon} />

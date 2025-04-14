@@ -128,20 +128,23 @@
 }
 
 .item {
-  padding: 0.875rem;
-  margin-bottom: 0.75rem;
-  border-radius: 0.5rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  @apply border rounded-lg p-4 mb-4 transition-all duration-300;
+  background-color: var(--card-bg);
+  border-color: var(--card-border);
 }
 
-.dark .item, .dark.item, .dark.container .item, .dark-rss.item, .dark-rss.container .item, .force-dark-rss .container .item {
-  background-color: rgba(30, 41, 59, 0.5);
-  border: 1px solid rgba(71, 85, 105, 0.3);
+:root.dark .item,
+.dark-rss .item,
+.force-dark-rss .item {
+  background-color: rgba(30, 41, 59, 0.5) !important;
+  border-color: rgba(71, 85, 105, 0.3) !important;
+  color: #ffffff !important;
 }
 
-:root:not(.dark) .item, .item:not(.dark):not(.dark-rss), .container:not(.dark):not(.dark-rss) .item, :root:not(.force-dark-rss) .container:not(.dark-rss) .item {
-  background-color: rgba(240, 240, 240, 0.5);
-  border: 1px solid rgba(203, 213, 225, 0.4);
+:root:not(.dark) .item:not(.dark-rss) {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+  border-color: rgba(203, 213, 225, 0.5) !important;
+  color: #1e293b !important;
 }
 
 .item:last-child {
@@ -172,19 +175,51 @@
   gap: 0.5rem;
 }
 
-.itemTitle {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--foreground);
-  margin: 0;
-  line-height: 1.4;
+.itemDate {
+  @apply text-sm mb-2;
+  color: var(--text-secondary);
 }
 
-.description {
-  font-size: 0.875rem;
-  color: var(--muted-foreground);
-  margin: 0;
-  line-height: 1.5;
+:root.dark .itemDate,
+.dark-rss .itemDate,
+.force-dark-rss .itemDate {
+  color: #10b981 !important;
+  opacity: 0.8;
+}
+
+:root:not(.dark) .itemDate:not(.dark-rss) {
+  color: #10b981 !important;
+  opacity: 0.8;
+}
+
+.itemTitle {
+  @apply font-semibold text-lg mb-1;
+  color: var(--text-primary);
+}
+
+:root.dark .itemTitle,
+.dark-rss .itemTitle,
+.force-dark-rss .itemTitle {
+  color: #ffffff !important;
+}
+
+:root:not(.dark) .itemTitle:not(.dark-rss) {
+  color: #1e293b !important;
+}
+
+.itemDescription {
+  @apply text-sm mb-3;
+  color: var(--text-secondary);
+}
+
+:root.dark .itemDescription,
+.dark-rss .itemDescription,
+.force-dark-rss .itemDescription {
+  color: rgba(203, 213, 225, 0.8) !important;
+}
+
+:root:not(.dark) .itemDescription:not(.dark-rss) {
+  color: rgba(71, 85, 105, 0.8) !important;
 }
 
 .imageContainer {

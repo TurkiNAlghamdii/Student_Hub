@@ -1412,34 +1412,40 @@ export default function CoursesClient({ courses, error }: CoursesClientProps) {
         )}
 
         {!coursesLoading && viewMode === 'my' && myCourses.length > 0 && (
-          <div className="courses-grid">
-            {myCourses.map((course) => (
-              <div 
-                key={course.course_code}
-                className="course-card"
-                onClick={() => router.push(`/courses/${course.course_code}`)}
-              tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && router.push(`/courses/${course.course_code}`)}
-              aria-label={`${course.course_name} course`}
-              >
-                <h2 className="course-card-code">{course.course_code}</h2>
-                <p className="course-card-name">{course.course_name}</p>
-                <p className="course-card-faculty">
-                  <AcademicCapIcon className="h-3 w-3 mr-1" />
-                  {course.faculty?.name || 'Faculty of Computing'}
-                </p>
-                
-                <button 
-                  className="remove-course-button"
-                  onClick={(e) => handleRemoveCourse(course.course_code, e)}
-                  aria-label={`Remove ${course.course_code} from your courses`}
-                tabIndex={0}
-                  disabled={coursesLoading}
-                >
-                  Remove
-                </button>
+          <div className="my-courses-container">
+            <div className="my-courses-section">
+              <h2 className="my-courses-title">My Enrolled Courses</h2>
+              
+              <div className="courses-grid">
+                {myCourses.map((course) => (
+                  <div 
+                    key={course.course_code}
+                    className="course-card"
+                    onClick={() => router.push(`/courses/${course.course_code}`)}
+                    tabIndex={0}
+                    onKeyDown={(e) => e.key === 'Enter' && router.push(`/courses/${course.course_code}`)}
+                    aria-label={`${course.course_name} course`}
+                  >
+                    <h2 className="course-card-code">{course.course_code}</h2>
+                    <p className="course-card-name">{course.course_name}</p>
+                    <p className="course-card-faculty">
+                      <AcademicCapIcon className="h-3 w-3 mr-1" />
+                      {course.faculty?.name || 'Faculty of Computing'}
+                    </p>
+                    
+                    <button 
+                      className="remove-course-button"
+                      onClick={(e) => handleRemoveCourse(course.course_code, e)}
+                      aria-label={`Remove ${course.course_code} from your courses`}
+                      tabIndex={0}
+                      disabled={coursesLoading}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         )}
       </main>

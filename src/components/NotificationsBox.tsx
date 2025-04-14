@@ -67,20 +67,36 @@ const NotificationsBox = () => {
     }
   }, [isOpen, fetchNotifications])
 
+  // Calculate position function
+  const calculatePosition = () => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect()
+      return {
+        top: rect.bottom + window.scrollY + 8,
+        right: window.innerWidth - rect.right
+      }
+    }
+    return { top: 0, right: 0 }
+  }
+
+  // Update position when toggle is clicked
+  const handleToggle = () => {
+    if (!isOpen) {
+      // Calculate position before opening
+      setPosition(calculatePosition())
+    }
+    setIsOpen(!isOpen)
+  }
+
   useEffect(() => {
-    // Update position when button position changes
+    // Update position when window is resized or scrolled
     const updatePosition = () => {
-      if (buttonRef.current) {
-        const rect = buttonRef.current.getBoundingClientRect()
-        setPosition({
-          top: rect.bottom + window.scrollY + 8,
-          right: window.innerWidth - rect.right
-        })
+      if (isOpen) {
+        setPosition(calculatePosition())
       }
     }
 
     if (isOpen) {
-      updatePosition()
       window.addEventListener('resize', updatePosition)
       window.addEventListener('scroll', updatePosition)
     }
@@ -91,9 +107,7 @@ const NotificationsBox = () => {
     }
   }, [isOpen])
 
-  const handleToggle = () => {
-    setIsOpen(!isOpen)
-  }
+
 
   const handleMarkAsReadClick = async (id: string) => {
     await markAsRead(id)

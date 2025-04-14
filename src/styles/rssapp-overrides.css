@@ -1,15 +1,11 @@
 @import url('../components/RssSimple/RssSimple.module.css');
 
-/* Override RSS app styles to match our dark theme */
+/* Base RSS app styles */
 rssapp-wall,
 body rssapp-wall,
 #__next rssapp-wall {
   --rssapp-theme-color: #10b981 !important;
   --rssapp-background-color: transparent !important;
-  --rssapp-text-color: #ffffff !important;
-  --rssapp-secondary-color: rgba(203, 213, 225, 0.8) !important;
-  --rssapp-border-color: rgba(71, 85, 105, 0.3) !important;
-  --rssapp-link-color: #10b981 !important;
   --rssapp-items-per-page: 3 !important;
   max-height: 800px !important;
 }
@@ -22,9 +18,43 @@ body rssapp-wall .rssapp-wall-root {
   overflow: hidden !important;
 }
 
-/* Make card items match our dark theme */
-rssapp-wall .rssapp-item,
-body rssapp-wall .rssapp-item {
+/* Light theme styles */
+:root:not(.dark) rssapp-wall,
+:root:not(.dark) body rssapp-wall,
+:root:not(.dark) #__next rssapp-wall {
+  --rssapp-text-color: #1e293b !important;
+  --rssapp-secondary-color: rgba(71, 85, 105, 0.8) !important;
+  --rssapp-border-color: rgba(203, 213, 225, 0.5) !important;
+  --rssapp-link-color: #10b981 !important;
+}
+
+/* Dark theme styles */
+:root.dark rssapp-wall,
+:root.dark body rssapp-wall,
+:root.dark #__next rssapp-wall,
+.force-dark-rss rssapp-wall,
+.force-dark-rss body rssapp-wall,
+.force-dark-rss #__next rssapp-wall {
+  --rssapp-text-color: #ffffff !important;
+  --rssapp-secondary-color: rgba(203, 213, 225, 0.8) !important;
+  --rssapp-border-color: rgba(71, 85, 105, 0.3) !important;
+  --rssapp-link-color: #10b981 !important;
+}
+
+/* Light theme card styles */
+:root:not(.dark) rssapp-wall .rssapp-item,
+:root:not(.dark) body rssapp-wall .rssapp-item {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(203, 213, 225, 0.5) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+/* Dark theme card styles */
+:root.dark rssapp-wall .rssapp-item,
+:root.dark body rssapp-wall .rssapp-item,
+.force-dark-rss rssapp-wall .rssapp-item,
+.force-dark-rss body rssapp-wall .rssapp-item {
   background-color: rgba(30, 41, 59, 0.5) !important;
   backdrop-filter: blur(5px);
   border: 1px solid rgba(71, 85, 105, 0.3) !important;
@@ -49,20 +79,61 @@ body rssapp-wall .rssapp-item:hover {
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2) !important;
 }
 
-/* Style the date to stand out */
-rssapp-wall .rssapp-item-date,
-body rssapp-wall .rssapp-item-date {
+/* Light theme hover effect */
+:root:not(.dark) rssapp-wall .rssapp-item:hover,
+:root:not(.dark) body rssapp-wall .rssapp-item:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Dark theme hover effect */
+:root.dark rssapp-wall .rssapp-item:hover,
+:root.dark body rssapp-wall .rssapp-item:hover,
+.force-dark-rss rssapp-wall .rssapp-item:hover,
+.force-dark-rss body rssapp-wall .rssapp-item:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Style the date to stand out - light theme */
+:root:not(.dark) rssapp-wall .rssapp-item-date,
+:root:not(.dark) body rssapp-wall .rssapp-item-date {
   color: #10b981 !important;
   opacity: 0.8;
 }
 
-/* Override any light-themed elements */
-rssapp-wall .rssapp-item-content,
-rssapp-wall .rssapp-item-title,
-rssapp-wall .rssapp-item-description,
-body rssapp-wall .rssapp-item-content,
-body rssapp-wall .rssapp-item-title,
-body rssapp-wall .rssapp-item-description {
+/* Style the date to stand out - dark theme */
+:root.dark rssapp-wall .rssapp-item-date,
+:root.dark body rssapp-wall .rssapp-item-date,
+.force-dark-rss rssapp-wall .rssapp-item-date,
+.force-dark-rss body rssapp-wall .rssapp-item-date {
+  color: #10b981 !important;
+  opacity: 0.8;
+}
+
+/* Light theme text colors */
+:root:not(.dark) rssapp-wall .rssapp-item-content,
+:root:not(.dark) rssapp-wall .rssapp-item-title,
+:root:not(.dark) rssapp-wall .rssapp-item-description,
+:root:not(.dark) body rssapp-wall .rssapp-item-content,
+:root:not(.dark) body rssapp-wall .rssapp-item-title,
+:root:not(.dark) body rssapp-wall .rssapp-item-description {
+  color: #1e293b !important;
+}
+
+/* Dark theme text colors */
+:root.dark rssapp-wall .rssapp-item-content,
+:root.dark rssapp-wall .rssapp-item-title,
+:root.dark rssapp-wall .rssapp-item-description,
+:root.dark body rssapp-wall .rssapp-item-content,
+:root.dark body rssapp-wall .rssapp-item-title,
+:root.dark body rssapp-wall .rssapp-item-description,
+.force-dark-rss rssapp-wall .rssapp-item-content,
+.force-dark-rss rssapp-wall .rssapp-item-title,
+.force-dark-rss rssapp-wall .rssapp-item-description,
+.force-dark-rss body rssapp-wall .rssapp-item-content,
+.force-dark-rss body rssapp-wall .rssapp-item-title,
+.force-dark-rss body rssapp-wall .rssapp-item-description {
   color: #ffffff !important;
 }
 
@@ -80,5 +151,20 @@ body rssapp-wall .rssapp-wall-root .rssapp-load-more-container {
 
 /* Apply custom scrollbar */
 .items {
-  @apply scrollbar-custom;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(16, 185, 129, 0.5) transparent;
+}
+
+/* Webkit scrollbar styles */
+.items::-webkit-scrollbar {
+  width: 8px;
+}
+
+.items::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.items::-webkit-scrollbar-thumb {
+  background-color: rgba(16, 185, 129, 0.5);
+  border-radius: 20px;
 } 

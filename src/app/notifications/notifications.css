@@ -305,21 +305,23 @@
 /* Notifications box dropdown with improved styling */
 .notifications-box {
   @apply mt-4 backdrop-blur-md rounded-xl overflow-hidden;
-  transition: all 0.3s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease;
   width: 380px;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
   transform-origin: top right;
-  animation: dropdown-appear 0.3s ease-out forwards;
+  animation: dropdown-appear 0.2s ease-out forwards;
+  /* Ensure the box doesn't move after initial positioning */
+  will-change: opacity, transform;
 }
 
 @keyframes dropdown-appear {
   from {
     opacity: 0;
-    transform: scale(0.95) translateY(-10px);
+    transform: scale(0.95);
   }
   to {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: scale(1);
   }
 }
 
@@ -444,9 +446,7 @@
 }
 
 .notifications-box .notifications-list {
-  @apply max-h-80 overflow-y-auto py-3 space-y-1.5 px-2;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(16, 185, 129, 0.5) transparent;
+  @apply py-3 space-y-1.5 px-2;
 }
 
 .notifications-box .notification-item {
