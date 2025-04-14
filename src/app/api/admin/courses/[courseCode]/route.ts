@@ -16,6 +16,13 @@ export async function GET(
       )
     }
 
+    if (!supabaseAdmin) {
+      return NextResponse.json(
+        { error: 'Database client not initialized' },
+        { status: 500 }
+      )
+    }
+
     const { data, error } = await supabaseAdmin
       .from('courses')
       .select('*')
@@ -55,6 +62,13 @@ export async function PUT(
       return NextResponse.json(
         { error: 'Course code is required' },
         { status: 400 }
+      )
+    }
+
+    if (!supabaseAdmin) {
+      return NextResponse.json(
+        { error: 'Database client not initialized' },
+        { status: 500 }
       )
     }
 
@@ -147,8 +161,15 @@ export async function DELETE(
       )
     }
 
+    if (!supabaseAdmin) {
+      return NextResponse.json(
+        { error: 'Database client not initialized' },
+        { status: 500 }
+      )
+    }
+
     // Check if course exists
-    const { data: existingCourse, error: checkError } = await supabaseAdmin
+    const { error: checkError } = await supabaseAdmin
       .from('courses')
       .select('course_code')
       .eq('course_code', courseCode)

@@ -3,6 +3,13 @@ import { supabaseAdmin } from '@/lib/supabase';
 
 export async function GET(request: NextRequest) {
   try {
+    if (!supabaseAdmin) {
+      return NextResponse.json(
+        { error: 'Database client not initialized' },
+        { status: 500 }
+      );
+    }
+
     // Check if user is authenticated and is admin
     const authHeader = request.headers.get('Authorization');
     if (!authHeader) {
@@ -37,7 +44,8 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json({ data });
     
-  } catch (error) {
+  } catch (err) {
+    console.error('Internal server error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 } 

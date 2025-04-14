@@ -11,6 +11,13 @@ const supportRequestSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    if (!supabaseAdmin) {
+      return NextResponse.json(
+        { error: 'Database client not initialized' },
+        { status: 500 }
+      );
+    }
+
     // Parse request body
     const body = await request.json();
     

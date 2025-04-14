@@ -4,6 +4,13 @@ import { supabaseAdmin } from '@/lib/supabase'
 // GET to fetch all users
 export async function GET() {
   try {
+    if (!supabaseAdmin) {
+      return NextResponse.json(
+        { error: 'Database client not initialized' },
+        { status: 500 }
+      )
+    }
+
     const { data: authUsers, error: authError } = await supabaseAdmin.auth.admin.listUsers()
     
     if (authError) throw authError
@@ -47,6 +54,13 @@ export async function GET() {
 // PUT to update user admin status
 export async function PUT(request: Request) {
   try {
+    if (!supabaseAdmin) {
+      return NextResponse.json(
+        { error: 'Database client not initialized' },
+        { status: 500 }
+      )
+    }
+
     const body = await request.json()
     console.log('PUT request body:', body)
     
@@ -92,6 +106,13 @@ export async function PUT(request: Request) {
 // PATCH to update user status (enable/disable)
 export async function PATCH(request: Request) {
   try {
+    if (!supabaseAdmin) {
+      return NextResponse.json(
+        { error: 'Database client not initialized' },
+        { status: 500 }
+      )
+    }
+
     const { userId, isDisabled } = await request.json()
     
     if (!userId) {

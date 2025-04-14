@@ -4,6 +4,13 @@ import { supabaseAdmin } from '@/lib/supabase'
 // GET all courses
 export async function GET() {
   try {
+    if (!supabaseAdmin) {
+      return NextResponse.json(
+        { error: 'Database client not initialized' },
+        { status: 500 }
+      )
+    }
+
     const { data, error } = await supabaseAdmin
       .from('courses')
       .select('*')
@@ -24,6 +31,13 @@ export async function GET() {
 // POST to create a new course
 export async function POST(request: Request) {
   try {
+    if (!supabaseAdmin) {
+      return NextResponse.json(
+        { error: 'Database client not initialized' },
+        { status: 500 }
+      )
+    }
+
     const courseData = await request.json()
     console.log('Received course data for creation:', courseData)
     
