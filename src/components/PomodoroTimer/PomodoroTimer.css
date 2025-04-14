@@ -351,4 +351,59 @@
     width: 2.5rem;
     height: 2.5rem;
   }
+
+  .pomodoro-card {
+    padding: 1rem;
+    margin: 0 0.5rem;
+    max-width: 100%;
+  }
+
+  .progress-ring svg {
+    width: 180px;
+    height: 180px;
+  }
+
+  .settings-content {
+    width: 95%;
+    padding: 1rem;
+  }
+
+  .settings-field input {
+    padding: 0.6rem;
+    font-size: 16px; /* Prevent iOS zoom on input focus */
+  }
+
+  .timer-controls {
+    gap: 0.75rem;
+  }
+
+  /* Make buttons larger for touch targets */
+  .control-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Add some space at the bottom for iOS Safari bottom bar */
+  .pomodoro-container {
+    margin-bottom: 3rem;
+  }
+}
+
+/* Prevent touch callout and selection on interactive elements */
+.control-button, 
+.mode-toggle-button,
+.close-settings,
+.save-settings-button {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+/* Add active state for touch feedback */
+.control-button:active,
+.mode-toggle-button:active,
+.save-settings-button:active {
+  opacity: 0.7;
+  transform: scale(0.97);
 } 

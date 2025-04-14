@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { PlayIcon, PauseIcon, ArrowPathIcon, Cog6ToothIcon, XMarkIcon } from '@heroicons/react/24/solid'
 import './PomodoroTimer.css'
 
@@ -10,6 +10,7 @@ interface TimerState {
   isActive: boolean
   workDuration: number
   breakDuration: number
+  completedCycles: number
 }
 
 export default function PomodoroTimer() {
@@ -18,138 +19,196 @@ export default function PomodoroTimer() {
     timeLeft: 25 * 60, // 25 minutes in seconds
     isActive: false,
     workDuration: 25 * 60,
-    breakDuration: 5 * 60
+    breakDuration: 5 * 60,
+    completedCycles: 0
   })
   const [showSettings, setShowSettings] = useState(false)
   const [workInput, setWorkInput] = useState('25')
   const [breakInput, setBreakInput] = useState('5')
-  const timerRef = useRef<NodeJS.Timeout | null>(null)
   const audioContextRef = useRef<AudioContext | null>(null)
+  const [audioInitialized, setAudioInitialized] = useState(false)
+  const [notificationsEnabled, setNotificationsEnabled] = useState<boolean>(false)
+  const [isMobile, setIsMobile] = useState<boolean>(false)
+  const [notificationsAvailable, setNotificationsAvailable] = useState<boolean>(false)
 
-  // Initialize Web Audio API
+  // Initialize Web Audio API on first user interaction
+  const initAudio = useCallback(() => {
+    if (!audioInitialized) {
+      try {
+        // Use proper typing for the WebKit Audio Context
+        type WebkitWindow = Window & {
+          webkitAudioContext: typeof AudioContext;
+        };
+        
+        // First check if Web Audio API is supported
+        if (typeof window !== 'undefined' && 
+           (window.AudioContext || (window as unknown as WebkitWindow).webkitAudioContext)) {
+          audioContextRef.current = new (window.AudioContext || 
+            (window as unknown as WebkitWindow).webkitAudioContext)();
+          setAudioInitialized(true);
+        } else {
+          console.warn('Web Audio API is not supported in this browser');
+        }
+      } catch (e) {
+        console.error('Could not initialize audio context:', e);
+      }
+    }
+  }, [audioInitialized]);
+
+  // Cleanup audio context on unmount
   useEffect(() => {
     return () => {
-      // Clean up audio context on unmount
       if (audioContextRef.current) {
         audioContextRef.current.close().catch(console.error)
       }
     }
   }, [])
 
-  // Function to play notification sound using Web Audio API
-  const playNotificationSound = () => {
+  // Check for Notification support on component mount
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+    }
+    checkMobile()
+
+    if (typeof Notification !== 'undefined') {
+      setNotificationsAvailable(true)
+      if (Notification.permission === 'granted') {
+        setNotificationsEnabled(true)
+      }
+    } else {
+      setNotificationsAvailable(false)
+    }
+    
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  // Play notification sound with error handling
+  const playSound = useCallback(() => {
     try {
-      // Create audio context on first use
-      if (!audioContextRef.current) {
-        // Use proper typing for the WebKit Audio Context
-        type WebkitWindow = Window & {
-          webkitAudioContext: typeof AudioContext;
-        };
-        
-        audioContextRef.current = new (window.AudioContext || 
-          (window as unknown as WebkitWindow).webkitAudioContext)();
+      const audioContext = audioContextRef.current;
+      if (!audioContext) return;
+      
+      // Resume audio context for mobile browsers that require user interaction
+      if (audioContext.state === 'suspended') {
+        audioContext.resume();
       }
       
-      const context = audioContextRef.current
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
       
-      // Create oscillator for notification sound
-      const oscillator = context.createOscillator()
-      const gainNode = context.createGain()
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
       
-      oscillator.connect(gainNode)
-      gainNode.connect(context.destination)
+      oscillator.frequency.value = 800;
+      gainNode.gain.value = 0.5;
       
-      // Configure sound
-      oscillator.type = 'sine'
-      oscillator.frequency.setValueAtTime(timerState.mode === 'work' ? 880 : 587.33, context.currentTime) // A5 for work completion, D5 for break completion
+      oscillator.start();
       
-      // Configure volume envelope
-      gainNode.gain.setValueAtTime(0, context.currentTime)
-      gainNode.gain.linearRampToValueAtTime(0.7, context.currentTime + 0.1)
-      gainNode.gain.linearRampToValueAtTime(0, context.currentTime + 1.5)
-      
-      // Start and stop
-      oscillator.start(context.currentTime)
-      oscillator.stop(context.currentTime + 1.5)
-    } catch (e) {
-      console.error('Error playing notification sound:', e)
+      setTimeout(() => {
+        oscillator.stop();
+      }, 500);
+    } catch (error) {
+      console.error("Error playing notification sound:", error);
     }
-  }
+  }, []);
+
+  // Request notification permission with better mobile handling
+  const requestNotificationPermission = useCallback(async () => {
+    if (!notificationsAvailable) return
+    
+    const permission = await Notification.requestPermission()
+    if (permission === 'granted') {
+      setNotificationsEnabled(true)
+    } else {
+      setNotificationsEnabled(false)
+    }
+  }, [notificationsAvailable]);
+
+  // Send notification with better error handling
+  const showNotification = useCallback((title: string, options?: NotificationOptions) => {
+    if (notificationsAvailable) {
+      try {
+        new Notification(title, options);
+      } catch (error) {
+        console.error('Notification error:', error);
+      }
+    } else {
+      console.log('Notifications not available or permission not granted');
+    }
+  }, [notificationsAvailable]);
+
+  // Trigger notification based on mode
+  const triggerNotification = useCallback(() => {
+    playSound();
+    
+    if (notificationsEnabled) {
+      const icon = "/favicon.ico";
+      const title = timerState.mode === 'work' ? "Break Time!" : "Time to Focus!";
+      const body = timerState.mode === 'work' ? "Take a break!" : "Back to work!";
+      
+      showNotification(title, { body, icon });
+    }
+  }, [timerState.mode, notificationsEnabled, playSound, showNotification]);
 
   // Timer logic
   useEffect(() => {
+    // Apply mobile-specific timing adjustments if needed
+    const timeInterval = isMobile ? 1100 : 1000; // Slightly longer interval on mobile to compensate for background throttling
+    
+    let interval: NodeJS.Timeout | null = null
+    
     if (timerState.isActive) {
-      timerRef.current = setInterval(() => {
+      interval = setInterval(() => {
         setTimerState(prev => {
           if (prev.timeLeft <= 1) {
             // Play sound when timer completes
-            playNotificationSound()
+            triggerNotification()
             
             // Switch modes when timer ends
             if (prev.mode === 'work') {
-              // Send browser notification if permitted
-              if (Notification.permission === 'granted') {
-                new Notification('Break Time!', {
-                  body: 'Good job! Time to take a break.',
-                  icon: '/favicon.ico'
-                })
-              }
               return {
                 ...prev,
                 mode: 'break',
                 timeLeft: prev.breakDuration,
+                isActive: false
               }
             } else {
-              // Send browser notification if permitted
-              if (Notification.permission === 'granted') {
-                new Notification('Work Time!', {
-                  body: 'Break is over. Time to focus!',
-                  icon: '/favicon.ico'
-                })
-              }
               return {
                 ...prev,
                 mode: 'work',
                 timeLeft: prev.workDuration,
+                isActive: false,
+                completedCycles: prev.completedCycles + 1
               }
             }
           }
           return { ...prev, timeLeft: prev.timeLeft - 1 }
         })
-      }, 1000)
+      }, timeInterval)
     }
-
+    
     return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current)
-      }
+      if (interval) clearInterval(interval)
     }
-  }, [timerState.isActive])
+  }, [timerState.isActive, triggerNotification, isMobile])
 
-  // Request notification permission
-  useEffect(() => {
-    if (Notification.permission !== 'granted' && Notification.permission !== 'denied') {
-      Notification.requestPermission()
-    }
-  }, [])
-
-  const startTimer = () => {
-    setTimerState(prev => ({ ...prev, isActive: true }))
-  }
-
-  const pauseTimer = () => {
-    setTimerState(prev => ({ ...prev, isActive: false }))
-  }
-
+  // Reset the timer to the beginning of the current mode
   const resetTimer = () => {
+    // Initialize audio on user interaction
+    initAudio();
     setTimerState(prev => ({
       ...prev,
       timeLeft: prev.mode === 'work' ? prev.workDuration : prev.breakDuration,
       isActive: false
     }))
   }
-
+  
+  // Toggle modes between work and break
   const toggleMode = () => {
+    // Initialize audio on user interaction
+    initAudio();
     setTimerState(prev => ({
       ...prev,
       mode: prev.mode === 'work' ? 'break' : 'work',
@@ -159,8 +218,8 @@ export default function PomodoroTimer() {
   }
 
   const saveSettings = () => {
-    const newWorkDuration = Math.max(1, parseInt(workInput)) * 60
-    const newBreakDuration = Math.max(1, parseInt(breakInput)) * 60
+    const newWorkDuration = Math.max(1, parseInt(workInput) || 25) * 60
+    const newBreakDuration = Math.max(1, parseInt(breakInput) || 5) * 60
     
     setTimerState(prev => ({
       ...prev,
@@ -179,6 +238,30 @@ export default function PomodoroTimer() {
     const secs = seconds % 60
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
   }
+
+  // Request notification permission on mount
+  useEffect(() => {
+    requestNotificationPermission();
+  }, [requestNotificationPermission]);
+
+  // Only create audio context after user interaction for mobile browsers
+  const handleUserInteraction = useCallback(() => {
+    initAudio();
+    
+    if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
+      audioContextRef.current.resume().catch(console.error);
+    }
+  }, [initAudio]);
+
+  // Add interaction handler to buttons
+  const handleStartClick = useCallback(() => {
+    handleUserInteraction();
+    setTimerState(prev => ({ ...prev, isActive: true }))
+  }, [handleUserInteraction])
+
+  const handlePauseClick = useCallback(() => {
+    setTimerState(prev => ({ ...prev, isActive: false }))
+  }, [])
 
   return (
     <div className={`pomodoro-container ${timerState.mode === 'work' ? 'work-mode' : 'break-mode'}`}>
@@ -227,7 +310,8 @@ export default function PomodoroTimer() {
           {!timerState.isActive ? (
             <button 
               className="control-button start" 
-              onClick={startTimer}
+              onClick={handleStartClick}
+              onTouchStart={handleUserInteraction}
               aria-label="Start Timer"
             >
               <PlayIcon className="h-6 w-6" />
@@ -235,7 +319,7 @@ export default function PomodoroTimer() {
           ) : (
             <button 
               className="control-button pause" 
-              onClick={pauseTimer}
+              onClick={handlePauseClick}
               aria-label="Pause Timer"
             >
               <PauseIcon className="h-6 w-6" />
@@ -245,6 +329,7 @@ export default function PomodoroTimer() {
           <button 
             className="control-button reset" 
             onClick={resetTimer}
+            onTouchStart={handleUserInteraction}
             aria-label="Reset Timer"
           >
             <ArrowPathIcon className="h-6 w-6" />
@@ -262,6 +347,7 @@ export default function PomodoroTimer() {
         <button 
           className="mode-toggle-button" 
           onClick={toggleMode}
+          onTouchStart={handleUserInteraction}
         >
           Switch to {timerState.mode === 'work' ? 'Break' : 'Work'} Mode
         </button>
