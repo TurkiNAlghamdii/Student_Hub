@@ -376,7 +376,17 @@ export default function Navbar({ showBack = false }: NavbarProps) {
   }, [isSidebarOpen, closeSidebar]);
 
   return (
-    <nav className="navbar">
+    <>
+      {/* Sidebar backdrop - moved outside navbar for full viewport coverage */}
+      {(isSidebarOpen || isSidebarClosing) && (
+        <div 
+          className={`sidebar-backdrop ${isBackdropActive ? 'sidebar-backdrop-active' : ''} ${isSidebarClosing ? 'sidebar-backdrop-closing' : ''}`}
+          onClick={closeSidebar}
+          aria-hidden="true"
+        />
+      )}
+      
+      <nav className="navbar">
       <div className="nav-content">
         {/* Title on the left */}
         <div className="nav-left">
@@ -502,15 +512,6 @@ export default function Navbar({ showBack = false }: NavbarProps) {
           </div>
         </div>
       </div>
-
-      {/* Sidebar backdrop */}
-      {(isSidebarOpen || isSidebarClosing) && (
-        <div 
-          className={`sidebar-backdrop ${isBackdropActive ? 'sidebar-backdrop-active' : ''} ${isSidebarClosing ? 'sidebar-backdrop-closing' : ''}`}
-          onClick={closeSidebar}
-          aria-hidden="true"
-        />
-      )}
 
       {/* Sidebar */}
       {(isSidebarOpen || isSidebarClosing) && (
@@ -924,5 +925,6 @@ export default function Navbar({ showBack = false }: NavbarProps) {
         </div>
       )}
     </nav>
+    </>
   )
 }
