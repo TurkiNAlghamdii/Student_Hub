@@ -5,6 +5,7 @@ import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import TwitterXIcon from '../icons/TwitterXIcon'
 import styles from './RssSimple.module.css'
 import Image from 'next/image'
+import { useTheme } from '@/contexts/ThemeContext'
 
 interface MediaItem {
   url: string
@@ -41,6 +42,23 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isViewMoreHovered, setIsViewMoreHovered] = useState(false)
+  const { theme } = useTheme()
+  
+  // Force dark mode styles to match app theme
+  useEffect(() => {
+    const rssContainer = document.querySelector(`.${styles.container}`);
+    if (rssContainer) {
+      if (theme === 'dark') {
+        document.documentElement.classList.add('force-dark-rss');
+      } else {
+        document.documentElement.classList.remove('force-dark-rss');
+      }
+    }
+    
+    return () => {
+      document.documentElement.classList.remove('force-dark-rss');
+    };
+  }, [theme])
 
   useEffect(() => {
     const fetchFeed = async () => {
@@ -162,11 +180,14 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
 
   if (loading) {
     return (
-      <div className={styles.container}>
+      <div className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`}>
         <div className={styles.widgetHeader}>
           <div className={styles.widgetTitleContainer}>
             <TwitterXIcon className={styles.widgetIcon} />
-            <h3 className={styles.title}>{title}</h3>
+            <h3 
+              className={styles.title}
+              style={theme === 'dark' ? { color: '#f9fafb' } : {}}
+            >{title}</h3>
           </div>
         </div>
         <div className={styles.loading}>
@@ -179,11 +200,14 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
 
   if (error) {
     return (
-      <div className={styles.container}>
+      <div className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`}>
         <div className={styles.widgetHeader}>
           <div className={styles.widgetTitleContainer}>
             <TwitterXIcon className={styles.widgetIcon} />
-            <h3 className={styles.title}>{title}</h3>
+            <h3 
+              className={styles.title}
+              style={theme === 'dark' ? { color: '#f9fafb' } : {}}
+            >{title}</h3>
           </div>
         </div>
         <div className={styles.error}>
@@ -195,11 +219,14 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
 
   if (!feedData || !feedData.items || feedData.items.length === 0) {
     return (
-      <div className={styles.container}>
+      <div className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`}>
         <div className={styles.widgetHeader}>
           <div className={styles.widgetTitleContainer}>
             <TwitterXIcon className={styles.widgetIcon} />
-            <h3 className={styles.title}>{title}</h3>
+            <h3 
+              className={styles.title}
+              style={theme === 'dark' ? { color: '#f9fafb' } : {}}
+            >{title}</h3>
           </div>
         </div>
         <div className={styles.empty}>
@@ -212,8 +239,17 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
   // Only display the requested number of items
   const displayItems = feedData.items.slice(0, count)
 
+  // Create inline styles based on theme
+  const darkModeStyles = theme === 'dark' ? {
+    backgroundColor: 'rgba(17, 24, 39, 0.7)',
+    borderColor: 'rgba(55, 65, 81, 0.5)',
+    color: '#f9fafb'
+  } : {}
+  
   return (
-    <div className={styles.container}>
+    <div 
+      className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`}
+      style={darkModeStyles}>
       <div className={styles.widgetHeader}>
         <div className={styles.widgetTitleContainer}>
           <TwitterXIcon className={styles.widgetIcon} />
@@ -243,19 +279,32 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
             const cleanedDescription = cleanDescription(item.description);
             
             return (
-              <li key={index} className={styles.item}>
+              <li 
+                key={index} 
+                className={`${styles.item} ${theme === 'dark' ? 'dark-rss' : ''}`}
+                style={theme === 'dark' ? {
+                  backgroundColor: 'rgba(30, 41, 59, 0.7)',
+                  borderColor: 'rgba(71, 85, 105, 0.5)',
+                  color: '#f9fafb'
+                } : {}}>
                 <a href={item.link} target="_blank" rel="noopener noreferrer" className={styles.link}>
                   <div className={styles.itemContent}>
                     <div className={styles.tweetHeader}>
                       {item.pubDate && (
-                        <span className={styles.date}>{formatDate(item.pubDate)}</span>
+                        <span 
+                          className={styles.date}
+                          style={theme === 'dark' ? { color: '#9ca3af' } : {}}
+                        >{formatDate(item.pubDate)}</span>
                       )}
                       <span className={isRetweet(item.description, item.title) ? styles.retweetBadge : styles.tweetBadge}>
                         {isRetweet(item.description, item.title) ? 'Retweet' : 'Post'}
                       </span>
                     </div>
                     
-                    <p className={styles.description} dangerouslySetInnerHTML={{ __html: cleanedDescription }}></p>
+                    <p 
+                      className={styles.description} 
+                      style={theme === 'dark' ? { color: '#d1d5db' } : {}}
+                      dangerouslySetInnerHTML={{ __html: cleanedDescription }}></p>
                     
                     {imageUrl && (
                       <div className={styles.imageContainer}>

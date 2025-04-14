@@ -110,8 +110,8 @@ const SummerTrainingGuide: React.FC = () => {
   return (
     <div className="space-y-8">
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-white mb-4">Summer Training Guide</h2>
-        <p className="text-gray-400">Find detailed information about summer training requirements and application process for your program</p>
+        <h2 className="text-2xl font-bold dark:text-white text-gray-800 mb-4">Summer Training Guide</h2>
+        <p className="dark:text-gray-400 text-gray-600">Find detailed information about summer training requirements and application process for your program</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -121,30 +121,30 @@ const SummerTrainingGuide: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 shadow-lg hover:shadow-emerald-500/10 transition-all duration-300"
+            className="dark:bg-gradient-to-br dark:from-gray-900/80 dark:to-gray-800/80 dark:border-gray-700/50 bg-gradient-to-br from-white/80 to-gray-100/80 border-gray-200/50 backdrop-blur-sm rounded-2xl p-6 border shadow-lg hover:shadow-emerald-500/10 transition-all duration-300"
           >
             <div className="mb-6">
               <div className="flex items-center gap-3 mb-2">
-                <div className="bg-emerald-500/10 rounded-full p-2">
+                <div className="dark:bg-emerald-500/10 bg-emerald-500/20 rounded-full p-2">
                   {guide.icon}
                 </div>
-                <h3 className="text-xl font-semibold text-white">{guide.title}</h3>
+                <h3 className="text-xl font-semibold dark:text-white text-gray-800">{guide.title}</h3>
               </div>
-              <p className="text-gray-400 text-sm">{guide.description}</p>
+              <p className="dark:text-gray-400 text-gray-600 text-sm">{guide.description}</p>
             </div>
 
             <div className="space-y-6">
               <div>
-                <h4 className="text-lg font-medium text-white mb-4">Prerequisites</h4>
+                <h4 className="text-lg font-medium dark:text-white text-gray-800 mb-4">Prerequisites</h4>
                 <div className="space-y-4">
                   {guide.prerequisites.map((prereq, index) => (
                     <div key={index} className="flex items-start gap-3">
-                      <div className="text-emerald-400 mt-1 bg-emerald-500/10 rounded-full p-1.5">
+                      <div className="text-emerald-400 mt-1 dark:bg-emerald-500/10 bg-emerald-500/20 rounded-full p-1.5">
                         {prereq.icon}
                       </div>
                       <div>
-                        <h5 className="text-white font-medium">{prereq.title}</h5>
-                        <p className="text-gray-400 text-sm">{prereq.description}</p>
+                        <h5 className="dark:text-white text-gray-800 font-medium">{prereq.title}</h5>
+                        <p className="dark:text-gray-400 text-gray-600 text-sm">{prereq.description}</p>
                       </div>
                     </div>
                   ))}
@@ -152,10 +152,10 @@ const SummerTrainingGuide: React.FC = () => {
               </div>
 
               <div>
-                <h4 className="text-lg font-medium text-white mb-4">Application Steps</h4>
+                <h4 className="text-lg font-medium dark:text-white text-gray-800 mb-4">Application Steps</h4>
                 <ol className="space-y-2">
                   {guide.applicationSteps.map((step, index) => (
-                    <li key={index} className="flex items-start gap-2 text-gray-400 text-sm">
+                    <li key={index} className="flex items-start gap-2 dark:text-gray-400 text-gray-600 text-sm">
                       <span className="text-emerald-400 font-medium">{index + 1}.</span>
                       {step}
                     </li>
@@ -163,15 +163,15 @@ const SummerTrainingGuide: React.FC = () => {
                 </ol>
               </div>
 
-              <div className="flex items-center justify-between pt-4 border-t border-gray-700/50">
-                <div className="flex items-center gap-2 text-gray-400">
-                  <div className="bg-emerald-500/10 rounded-full p-1.5">
+              <div className="flex items-center justify-between pt-4 dark:border-gray-700/50 border-gray-200/50 border-t">
+                <div className="flex items-center gap-2 dark:text-gray-400 text-gray-600">
+                  <div className="dark:bg-emerald-500/10 bg-emerald-500/20 rounded-full p-1.5">
                     <ClockIcon className="h-5 w-5 text-emerald-400" />
                   </div>
                   <span className="text-sm">{guide.duration}</span>
                 </div>
-                <div className="flex items-center gap-2 text-gray-400">
-                  <div className="bg-emerald-500/10 rounded-full p-1.5">
+                <div className="flex items-center gap-2 dark:text-gray-400 text-gray-600">
+                  <div className="dark:bg-emerald-500/10 bg-emerald-500/20 rounded-full p-1.5">
                     <UserGroupIcon className="h-5 w-5 text-emerald-400" />
                   </div>
                   <span className="text-sm">{guide.credits}</span>

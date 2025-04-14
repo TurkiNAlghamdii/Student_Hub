@@ -1,7 +1,18 @@
 .gpa-calculator-container {
-  @apply min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
-  background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.15) 1px, transparent 0);
+  @apply min-h-screen;
   background-size: 40px 40px;
+}
+
+/* Dark theme background */
+:root.dark .gpa-calculator-container {
+  @apply bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
+  background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.15) 1px, transparent 0);
+}
+
+/* Light theme background */
+:root:not(.dark) .gpa-calculator-container {
+  @apply bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50;
+  background-image: radial-gradient(circle at 1px 1px, rgb(156, 163, 175, 0.15) 1px, transparent 0);
 }
 
 .gpa-calculator-content {
@@ -21,11 +32,23 @@
 }
 
 .gpa-calculator-section {
-  @apply bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 md:p-8
-    border border-gray-800/50 space-y-8;
+  @apply backdrop-blur-sm rounded-2xl p-6 md:p-8 space-y-8;
+}
+
+/* Dark theme section */
+:root.dark .gpa-calculator-section {
+  @apply bg-gray-900/50 border border-gray-800/50;
   box-shadow: 
     0 0 40px rgba(6, 78, 59, 0.1),
     0 0 80px rgba(0, 0, 0, 0.3);
+}
+
+/* Light theme section */
+:root:not(.dark) .gpa-calculator-section {
+  @apply bg-white/80 border border-gray-200/70;
+  box-shadow: 
+    0 0 40px rgba(6, 78, 59, 0.05),
+    0 0 30px rgba(0, 0, 0, 0.05);
 }
 
 .section-subtitle {
@@ -38,7 +61,17 @@
 
 /* Previous GPA Section */
 .previous-gpa-section {
-  @apply pb-6 border-b border-gray-800/50;
+  @apply pb-6 border-b;
+}
+
+/* Dark theme border */
+:root.dark .previous-gpa-section {
+  @apply border-gray-800/50;
+}
+
+/* Light theme border */
+:root:not(.dark) .previous-gpa-section {
+  @apply border-gray-200;
 }
 
 .input-group {
@@ -50,49 +83,134 @@
 }
 
 .input-field label {
-  @apply text-gray-300 text-sm font-medium;
+  @apply text-sm font-medium;
+}
+
+/* Dark theme label */
+:root.dark .input-field label {
+  @apply text-gray-300;
+}
+
+/* Light theme label */
+:root:not(.dark) .input-field label {
+  @apply text-gray-700;
 }
 
 .gpa-input {
-  @apply bg-gray-800/50 text-white border border-gray-700 rounded-md
-    px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500
+  @apply rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500
     focus:border-transparent transition duration-200;
 }
 
+/* Dark theme input */
+:root.dark .gpa-input {
+  @apply bg-gray-800/50 text-white border border-gray-700;
+}
+
+/* Light theme input */
+:root:not(.dark) .gpa-input {
+  @apply bg-white text-gray-800 border border-gray-300;
+}
+
 .readonly-input {
-  @apply bg-gray-800/80 cursor-not-allowed;
+  @apply cursor-not-allowed;
+}
+
+/* Dark theme readonly input */
+:root.dark .readonly-input {
+  @apply bg-gray-800/80;
+}
+
+/* Light theme readonly input */
+:root:not(.dark) .readonly-input {
+  @apply bg-gray-100;
 }
 
 /* GPA Scale Section */
 .gpa-scale-section {
-  @apply pb-6 border-b border-gray-800/50;
+  @apply pb-6 border-b;
+}
+
+/* Dark theme border */
+:root.dark .gpa-scale-section {
+  @apply border-gray-800/50;
+}
+
+/* Light theme border */
+:root:not(.dark) .gpa-scale-section {
+  @apply border-gray-200;
 }
 
 .scale-selector {
-  @apply flex border border-gray-700 rounded-md overflow-hidden;
+  @apply flex rounded-md overflow-hidden;
   width: fit-content;
 }
 
+/* Dark theme scale selector */
+:root.dark .scale-selector {
+  @apply border border-gray-700;
+}
+
+/* Light theme scale selector */
+:root:not(.dark) .scale-selector {
+  @apply border border-gray-300;
+}
+
 .scale-button {
-  @apply bg-gray-800 text-white px-6 py-2 
-    transition-all duration-200 ease-in-out;
+  @apply px-6 py-2 transition-all duration-200 ease-in-out;
+}
+
+/* Dark theme scale button */
+:root.dark .scale-button {
+  @apply bg-gray-800 text-white;
+}
+
+/* Light theme scale button */
+:root:not(.dark) .scale-button {
+  @apply bg-gray-100 text-gray-800;
 }
 
 .scale-button.active {
   @apply bg-emerald-600 font-medium;
 }
 
-.scale-button:hover:not(.active) {
+/* Dark theme scale button hover */
+:root.dark .scale-button:hover:not(.active) {
   @apply bg-gray-700;
+}
+
+/* Light theme scale button hover */
+:root:not(.dark) .scale-button:hover:not(.active) {
+  @apply bg-gray-200;
 }
 
 /* Results Section */
 .results-section {
-  @apply grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-gray-800/50;
+  @apply grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b;
+}
+
+/* Dark theme border */
+:root.dark .results-section {
+  @apply border-gray-800/50;
+}
+
+/* Light theme border */
+:root:not(.dark) .results-section {
+  @apply border-gray-200;
 }
 
 .cumulative-results, .semester-results {
-  @apply rounded-xl border border-gray-800/70 p-4 bg-gray-900/30;
+  @apply rounded-xl p-4;
+}
+
+/* Dark theme results */
+:root.dark .cumulative-results, :root.dark .semester-results {
+  @apply border border-gray-800/70 bg-gray-900/30;
+}
+
+/* Light theme results */
+:root:not(.dark) .cumulative-results, :root:not(.dark) .semester-results {
+  @apply border border-gray-200 bg-white/80;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .results-grid {
@@ -104,15 +222,45 @@
 }
 
 .result-label {
-  @apply text-gray-400 text-xs mb-1;
+  @apply text-xs mb-1;
+}
+
+/* Dark theme result label */
+:root.dark .result-label {
+  @apply text-gray-400;
+}
+
+/* Light theme result label */
+:root:not(.dark) .result-label {
+  @apply text-gray-500;
 }
 
 .result-value {
-  @apply text-white text-lg font-semibold;
+  @apply text-lg font-semibold;
+}
+
+/* Dark theme result value */
+:root.dark .result-value {
+  @apply text-white;
+}
+
+/* Light theme result value */
+:root:not(.dark) .result-value {
+  @apply text-gray-800;
 }
 
 .gpa-value {
-  @apply text-emerald-400 text-2xl;
+  @apply text-2xl;
+}
+
+/* Dark theme GPA value */
+:root.dark .gpa-value {
+  @apply text-emerald-400;
+}
+
+/* Light theme GPA value */
+:root:not(.dark) .gpa-value {
+  @apply text-emerald-600;
 }
 
 /* Courses Table Section */
@@ -131,20 +279,59 @@
 }
 
 .courses-table {
-  @apply border border-gray-800 rounded-lg overflow-hidden;
+  @apply rounded-lg overflow-hidden;
+}
+
+/* Dark theme courses table */
+:root.dark .courses-table {
+  @apply border border-gray-800;
+}
+
+/* Light theme courses table */
+:root:not(.dark) .courses-table {
+  @apply border border-gray-200;
 }
 
 .courses-table-head {
-  @apply grid grid-cols-12 gap-x-2 bg-gray-800 text-gray-300 
-    text-sm font-medium py-3 px-4;
+  @apply grid grid-cols-12 gap-x-2 text-sm font-medium py-3 px-4;
+}
+
+/* Dark theme table head */
+:root.dark .courses-table-head {
+  @apply bg-gray-800 text-gray-300;
+}
+
+/* Light theme table head */
+:root:not(.dark) .courses-table-head {
+  @apply bg-gray-100 text-gray-700;
 }
 
 .courses-table-body {
-  @apply divide-y divide-gray-800;
+  @apply divide-y;
+}
+
+/* Dark theme table body */
+:root.dark .courses-table-body {
+  @apply divide-gray-800;
+}
+
+/* Light theme table body */
+:root:not(.dark) .courses-table-body {
+  @apply divide-gray-200;
 }
 
 .course-row {
-  @apply grid grid-cols-12 gap-x-2 py-3 px-4 text-gray-300 items-center hover:bg-gray-800/50;
+  @apply grid grid-cols-12 gap-x-2 py-3 px-4 items-center;
+}
+
+/* Dark theme course row */
+:root.dark .course-row {
+  @apply text-gray-300 hover:bg-gray-800/50;
+}
+
+/* Light theme course row */
+:root:not(.dark) .course-row {
+  @apply text-gray-700 hover:bg-gray-100;
 }
 
 .course-cell {
@@ -164,9 +351,18 @@
 }
 
 .course-input {
-  @apply bg-gray-800/70 text-white border border-gray-700 rounded
-    px-2 py-1 text-sm w-full focus:outline-none focus:ring-1 
+  @apply rounded px-2 py-1 text-sm w-full focus:outline-none focus:ring-1 
     focus:ring-emerald-500 focus:border-transparent;
+}
+
+/* Dark theme course input */
+:root.dark .course-input {
+  @apply bg-gray-800/70 text-white border border-gray-700;
+}
+
+/* Light theme course input */
+:root:not(.dark) .course-input {
+  @apply bg-white text-gray-800 border border-gray-300;
 }
 
 .name-input {
@@ -174,7 +370,17 @@
 }
 
 .readonly-value {
-  @apply text-gray-300 font-mono;
+  @apply font-mono;
+}
+
+/* Dark theme readonly value */
+:root.dark .readonly-value {
+  @apply text-gray-300;
+}
+
+/* Light theme readonly value */
+:root:not(.dark) .readonly-value {
+  @apply text-gray-600;
 }
 
 .remove-course-btn {

@@ -120,7 +120,7 @@ export default function AcademicCalendarPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 home-container">
+    <div className="home-container">
       <Navbar />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -130,21 +130,21 @@ export default function AcademicCalendarPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="welcome-section bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-800/50 relative overflow-hidden">
+          <div className="welcome-section p-6 relative">
             <div className="welcome-container relative z-1">
               <div className="greeting-content flex items-center gap-4">
-                <div className="greeting-icon bg-emerald-500/10 rounded-full p-3 flex items-center justify-center">
-                  <CalendarIcon className="w-8 h-8 text-emerald-400" />
+                <div className="greeting-icon rounded-full p-3 flex items-center justify-center bg-emerald-500/10 dark:bg-emerald-500/10 light:bg-emerald-500/20">
+                  <CalendarIcon className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold text-white">Academic Calendar</h1>
-                  <p className="text-gray-400 text-sm mt-1">View and download academic and exam calendars</p>
+                  <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Academic Calendar</h1>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">View and download academic and exam calendars</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="mb-6 border-b border-gray-800">
+          <div className="mb-6 border-b dark:border-gray-800 border-gray-200">
             <ul className="flex space-x-2">
               <li>
                 <button 
@@ -152,8 +152,8 @@ export default function AcademicCalendarPage() {
                   onClick={() => setActiveTab('academic')}
                   className={`py-3 px-6 rounded-t-lg transition-all duration-200 font-medium ${
                     activeTab === 'academic' 
-                      ? 'text-white border-b-2 border-emerald-400 bg-gray-800/50' 
-                      : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/30'
+                      ? 'dark:text-white text-gray-800 border-b-2 border-emerald-500 dark:border-emerald-400 dark:bg-gray-800/50 bg-gray-100/80' 
+                      : 'dark:text-gray-400 text-gray-500 dark:hover:text-gray-200 hover:text-gray-700 dark:hover:bg-gray-800/30 hover:bg-gray-100/50'
                   }`}
                 >
                   <div className="flex items-center">
@@ -168,8 +168,8 @@ export default function AcademicCalendarPage() {
                   onClick={() => setActiveTab('exam')}
                   className={`py-3 px-6 rounded-t-lg transition-all duration-200 font-medium ${
                     activeTab === 'exam' 
-                      ? 'text-white border-b-2 border-emerald-400 bg-gray-800/50' 
-                      : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/30'
+                      ? 'dark:text-white text-gray-800 border-b-2 border-emerald-500 dark:border-emerald-400 dark:bg-gray-800/50 bg-gray-100/80' 
+                      : 'dark:text-gray-400 text-gray-500 dark:hover:text-gray-200 hover:text-gray-700 dark:hover:bg-gray-800/30 hover:bg-gray-100/50'
                   }`}
                 >
                   <div className="flex items-center">
@@ -183,36 +183,36 @@ export default function AcademicCalendarPage() {
           
           {activeTab === 'academic' ? (
             loading ? (
-              <div className="flex items-center justify-center h-64 bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-800/50">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-400"></div>
+              <div className="flex items-center justify-center h-64 dark:bg-gray-900/50 bg-white/80 backdrop-blur-sm rounded-2xl p-6 dark:border-gray-800/50 border border-gray-200">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500 dark:border-emerald-400"></div>
               </div>
             ) : error ? (
-              <div className="bg-red-900/20 border border-red-800 text-red-400 px-6 py-4 rounded-2xl">
+              <div className="dark:bg-red-900/20 bg-red-50 dark:border-red-800 border border-red-200 dark:text-red-400 text-red-600 px-6 py-4 rounded-2xl">
                 <p>{error}</p>
               </div>
             ) : (
-              <div className="bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-800/50 overflow-hidden">
+              <div className="dark:bg-gray-900/50 bg-white/80 backdrop-blur-sm rounded-2xl dark:border-gray-800/50 border border-gray-200 overflow-hidden">
                 {activeCalendar ? (
                   <div className="pdf-container">
-                    <div className="p-4 border-b border-gray-800 flex justify-between items-center">
+                    <div className="p-4 dark:border-gray-800 border-b border-gray-200 flex justify-between items-center">
                       <div className="flex items-center">
-                        <DocumentTextIcon className="h-5 w-5 text-emerald-400 mr-2" />
-                        <span className="text-white font-medium">
+                        <DocumentTextIcon className="h-5 w-5 dark:text-emerald-400 text-emerald-600 mr-2" />
+                        <span className="dark:text-white text-gray-800 font-medium">
                           {activeCalendar.semester} Academic Calendar
                         </span>
                         {activeCalendar.description && (
-                          <span className="ml-3 text-sm text-gray-400">
+                          <span className="ml-3 text-sm dark:text-gray-400 text-gray-500">
                             {activeCalendar.description}
                           </span>
                         )}
                       </div>
                       
-                      <a
-                        href={activeCalendar.file_url}
+                      <a 
+                        href={activeCalendar.file_url} 
                         download
-                        target="_blank"
+                        target="_blank" 
                         rel="noopener noreferrer"
-                        className="flex items-center px-3 py-1.5 bg-emerald-500/10 text-emerald-400 rounded-lg hover:bg-emerald-500/20 transition-colors text-sm"
+                        className="flex items-center px-3 py-1.5 dark:bg-emerald-500/10 bg-emerald-100 dark:text-emerald-400 text-emerald-600 rounded-lg dark:hover:bg-emerald-500/20 hover:bg-emerald-200 transition-colors text-sm"
                       >
                         <ArrowDownTrayIcon className="h-4 w-4 mr-1" />
                         Download
@@ -228,9 +228,9 @@ export default function AcademicCalendarPage() {
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center h-96 p-8 text-center">
-                    <CalendarIcon className="h-16 w-16 text-gray-700 mb-4" />
-                    <h3 className="text-xl font-medium text-gray-300 mb-2">No Academic Calendar Available</h3>
-                    <p className="text-gray-500">
+                    <CalendarIcon className="h-16 w-16 dark:text-gray-700 text-gray-400 mb-4" />
+                    <h3 className="text-xl font-medium dark:text-gray-300 text-gray-600 mb-2">No Academic Calendar Available</h3>
+                    <p className="dark:text-gray-500 text-gray-500">
                       There is currently no academic calendar uploaded. Please check back later.
                     </p>
                   </div>
@@ -239,66 +239,51 @@ export default function AcademicCalendarPage() {
             )
           ) : (
             loadingExams ? (
-              <div className="flex items-center justify-center h-64 bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-800/50">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-400"></div>
+              <div className="flex items-center justify-center h-64 dark:bg-gray-900/50 bg-white/80 backdrop-blur-sm rounded-2xl p-6 dark:border-gray-800/50 border border-gray-200">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500 dark:border-emerald-400"></div>
               </div>
             ) : examError ? (
-              <div className="bg-red-900/20 border border-red-800 text-red-400 px-6 py-4 rounded-2xl">
+              <div className="dark:bg-red-900/20 bg-red-50 dark:border-red-800 border border-red-200 dark:text-red-400 text-red-600 px-6 py-4 rounded-2xl">
                 <p>{examError}</p>
               </div>
+            ) : examCalendars.length === 0 ? (
+              <div className="dark:bg-gray-900/50 bg-white/80 backdrop-blur-sm rounded-2xl p-6 dark:border-gray-800/50 border border-gray-200 text-center">
+                <p className="dark:text-gray-400 text-gray-500">No exam calendars available at this time.</p>
+              </div>
             ) : (
-              <div className="bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-800/50 overflow-hidden">
-                {examCalendars.length > 0 ? (
-                  <div className="divide-y divide-gray-800">
-                    {examCalendars.map((calendar) => (
-                      <div key={calendar.id} className="p-4 flex items-center justify-between hover:bg-gray-800/30 transition-colors">
-                        <div className="flex items-center space-x-4">
-                          <div className={`p-2 rounded-lg ${
-                            calendar.exam_type === 'Mid Term' 
-                              ? 'bg-blue-500/10 text-blue-400' 
-                              : 'bg-amber-500/10 text-amber-400'
-                          }`}>
-                            <DocumentTextIcon className="h-6 w-6" />
-                          </div>
-                          <div>
-                            <h3 className="text-white font-medium">{calendar.title}</h3>
-                            <div className="flex items-center space-x-3 mt-1">
-                              <span className={`text-xs px-2 py-0.5 rounded-full ${
-                                calendar.exam_type === 'Mid Term'
-                                  ? 'bg-blue-900/50 text-blue-300'
-                                  : 'bg-amber-900/50 text-amber-300'
-                              }`}>
-                                {calendar.exam_type}
-                              </span>
-                              <span className="text-sm text-gray-400">{calendar.semester}</span>
-                              {calendar.description && (
-                                <span className="text-sm text-gray-500">{calendar.description}</span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <a
-                          href={calendar.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center px-3 py-1.5 bg-emerald-500/10 text-emerald-400 rounded-lg hover:bg-emerald-500/20 transition-colors text-sm ml-4"
-                        >
-                          <ArrowDownTrayIcon className="h-4 w-4 mr-1" />
-                          View Calendar
-                        </a>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {examCalendars.map(calendar => (
+                  <div 
+                    key={calendar.id} 
+                    className="dark:bg-gray-900/50 bg-white/80 backdrop-blur-sm rounded-xl p-4 dark:border-gray-800/50 border border-gray-200 dark:hover:border-emerald-800/50 hover:border-emerald-300 transition-all hover:shadow-lg dark:hover:shadow-emerald-900/10 hover:shadow-emerald-100/50 group"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center">
+                        <span className={`inline-flex items-center justify-center px-2 py-1 text-xs font-medium rounded-full ${calendar.exam_type === 'Mid Term' ? 'dark:bg-blue-900/30 bg-blue-100 dark:text-blue-400 text-blue-700' : 'dark:bg-purple-900/30 bg-purple-100 dark:text-purple-400 text-purple-700'}`}>
+                          {calendar.exam_type}
+                        </span>
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-96 p-8 text-center">
-                    <DocumentIcon className="h-16 w-16 text-gray-700 mb-4" />
-                    <h3 className="text-xl font-medium text-gray-300 mb-2">No Exam Calendars Available</h3>
-                    <p className="text-gray-500">
-                      There are currently no exam calendars available. Please check back later.
+                      <span className="dark:text-gray-500 text-gray-400 text-xs">
+                        {new Date(calendar.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <h3 className="dark:text-white text-gray-800 font-medium mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                      {calendar.title}
+                    </h3>
+                    <p className="dark:text-gray-400 text-gray-600 text-sm mb-4 line-clamp-2">
+                      {calendar.description}
                     </p>
+                    <a 
+                      href={calendar.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center w-full dark:bg-gray-800 bg-gray-100 dark:hover:bg-gray-700 hover:bg-gray-200 dark:text-white text-gray-800 px-3 py-2 rounded text-sm font-medium transition-colors group-hover:bg-emerald-600 group-hover:text-white"
+                    >
+                      <ArrowDownTrayIcon className="h-4 w-4 mr-2" />
+                      Download Calendar
+                    </a>
                   </div>
-                )}
+                ))}
               </div>
             )
           )}

@@ -52,7 +52,7 @@ export default function AdminPage() {
 
   if (loading || authLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">
+      <div className="min-h-screen admin-container">
         <Navbar />
         <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
           <LoadingSpinner />
@@ -79,12 +79,12 @@ export default function AdminPage() {
                   </svg>
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
-                  <p className="text-gray-400 text-sm mt-1">Manage your application settings and data</p>
+                  <h1 className="text-3xl font-bold dark:text-white text-gray-800">Admin Dashboard</h1>
+                  <p className="dark:text-gray-400 text-gray-600 text-sm mt-1">Manage your application settings and data</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20">
-                <span className="text-sm text-emerald-400">Admin Access</span>
+              <div className="flex items-center gap-2 dark:bg-emerald-500/10 bg-emerald-500/20 px-3 py-1 rounded-lg border dark:border-emerald-500/20 border-emerald-500/30">
+                <span className="text-sm dark:text-emerald-400 text-emerald-600">Admin Access</span>
               </div>
             </div>
           </div>
@@ -97,11 +97,11 @@ export default function AdminPage() {
                   className="admin-card"
                 >
                   <div className="p-6 flex flex-col items-center text-center h-full">
-                    <div className="admin-card-icon bg-emerald-500/10 rounded-full p-4">
-                      <UserGroupIcon className="h-10 w-10 text-emerald-400" />
+                    <div className="admin-card-icon dark:bg-emerald-500/10 bg-emerald-500/20 rounded-full p-4">
+                      <UserGroupIcon className="h-10 w-10 dark:text-emerald-400 text-emerald-600" />
                     </div>
-                    <h3 className="text-xl font-semibold text-white mb-2">User Management</h3>
-                    <p className="text-gray-400 text-sm">
+                    <h3 className="text-xl font-semibold dark:text-white text-gray-800 mb-2">User Management</h3>
+                    <p className="dark:text-gray-400 text-gray-600 text-sm">
                       Manage users, update roles, and control access permissions
                     </p>
                   </div>
@@ -112,11 +112,11 @@ export default function AdminPage() {
                   className="admin-card"
                 >
                   <div className="p-6 flex flex-col items-center text-center h-full">
-                    <div className="admin-card-icon bg-emerald-500/10 rounded-full p-4">
-                      <AcademicCapIcon className="h-10 w-10 text-emerald-400" />
+                    <div className="admin-card-icon dark:bg-emerald-500/10 bg-emerald-500/20 rounded-full p-4">
+                      <AcademicCapIcon className="h-10 w-10 dark:text-emerald-400 text-emerald-600" />
                     </div>
-                    <h3 className="text-xl font-semibold text-white mb-2">Course Management</h3>
-                    <p className="text-gray-400 text-sm">
+                    <h3 className="text-xl font-semibold dark:text-white text-gray-800 mb-2">Course Management</h3>
+                    <p className="dark:text-gray-400 text-gray-600 text-sm">
                       Create, edit, and delete courses in the system
                     </p>
                   </div>
@@ -127,11 +127,11 @@ export default function AdminPage() {
                   className="admin-card"
                 >
                   <div className="p-6 flex flex-col items-center text-center h-full">
-                    <div className="admin-card-icon bg-emerald-500/10 rounded-full p-4">
-                      <ShieldExclamationIcon className="h-10 w-10 text-emerald-400" />
+                    <div className="admin-card-icon dark:bg-emerald-500/10 bg-emerald-500/20 rounded-full p-4">
+                      <ShieldExclamationIcon className="h-10 w-10 dark:text-emerald-400 text-emerald-600" />
                     </div>
-                    <h3 className="text-xl font-semibold text-white mb-2">Content Moderation</h3>
-                    <p className="text-gray-400 text-sm">
+                    <h3 className="text-xl font-semibold dark:text-white text-gray-800 mb-2">Content Moderation</h3>
+                    <p className="dark:text-gray-400 text-gray-600 text-sm">
                       Review comments, manage reported content, and remove inappropriate materials
                     </p>
                   </div>
@@ -142,11 +142,11 @@ export default function AdminPage() {
                   className="admin-card"
                 >
                   <div className="p-6 flex flex-col items-center text-center h-full">
-                    <div className="admin-card-icon bg-emerald-500/10 rounded-full p-4">
-                      <DocumentIcon className="h-10 w-10 text-emerald-400" />
+                    <div className="admin-card-icon dark:bg-emerald-500/10 bg-emerald-500/20 rounded-full p-4">
+                      <DocumentIcon className="h-10 w-10 dark:text-emerald-400 text-emerald-600" />
                     </div>
-                    <h3 className="text-xl font-semibold text-white mb-2">File Management</h3>
-                    <p className="text-gray-400 text-sm">
+                    <h3 className="text-xl font-semibold dark:text-white text-gray-800 mb-2">File Management</h3>
+                    <p className="dark:text-gray-400 text-gray-600 text-sm">
                       View uploaded files, monitor storage usage, and remove inappropriate content
                     </p>
                   </div>
@@ -157,11 +157,11 @@ export default function AdminPage() {
                   className="admin-card"
                 >
                   <div className="p-6 flex flex-col items-center text-center h-full">
-                    <div className="admin-card-icon bg-emerald-500/10 rounded-full p-4">
-                      <QuestionMarkCircleIcon className="h-10 w-10 text-emerald-400" />
+                    <div className="admin-card-icon dark:bg-emerald-500/10 bg-emerald-500/20 rounded-full p-4">
+                      <QuestionMarkCircleIcon className="h-10 w-10 dark:text-emerald-400 text-emerald-600" />
                     </div>
-                    <h3 className="text-xl font-semibold text-white mb-2">Support Requests</h3>
-                    <p className="text-gray-400 text-sm">
+                    <h3 className="text-xl font-semibold dark:text-white text-gray-800 mb-2">Support Requests</h3>
+                    <p className="dark:text-gray-400 text-gray-600 text-sm">
                       Manage user support tickets, track issues, and respond to feedback
                     </p>
                   </div>
@@ -172,11 +172,11 @@ export default function AdminPage() {
                   className="admin-card"
                 >
                   <div className="p-6 flex flex-col items-center text-center h-full">
-                    <div className="admin-card-icon bg-emerald-500/10 rounded-full p-4">
-                      <CalendarIcon className="h-10 w-10 text-emerald-400" />
+                    <div className="admin-card-icon dark:bg-emerald-500/10 bg-emerald-500/20 rounded-full p-4">
+                      <CalendarIcon className="h-10 w-10 dark:text-emerald-400 text-emerald-600" />
                     </div>
-                    <h3 className="text-xl font-semibold text-white mb-2">Academic Calendar</h3>
-                    <p className="text-gray-400 text-sm">
+                    <h3 className="text-xl font-semibold dark:text-white text-gray-800 mb-2">Academic Calendar</h3>
+                    <p className="dark:text-gray-400 text-gray-600 text-sm">
                       Manage the academic calendar PDF files for student reference
                     </p>
                   </div>
@@ -189,7 +189,7 @@ export default function AdminPage() {
             <>
               <button
                 onClick={() => setActiveSection('dashboard')}
-                className="back-button flex items-center gap-2 text-gray-400 hover:text-emerald-400 transition-colors bg-gray-900/30 rounded-lg px-4 py-2 border border-gray-800/30 hover:border-emerald-500/20 mb-6"
+                className="back-button flex items-center gap-2 dark:text-gray-400 text-gray-600 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors dark:bg-gray-900/30 bg-gray-200/50 rounded-lg px-4 py-2 dark:border-gray-800/30 border-gray-300/50 border hover:border-emerald-500/20 mb-6"
               >
                 <ArrowLeftIcon className="h-4 w-4" />
                 Back to Dashboard

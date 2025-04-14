@@ -1,0 +1,480 @@
+/* Faculty page styles */
+
+/* Hero section */
+.faculty-hero {
+  position: relative;
+  height: 60vh;
+  width: 100%;
+}
+
+/* Dark theme hero background */
+:root.dark .faculty-hero {
+  background: linear-gradient(to bottom, rgba(6, 78, 59, 0.2), rgba(14, 17, 25, 1));
+}
+
+/* Light theme hero background */
+:root:not(.dark) .faculty-hero {
+  background: linear-gradient(to bottom, rgba(16, 185, 129, 0.1), rgba(249, 250, 251, 1));
+}
+
+/* Hero content */
+.faculty-hero-content {
+  position: relative;
+  z-index: 20;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+}
+
+/* Hero title */
+.faculty-title {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .faculty-title {
+    font-size: 3.75rem;
+    line-height: 1;
+  }
+}
+
+/* Dark theme title */
+:root.dark .faculty-title {
+  background: linear-gradient(to right, rgb(52, 211, 153), rgb(16, 185, 129), rgb(5, 150, 105));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Light theme title */
+:root:not(.dark) .faculty-title {
+  background: linear-gradient(to right, rgb(5, 150, 105), rgb(16, 185, 129), rgb(4, 120, 87));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Section titles */
+.section-title {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+/* Dark theme section title */
+:root.dark .section-title {
+  background: linear-gradient(to right, rgb(52, 211, 153), rgb(16, 185, 129), rgb(5, 150, 105));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Light theme section title */
+:root:not(.dark) .section-title {
+  background: linear-gradient(to right, rgb(5, 150, 105), rgb(16, 185, 129), rgb(4, 120, 87));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Department cards */
+.department-card {
+  padding: 2rem;
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border-width: 2px;
+}
+
+.department-card:hover {
+  transform: scale(1.05);
+}
+
+/* Dark theme department card */
+:root.dark .department-card {
+  background-color: rgba(31, 41, 55, 0.5);
+  border-color: rgb(31, 41, 55);
+}
+
+:root.dark .department-card:hover {
+  border-color: rgba(16, 185, 129, 0.5);
+}
+
+:root.dark .department-card.active {
+  border-color: rgb(16, 185, 129);
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+/* Light theme department card */
+:root:not(.dark) .department-card {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-color: rgb(229, 231, 235);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+:root:not(.dark) .department-card:hover {
+  border-color: rgba(16, 185, 129, 0.5);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+:root:not(.dark) .department-card.active {
+  border-color: rgb(16, 185, 129);
+  background-color: rgba(16, 185, 129, 0.05);
+  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.15);
+}
+
+/* Department card title */
+.department-title {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* Dark theme department title */
+:root.dark .department-title {
+  background: linear-gradient(to right, rgb(52, 211, 153), rgb(16, 185, 129), rgb(5, 150, 105));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Light theme department title */
+:root:not(.dark) .department-title {
+  background: linear-gradient(to right, rgb(5, 150, 105), rgb(16, 185, 129), rgb(4, 120, 87));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Department description */
+.department-description {
+  margin-bottom: 1.5rem;
+}
+
+/* Dark theme department description */
+:root.dark .department-description {
+  color: rgb(156, 163, 175);
+}
+
+/* Light theme department description */
+:root:not(.dark) .department-description {
+  color: rgb(55, 65, 81);
+}
+
+/* Section heading */
+.section-heading {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+/* Dark theme section heading */
+:root.dark .section-heading {
+  color: rgb(52, 211, 153);
+}
+
+/* Light theme section heading */
+:root:not(.dark) .section-heading {
+  color: rgb(5, 150, 105);
+}
+
+/* List items */
+.list-item {
+  display: flex;
+  align-items: center;
+}
+
+/* Dark theme list item */
+:root.dark .list-item {
+  color: rgb(156, 163, 175);
+}
+
+/* Light theme list item */
+:root:not(.dark) .list-item {
+  color: rgb(55, 65, 81);
+}
+
+/* List marker */
+.list-marker {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  margin-right: 0.75rem;
+}
+
+/* Dark theme list marker */
+:root.dark .list-marker {
+  background-color: rgb(16, 185, 129);
+}
+
+/* Light theme list marker */
+:root:not(.dark) .list-marker {
+  background-color: rgb(5, 150, 105);
+}
+
+/* Contact cards */
+.contact-card {
+  display: flex;
+  align-items: flex-start;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+}
+
+/* Dark theme contact card */
+:root.dark .contact-card {
+  background-color: rgba(31, 41, 55, 0.5);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+/* Light theme contact card */
+:root:not(.dark) .contact-card {
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Contact icon */
+.contact-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-top: 0.25rem;
+  margin-right: 1rem;
+}
+
+/* Dark theme contact icon */
+:root.dark .contact-icon {
+  color: rgb(16, 185, 129);
+}
+
+/* Light theme contact icon */
+:root:not(.dark) .contact-icon {
+  color: rgb(5, 150, 105);
+}
+
+/* Contact title */
+.contact-title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+/* Dark theme contact title */
+:root.dark .contact-title {
+  color: rgb(255, 255, 255);
+}
+
+/* Light theme contact title */
+:root:not(.dark) .contact-title {
+  color: rgb(17, 24, 39);
+}
+
+/* Contact text */
+.contact-text {
+  font-size: 0.875rem;
+}
+
+/* Dark theme contact text */
+:root.dark .contact-text {
+  color: rgb(156, 163, 175);
+}
+
+/* Light theme contact text */
+:root:not(.dark) .contact-text {
+  color: rgb(75, 85, 99);
+}
+
+/* Map container */
+.map-container {
+  position: relative;
+  height: 400px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+/* Dark theme map container */
+:root.dark .map-container {
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  box-shadow: 0 10px 15px rgba(16, 185, 129, 0.1);
+  background-color: rgba(31, 41, 55, 0.5);
+}
+
+/* Light theme map container */
+:root:not(.dark) .map-container {
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* Map link */
+.map-link {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+/* Dark theme map link */
+:root.dark .map-link {
+  background-color: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: rgb(52, 211, 153);
+}
+
+:root.dark .map-link:hover {
+  background-color: rgba(16, 185, 129, 0.2);
+}
+
+/* Light theme map link */
+:root:not(.dark) .map-link {
+  background-color: rgba(5, 150, 105, 0.1);
+  border: 1px solid rgba(5, 150, 105, 0.2);
+  color: rgb(5, 150, 105);
+}
+
+:root:not(.dark) .map-link:hover {
+  background-color: rgba(5, 150, 105, 0.2);
+}
+
+/* Page background */
+.faculty-page {
+  min-height: 100vh;
+}
+
+/* Dark theme page background */
+:root.dark .faculty-page {
+  background-color: #0e1119;
+  background-image: radial-gradient(circle at 1px 1px, rgba(55, 65, 81, 0.15) 1px, transparent 0);
+  background-size: 40px 40px;
+}
+
+/* Light theme page background */
+:root:not(.dark) .faculty-page {
+  background-color: #f9fafb;
+  background-image: radial-gradient(circle at 1px 1px, rgba(156, 163, 175, 0.15) 1px, transparent 0);
+  background-size: 40px 40px;
+}
+
+/* Faculty subtitle */
+.faculty-subtitle {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  margin-bottom: 2rem;
+}
+
+/* Dark theme faculty subtitle */
+:root.dark .faculty-subtitle {
+  color: rgb(229, 231, 235);
+}
+
+/* Light theme faculty subtitle */
+:root:not(.dark) .faculty-subtitle {
+  color: rgb(55, 65, 81);
+}
+
+/* Website link */
+.website-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+/* Dark theme website link */
+:root.dark .website-link {
+  background-color: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: rgb(52, 211, 153);
+}
+
+:root.dark .website-link:hover {
+  background-color: rgba(16, 185, 129, 0.2);
+}
+
+/* Light theme website link */
+:root:not(.dark) .website-link {
+  background-color: rgba(5, 150, 105, 0.1);
+  border: 1px solid rgba(5, 150, 105, 0.2);
+  color: rgb(5, 150, 105);
+}
+
+:root:not(.dark) .website-link:hover {
+  background-color: rgba(5, 150, 105, 0.2);
+}
+
+/* About text */
+.about-text {
+  line-height: 1.625;
+  font-size: 1.125rem;
+}
+
+/* Dark theme about text */
+:root.dark .about-text {
+  color: rgb(209, 213, 219);
+}
+
+/* Light theme about text */
+:root:not(.dark) .about-text {
+  color: rgb(55, 65, 81);
+}
+
+/* Building info */
+.building-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+/* Dark theme building info */
+:root.dark .building-info {
+  background-color: rgba(31, 41, 55, 0.5);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: rgb(52, 211, 153);
+}
+
+/* Light theme building info */
+:root:not(.dark) .building-info {
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(5, 150, 105, 0.2);
+  color: rgb(5, 150, 105);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Section container */
+.section-container {
+  padding: 5rem 1rem;
+}
+
+@media (min-width: 768px) {
+  .section-container {
+    padding: 5rem 2rem;
+  }
+}
+
+/* Section border */
+.section-border {
+  border-top-width: 1px;
+}
+
+/* Dark theme section border */
+:root.dark .section-border {
+  border-color: rgb(31, 41, 55);
+}
+
+/* Light theme section border */
+:root:not(.dark) .section-border {
+  border-color: rgb(229, 231, 235);
+}

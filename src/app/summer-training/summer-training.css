@@ -1,23 +1,64 @@
 /* Summer Training Page Styles */
 .summer-training-container {
-  @apply min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
-  background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.15) 1px, transparent 0);
+  min-height: 100vh;
   background-size: 40px 40px;
 }
 
+/* Dark theme background */
+:root.dark .summer-training-container {
+  background: linear-gradient(to bottom right, #030712, #111827, #030712);
+  background-image: radial-gradient(circle at 1px 1px, rgba(55, 65, 81, 0.15) 1px, transparent 0);
+}
+
+/* Light theme background */
+:root:not(.dark) .summer-training-container {
+  background: linear-gradient(to bottom right, #f9fafb, #f3f4f6, #f9fafb);
+  background-image: radial-gradient(circle at 1px 1px, rgba(156, 163, 175, 0.15) 1px, transparent 0);
+}
+
 .welcome-section {
-  @apply relative overflow-hidden;
-  box-shadow: 
-    0 0 40px rgba(6, 78, 59, 0.1),
-    0 0 80px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
   transition: all 0.3s ease;
 }
 
+/* Dark theme welcome section */
+:root.dark .welcome-section {
+  background: linear-gradient(to bottom right, rgba(17, 24, 39, 0.8), rgba(31, 41, 55, 0.8));
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(31, 41, 55, 0.5);
+  box-shadow: 
+    0 0 40px rgba(6, 78, 59, 0.1),
+    0 0 80px rgba(0, 0, 0, 0.3);
+}
+
+/* Light theme welcome section */
+:root:not(.dark) .welcome-section {
+  background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.8), rgba(243, 244, 246, 0.8));
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(209, 213, 219, 0.5);
+  box-shadow: 
+    0 0 40px rgba(6, 78, 59, 0.05),
+    0 0 20px rgba(0, 0, 0, 0.05);
+}
+
 .welcome-section:hover {
-  @apply transform transition-all duration-500;
+  transform: translateY(-2px);
+  transition: all 0.5s;
+}
+
+/* Dark theme welcome section hover */
+:root.dark .welcome-section:hover {
   box-shadow: 
     0 0 50px rgba(6, 78, 59, 0.15),
     0 0 90px rgba(0, 0, 0, 0.3);
+}
+
+/* Light theme welcome section hover */
+:root:not(.dark) .welcome-section:hover {
+  box-shadow: 
+    0 0 40px rgba(6, 78, 59, 0.1),
+    0 0 30px rgba(0, 0, 0, 0.08);
 }
 
 .welcome-section::before {
@@ -27,36 +68,68 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(45deg, rgba(6, 78, 59, 0.05), rgba(16, 185, 129, 0.05));
   z-index: 0;
 }
 
+/* Dark theme welcome section before */
+:root.dark .welcome-section::before {
+  background: linear-gradient(45deg, rgba(6, 78, 59, 0.05), rgba(16, 185, 129, 0.05));
+}
+
+/* Light theme welcome section before */
+:root:not(.dark) .welcome-section::before {
+  background: linear-gradient(45deg, rgba(5, 150, 105, 0.05), rgba(16, 185, 129, 0.05));
+}
+
 .greeting-icon {
-  @apply transition-all duration-300;
+  transition: all 0.3s;
+}
+
+/* Dark theme greeting icon */
+:root.dark .greeting-icon {
+  background-color: rgba(6, 78, 59, 0.1);
   box-shadow: 0 0 20px rgba(6, 78, 59, 0.2);
+}
+
+/* Light theme greeting icon */
+:root:not(.dark) .greeting-icon {
+  background-color: rgba(5, 150, 105, 0.1);
+  box-shadow: 0 0 20px rgba(5, 150, 105, 0.1);
 }
 
 .greeting-icon:hover {
   transform: scale(1.05);
+}
+
+/* Dark theme greeting icon hover */
+:root.dark .greeting-icon:hover {
   box-shadow: 0 0 30px rgba(6, 78, 59, 0.3);
 }
 
+/* Light theme greeting icon hover */
+:root:not(.dark) .greeting-icon:hover {
+  box-shadow: 0 0 30px rgba(5, 150, 105, 0.2);
+}
+
 .content-section {
-  @apply space-y-6;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 /* Responsive Design */
 @media (max-width: 640px) {
   .welcome-section {
-    @apply p-4;
+    padding: 1rem;
   }
 
   .greeting-content {
-    @apply flex-col items-start;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .greeting-icon {
-    @apply mb-4;
+    margin-bottom: 1rem;
   }
 }
 
@@ -90,14 +163,30 @@
   width: 8px;
 }
 
-::-webkit-scrollbar-track {
-  @apply bg-gray-900;
+/* Dark theme scrollbar */
+:root.dark ::-webkit-scrollbar-track {
+  background-color: #111827;
 }
 
-::-webkit-scrollbar-thumb {
-  @apply bg-emerald-500/50 rounded-full;
+:root.dark ::-webkit-scrollbar-thumb {
+  background-color: rgba(16, 185, 129, 0.5);
+  border-radius: 9999px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-emerald-500/70;
+:root.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(16, 185, 129, 0.7);
+}
+
+/* Light theme scrollbar */
+:root:not(.dark) ::-webkit-scrollbar-track {
+  background-color: #f3f4f6;
+}
+
+:root:not(.dark) ::-webkit-scrollbar-thumb {
+  background-color: rgba(5, 150, 105, 0.5);
+  border-radius: 9999px;
+}
+
+:root:not(.dark) ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(5, 150, 105, 0.7);
 } 

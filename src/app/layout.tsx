@@ -4,6 +4,7 @@ import "./globals.css";
 import "./chat-styles.css";
 import { AuthProvider } from '@/contexts/AuthContext'
 import { NotificationsProvider } from '@/contexts/NotificationsContext'
+import { ThemeProvider } from '@/contexts/ThemeContext'
 import SessionChecker from '@/components/SessionChecker'
 import { Toaster } from 'react-hot-toast'
 
@@ -32,16 +33,44 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* This script prevents flash of unstyled content (FOUC) when switching between themes */}
+        <script dangerouslySetInnerHTML={{ __html: `
+          (function() {
+            try {
+              const storedTheme = localStorage.getItem('theme');
+              if (storedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.documentElement.style.backgroundColor = '#111827';
+              } else if (storedTheme === 'light') {
+                document.documentElement.classList.add('light');
+              } else {
+                // Check system preference if no stored theme
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.documentElement.classList.add(prefersDark ? 'dark' : 'light');
+                if (prefersDark) {
+                  document.documentElement.style.backgroundColor = '#111827';
+                }
+              }
+            } catch (e) {
+              // Fail silently if localStorage is not available
+              console.error('Error accessing localStorage:', e);
+            }
+          })();
+        ` }} />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
         <AuthProvider>
           <NotificationsProvider>
-            <SessionChecker />
-            <div className="flex-grow">
-              {children}
-            </div>
-            <div id="modal-root"></div>
+            <ThemeProvider>
+              <SessionChecker />
+              <div className="flex-grow">
+                {children}
+              </div>
+              <div id="modal-root"></div>
+            </ThemeProvider>
           </NotificationsProvider>
         </AuthProvider>
         <Toaster position="top-right" />

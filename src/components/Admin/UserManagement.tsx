@@ -158,12 +158,12 @@ export default function UserManagement() {
   }
 
   return (
-    <div className="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-800/50 shadow-lg">
+    <div className="dark:bg-gray-900/50 bg-white/80 backdrop-blur-sm rounded-2xl p-6 dark:border-gray-800/50 border-gray-200/70 shadow-lg">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-white">User Management</h2>
+        <h2 className="text-2xl font-bold dark:text-white text-gray-800">User Management</h2>
         <button
           onClick={fetchUsers}
-          className="px-4 py-2 bg-emerald-500/10 text-emerald-400 rounded-lg hover:bg-emerald-500/20 transition-colors border border-emerald-500/20 hover:border-emerald-500/30"
+          className="px-4 py-2 dark:bg-emerald-500/10 bg-emerald-500/20 dark:text-emerald-400 text-emerald-600 rounded-lg hover:bg-emerald-500/20 transition-colors dark:border-emerald-500/20 border-emerald-500/30 hover:border-emerald-500/30"
         >
           Refresh
         </button>
@@ -172,13 +172,13 @@ export default function UserManagement() {
       <div className="mb-6">
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+            <MagnifyingGlassIcon className="h-5 w-5 dark:text-gray-400 text-gray-500" />
           </div>
           <input
             type="text"
             value={searchQuery}
             onChange={handleSearchChange}
-            className="w-full bg-gray-800/70 backdrop-blur-sm border border-gray-700 rounded-lg pl-10 pr-10 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full dark:bg-gray-800/70 bg-gray-100/70 backdrop-blur-sm dark:border-gray-700 border-gray-300 rounded-lg pl-10 pr-10 py-2 dark:text-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
             placeholder="Search by name, student ID or email..."
           />
           {searchQuery && (
@@ -186,29 +186,29 @@ export default function UserManagement() {
               onClick={clearSearch}
               className="absolute inset-y-0 right-0 pr-3 flex items-center"
             >
-              <XMarkIcon className="h-5 w-5 text-gray-400 hover:text-white" />
+              <XMarkIcon className="h-5 w-5 dark:text-gray-400 text-gray-500 dark:hover:text-white hover:text-gray-800" />
             </button>
           )}
         </div>
         {searchQuery && (
-          <div className="mt-2 text-sm text-gray-400">
+          <div className="mt-2 text-sm dark:text-gray-400 text-gray-600">
             Found {filteredUsers.length} {filteredUsers.length === 1 ? 'user' : 'users'} matching &quot;{searchQuery}&quot;
           </div>
         )}
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-gray-800/60">
+      <div className="overflow-x-auto rounded-lg dark:border-gray-800/60 border-gray-300/60">
         <table className="w-full">
           <thead>
-            <tr className="text-left bg-gray-800/50 backdrop-blur-sm">
-              <th className="px-4 py-3 text-gray-300 font-medium text-sm">User</th>
-              <th className="px-4 py-3 text-gray-300 font-medium text-sm">Email</th>
-              <th className="px-4 py-3 text-gray-300 font-medium text-sm">Role</th>
-              <th className="px-4 py-3 text-gray-300 font-medium text-sm">Status</th>
-              <th className="px-4 py-3 text-gray-300 font-medium text-sm">Actions</th>
+            <tr className="text-left dark:bg-gray-800/50 bg-gray-200/70 backdrop-blur-sm">
+              <th className="px-4 py-3 dark:text-gray-300 text-gray-700 font-medium text-sm">User</th>
+              <th className="px-4 py-3 dark:text-gray-300 text-gray-700 font-medium text-sm">Email</th>
+              <th className="px-4 py-3 dark:text-gray-300 text-gray-700 font-medium text-sm">Role</th>
+              <th className="px-4 py-3 dark:text-gray-300 text-gray-700 font-medium text-sm">Status</th>
+              <th className="px-4 py-3 dark:text-gray-300 text-gray-700 font-medium text-sm">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-800/50">
+          <tbody className="divide-y dark:divide-gray-800/50 divide-gray-300/50">
             {filteredUsers.length > 0 ? (
               filteredUsers.map((user) => {
                 const isAdmin = user.app_metadata?.is_admin === true || 
@@ -217,18 +217,18 @@ export default function UserManagement() {
                 const isDisabled = user.user_metadata?.is_disabled === true
                 
                 return (
-                  <tr key={user.id} className="hover:bg-gray-800/30 transition-colors">
+                  <tr key={user.id} className="dark:hover:bg-gray-800/30 hover:bg-gray-200/50 transition-colors">
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="bg-gray-700/50 p-2 rounded-full">
-                          <UserCircleIcon className="h-8 w-8 text-emerald-400" />
+                        <div className="dark:bg-gray-700/50 bg-gray-200/80 p-2 rounded-full">
+                          <UserCircleIcon className="h-8 w-8 dark:text-emerald-400 text-emerald-600" />
                         </div>
                         <div>
-                          <div className="text-white font-medium">
+                          <div className="dark:text-white text-gray-800 font-medium">
                             {user.student_profile?.full_name || 'No Name'}
                           </div>
                           {user.student_profile?.student_id && (
-                            <div className="text-sm text-gray-400">
+                            <div className="text-sm dark:text-gray-400 text-gray-600">
                               ID: {user.student_profile.student_id}
                             </div>
                           )}
@@ -236,8 +236,8 @@ export default function UserManagement() {
                       </div>
                     </td>
                     <td className="px-4 py-4">
-                      <div className="flex items-center gap-2 text-gray-300">
-                        <EnvelopeIcon className="h-5 w-5 text-emerald-400/70" />
+                      <div className="flex items-center gap-2 dark:text-gray-300 text-gray-700">
+                        <EnvelopeIcon className="h-5 w-5 dark:text-emerald-400/70 text-emerald-600/70" />
                         {user.email}
                       </div>
                     </td>
@@ -296,13 +296,13 @@ export default function UserManagement() {
               })
             ) : (
               <tr>
-                <td colSpan={5} className="py-8 text-center text-gray-400">
+                <td colSpan={5} className="py-8 text-center dark:text-gray-400 text-gray-600">
                   {searchQuery ? (
                     <div>
                       <div>No users found matching your search.</div>
                       <button 
                         onClick={clearSearch}
-                        className="mt-2 text-emerald-400 hover:text-emerald-300 underline"
+                        className="mt-2 dark:text-emerald-400 text-emerald-600 dark:hover:text-emerald-300 hover:text-emerald-500 underline"
                       >
                         Clear search
                       </button>

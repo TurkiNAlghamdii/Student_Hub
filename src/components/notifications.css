@@ -1,6 +1,14 @@
 .notifications-box {
-  @apply mt-6 p-6 bg-gray-900/50 backdrop-blur-md rounded-xl border border-gray-800/50 overflow-hidden;
+  @apply mt-6 p-6 backdrop-blur-md rounded-xl overflow-hidden;
   transition: all 0.3s ease;
+}
+
+.dark .notifications-box {
+  @apply bg-gray-900/50 border border-gray-800/50;
+}
+
+:root:not(.dark) .notifications-box {
+  @apply bg-white/90 border border-gray-200/70 shadow-md;
 }
 
 .notifications-header {
@@ -8,7 +16,15 @@
 }
 
 .notifications-title {
-  @apply text-xl font-semibold text-white cursor-pointer hover:text-emerald-500 transition-colors flex items-center gap-2;
+  @apply text-xl font-semibold cursor-pointer hover:text-emerald-500 transition-colors flex items-center gap-2;
+}
+
+.dark .notifications-title {
+  @apply text-white;
+}
+
+:root:not(.dark) .notifications-title {
+  @apply text-gray-800;
 }
 
 .unread-badge {
@@ -40,11 +56,27 @@
 }
 
 .notification-item {
-  @apply flex justify-between items-start bg-gray-800/40 p-3 rounded-lg border border-gray-700/40 transition-all;
+  @apply flex justify-between items-start p-3 rounded-lg transition-all;
+}
+
+.dark .notification-item {
+  @apply bg-gray-800/40 border border-gray-700/40;
+}
+
+:root:not(.dark) .notification-item {
+  @apply bg-gray-100/70 border border-gray-200/70;
 }
 
 .notification-item.unread {
-  @apply bg-gray-800/70 border-l-4 border-l-emerald-500;
+  @apply border-l-4 border-l-emerald-500;
+}
+
+.dark .notification-item.unread {
+  @apply bg-gray-800/70;
+}
+
+:root:not(.dark) .notification-item.unread {
+  @apply bg-gray-200/70;
 }
 
 .notification-content {
@@ -52,11 +84,27 @@
 }
 
 .notification-title {
-  @apply text-sm font-medium text-white mb-1;
+  @apply text-sm font-medium mb-1;
+}
+
+.dark .notification-title {
+  @apply text-white;
+}
+
+:root:not(.dark) .notification-title {
+  @apply text-gray-800;
 }
 
 .notification-message {
-  @apply text-xs text-gray-300 line-clamp-2;
+  @apply text-xs line-clamp-2;
+}
+
+.dark .notification-message {
+  @apply text-gray-300;
+}
+
+:root:not(.dark) .notification-message {
+  @apply text-gray-600;
 }
 
 .notification-time {
@@ -68,7 +116,15 @@
 }
 
 .notification-view-btn {
-  @apply text-xs bg-gray-700/70 hover:bg-gray-600/70 text-gray-100 px-2 py-1 rounded-md transition-colors;
+  @apply text-xs px-2 py-1 rounded-md transition-colors;
+}
+
+.dark .notification-view-btn {
+  @apply bg-gray-700/70 hover:bg-gray-600/70 text-gray-100;
+}
+
+:root:not(.dark) .notification-view-btn {
+  @apply bg-gray-300/80 hover:bg-gray-400/80 text-gray-700;
 }
 
 .notification-read-btn {
@@ -80,5 +136,13 @@
 }
 
 .view-all-button {
-  @apply w-full text-sm py-2 text-center text-gray-300 hover:text-emerald-400 transition-colors border-t border-gray-700/40 pt-3 mt-2;
+  @apply w-full text-sm py-2 text-center hover:text-emerald-400 transition-colors border-t pt-3 mt-2;
+}
+
+.dark .view-all-button {
+  @apply text-gray-300 border-gray-700/40;
+}
+
+:root:not(.dark) .view-all-button {
+  @apply text-gray-600 border-gray-200/70;
 } 

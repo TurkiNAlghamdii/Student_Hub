@@ -1,12 +1,26 @@
 .profile-container {
-  @apply min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background-size: 100% 100%, 100% 100%, 50px 50px;
+}
+
+/* Dark theme background */
+:root.dark .profile-container {
+  background: linear-gradient(to bottom right, #030712, #111827, #030712);
   background-image: 
     radial-gradient(circle at 15% 25%, rgba(16, 185, 129, 0.02) 0%, transparent 15%),
     radial-gradient(circle at 85% 75%, rgba(6, 78, 59, 0.03) 0%, transparent 20%),
-    radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.08) 1px, transparent 0);
-  background-size: 100% 100%, 100% 100%, 50px 50px;
-  position: relative;
-  overflow: hidden;
+    radial-gradient(circle at 1px 1px, rgba(55, 65, 81, 0.08) 1px, transparent 0);
+}
+
+/* Light theme background */
+:root:not(.dark) .profile-container {
+  background: linear-gradient(to bottom right, #f9fafb, #f3f4f6, #f9fafb);
+  background-image: 
+    radial-gradient(circle at 15% 25%, rgba(16, 185, 129, 0.01) 0%, transparent 15%),
+    radial-gradient(circle at 85% 75%, rgba(5, 150, 105, 0.02) 0%, transparent 20%),
+    radial-gradient(circle at 1px 1px, rgba(156, 163, 175, 0.08) 1px, transparent 0);
 }
 
 .profile-container::before {
@@ -16,9 +30,18 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle at center, rgba(16, 185, 129, 0.01) 0%, transparent 60%);
   animation: rotate 90s linear infinite;
   z-index: 0;
+}
+
+/* Dark theme gradient */
+:root.dark .profile-container::before {
+  background: radial-gradient(circle at center, rgba(16, 185, 129, 0.01) 0%, transparent 60%);
+}
+
+/* Light theme gradient */
+:root:not(.dark) .profile-container::before {
+  background: radial-gradient(circle at center, rgba(5, 150, 105, 0.01) 0%, transparent 60%);
 }
 
 @keyframes rotate {
@@ -27,40 +50,87 @@
 }
 
 .profile-card {
-  @apply bg-gray-900/70 backdrop-blur-md rounded-2xl p-8 mb-8
-    border border-gray-800/50 relative z-10;
-  box-shadow: 
-    0 10px 40px rgba(0, 0, 0, 0.25),
-    0 0 60px rgba(6, 78, 59, 0.1);
+  backdrop-filter: blur(16px);
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 10;
   transition: all 0.4s ease;
   margin-top: 1rem;
   padding-top: 2.5rem;
   padding-bottom: 2.5rem;
 }
 
-.profile-card:hover {
-  @apply transform transition-all duration-500;
+/* Dark theme card */
+:root.dark .profile-card {
+  background-color: rgba(17, 24, 39, 0.7);
+  border: 1px solid rgba(31, 41, 55, 0.5);
   box-shadow: 
-    0 15px 50px rgba(0, 0, 0, 0.3),
-    0 0 70px rgba(6, 78, 59, 0.15);
+    0 10px 40px rgba(0, 0, 0, 0.25),
+    0 0 60px rgba(6, 78, 59, 0.1);
+}
+
+/* Light theme card */
+:root:not(.dark) .profile-card {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(209, 213, 219, 0.5);
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.05),
+    0 0 40px rgba(5, 150, 105, 0.05);
+}
+
+.profile-card:hover {
+  transition: all 0.5s;
   transform: translateY(-3px);
 }
 
+/* Dark theme card hover */
+:root.dark .profile-card:hover {
+  box-shadow: 
+    0 15px 50px rgba(0, 0, 0, 0.3),
+    0 0 70px rgba(6, 78, 59, 0.15);
+}
+
+/* Light theme card hover */
+:root:not(.dark) .profile-card:hover {
+  box-shadow: 
+    0 15px 40px rgba(0, 0, 0, 0.1),
+    0 0 50px rgba(5, 150, 105, 0.1);
+}
+
 .profile-title {
-  @apply text-2xl font-bold mb-8 text-center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-align: center;
   background: linear-gradient(to right, #10b981, #064e3b);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+/* Dark theme title */
+:root.dark .profile-title {
   text-shadow: 0 0 30px rgba(6, 78, 59, 0.3);
 }
 
+/* Light theme title */
+:root:not(.dark) .profile-title {
+  text-shadow: 0 0 20px rgba(5, 150, 105, 0.2);
+}
+
 .profile-content {
-  @apply flex flex-col items-center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 0.75rem 0;
 }
 
 .profile-avatar {
-  @apply mb-8 flex justify-center;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
 }
 
 .avatar-container {
@@ -138,11 +208,28 @@
 }
 
 .avatar-circle {
-  @apply w-32 h-32 rounded-full flex items-center justify-center text-4xl font-bold text-white;
+  width: 8rem;
+  height: 8rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: white;
   background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
   border: 3px solid rgba(16, 185, 129, 0.2);
-  box-shadow: 0 0 20px rgba(6, 78, 59, 0.2);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Dark theme avatar circle */
+:root.dark .avatar-circle {
+  box-shadow: 0 0 20px rgba(6, 78, 59, 0.2);
+}
+
+/* Light theme avatar circle */
+:root:not(.dark) .avatar-circle {
+  box-shadow: 0 0 15px rgba(5, 150, 105, 0.15);
 }
 
 .avatar-circle:hover {
@@ -151,30 +238,68 @@
 }
 
 .profile-details {
-  @apply w-full mt-6;
+  width: 100%;
+  margin-top: 1.5rem;
 }
 
 .info-grid {
-  @apply grid gap-8 md:grid-cols-2 w-full;
+  display: grid;
+  gap: 2rem;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .info-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .info-item {
-  @apply space-y-3;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .info-item label {
-  @apply text-sm font-medium text-emerald-400;
-  text-shadow: 0 0 20px rgba(6, 78, 59, 0.2);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #10b981;
   margin-bottom: 0.25rem;
   display: block;
 }
 
+/* Dark theme label */
+:root.dark .info-item label {
+  text-shadow: 0 0 20px rgba(6, 78, 59, 0.2);
+}
+
+/* Light theme label */
+:root:not(.dark) .info-item label {
+  text-shadow: 0 0 10px rgba(5, 150, 105, 0.1);
+}
+
 .info-item p {
-  @apply text-white text-lg p-4 rounded-xl bg-gray-800/50 border border-gray-700/50;
+  font-size: 1.125rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
   overflow-wrap: break-word;
   word-break: break-word;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Dark theme info text */
+:root.dark .info-item p {
+  color: white;
+  background-color: rgba(31, 41, 55, 0.5);
+  border: 1px solid rgba(55, 65, 81, 0.5);
+}
+
+/* Light theme info text */
+:root:not(.dark) .info-item p {
+  color: #1f2937;
+  background-color: rgba(243, 244, 246, 0.7);
+  border: 1px solid rgba(209, 213, 219, 0.5);
 }
 
 .email-display {
@@ -191,7 +316,7 @@
   }
   
   .info-grid {
-    @apply grid-cols-1;
+    grid-template-columns: 1fr;
   }
   
   .profile-card {
@@ -200,44 +325,87 @@
 }
 
 .profile-header {
-  @apply flex justify-between items-center mb-6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
 }
 
 .edit-button {
-  @apply px-4 py-2 rounded-xl text-sm font-medium text-white
-    transition-all duration-300 ease-in-out;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: white;
+  transition: all 0.3s ease-in-out;
   background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
   border: 1px solid rgba(6, 78, 59, 0.2);
   box-shadow: 0 4px 20px rgba(6, 78, 59, 0.15);
 }
 
 .edit-button:hover {
-  @apply transform scale-[1.02];
+  transform: scale(1.02);
   box-shadow: 0 4px 25px rgba(6, 78, 59, 0.25);
 }
 
 .save-button {
-  @apply px-4 py-2 rounded-xl text-sm font-medium text-white
-    transition-all duration-300 ease-in-out mt-4 w-full;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: white;
+  transition: all 0.3s ease-in-out;
+  margin-top: 1rem;
+  width: 100%;
   background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
   border: 1px solid rgba(6, 78, 59, 0.2);
   box-shadow: 0 4px 20px rgba(6, 78, 59, 0.15);
 }
 
 .form-group {
-  @apply mb-4;
+  margin-bottom: 1rem;
 }
 
 .form-group label {
-  @apply block text-emerald-400 font-medium mb-2;
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+/* Dark theme form label */
+:root.dark .form-group label {
+  color: #34d399;
+}
+
+/* Light theme form label */
+:root:not(.dark) .form-group label {
+  color: #059669;
 }
 
 .form-group input,
 .form-group select {
-  @apply w-full p-4 bg-gray-800/50 border border-gray-700/50 rounded-xl text-white;
+  width: 100%;
+  padding: 1rem;
+  border-radius: 0.75rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Dark theme form inputs */
+:root.dark .form-group input,
+:root.dark .form-group select {
+  background-color: rgba(31, 41, 55, 0.5);
+  border: 1px solid rgba(55, 65, 81, 0.5);
+  color: white;
+}
+
+/* Light theme form inputs */
+:root:not(.dark) .form-group input,
+:root:not(.dark) .form-group select {
+  background-color: rgba(249, 250, 251, 0.8);
+  border: 1px solid rgba(209, 213, 219, 0.5);
+  color: #1f2937;
 }
 
 .form-group input[type="email"],
@@ -246,35 +414,70 @@
 }
 
 .update-message {
-  @apply p-3 mb-4 rounded-xl text-center;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border-radius: 0.75rem;
+  text-align: center;
 }
 
-.update-message.success {
-  @apply bg-emerald-900/50 text-emerald-300 border border-emerald-800/50;
+/* Dark theme success message */
+:root.dark .update-message.success {
+  background-color: rgba(6, 78, 59, 0.5);
+  color: #6ee7b7;
+  border: 1px solid rgba(5, 150, 105, 0.5);
 }
 
-.update-message.error {
-  @apply bg-red-900/50 text-red-300 border border-red-800/50;
+/* Light theme success message */
+:root:not(.dark) .update-message.success {
+  background-color: rgba(209, 250, 229, 0.8);
+  color: #047857;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+/* Dark theme error message */
+:root.dark .update-message.error {
+  background-color: rgba(127, 29, 29, 0.5);
+  color: #fca5a5;
+  border: 1px solid rgba(153, 27, 27, 0.5);
+}
+
+/* Light theme error message */
+:root:not(.dark) .update-message.error {
+  background-color: rgba(254, 226, 226, 0.8);
+  color: #b91c1c;
+  border: 1px solid rgba(220, 38, 38, 0.3);
 }
 
 .edit-form {
-  @apply space-y-4;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .back-button:hover {
-  @apply transform scale-[1.02];
+  transform: scale(1.02);
   box-shadow: 0 4px 25px rgba(6, 78, 59, 0.25);
 }
 
 .back-button:active {
-  @apply transform scale-[0.98];
+  transform: scale(0.98);
 }
 
 .disabled-input {
   opacity: 0.7;
   cursor: not-allowed;
+}
+
+/* Dark theme disabled input */
+:root.dark .disabled-input {
   background-color: rgba(55, 65, 81, 0.5) !important;
   border-color: rgba(75, 85, 99, 0.4) !important;
+}
+
+/* Light theme disabled input */
+:root:not(.dark) .disabled-input {
+  background-color: rgba(229, 231, 235, 0.7) !important;
+  border-color: rgba(209, 213, 219, 0.5) !important;
 }
 
 .field-note {
@@ -283,5 +486,14 @@
   font-weight: normal;
   font-style: italic;
   margin-left: 0.5rem;
+}
+
+/* Dark theme field note */
+:root.dark .field-note {
   color: #9ca3af;
+}
+
+/* Light theme field note */
+:root:not(.dark) .field-note {
+  color: #6b7280;
 }

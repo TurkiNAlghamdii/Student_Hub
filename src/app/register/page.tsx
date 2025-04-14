@@ -2,11 +2,31 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
+import { EyeIcon, EyeSlashIcon, SunIcon, MoonIcon } from '@heroicons/react/24/outline'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useTheme } from '@/contexts/ThemeContext'
 import './register.css'
+
+// Theme Toggle Button Component
+function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme()
+  
+  return (
+    <button
+      onClick={toggleTheme}
+      className="theme-toggle-button"
+      aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+    >
+      {theme === 'dark' ? (
+        <SunIcon className="h-5 w-5" />
+      ) : (
+        <MoonIcon className="h-5 w-5" />
+      )}
+    </button>
+  )
+}
 
 const ALLOWED_DOMAINS = ['@stu.kau.edu.sa', '@kau.edu.sa']
 const FACULTIES = ['Faculty of Computing', 'Faculty of Engineering', 'Faculty of Science']
@@ -24,6 +44,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false)
   const [isStudent, setIsStudent] = useState(false)
   const router = useRouter()
+  const { theme } = useTheme()
 
   useEffect(() => {
     const domain = email.substring(email.indexOf('@'))
@@ -157,6 +178,7 @@ export default function Register() {
 
   return (
     <div className="register-container">
+      <ThemeToggle />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

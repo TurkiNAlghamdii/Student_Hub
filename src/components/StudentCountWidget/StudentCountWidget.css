@@ -1,18 +1,39 @@
 .student-count-widget {
-  @apply bg-gray-900/50 backdrop-blur-sm rounded-2xl p-5
-    border border-gray-800/50 transition-all duration-300;
-  box-shadow: 
-    0 0 30px rgba(6, 78, 59, 0.05),
-    0 0 60px rgba(0, 0, 0, 0.2);
+  @apply backdrop-blur-sm rounded-2xl p-5 transition-all duration-300;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
   display: flex;
   flex-direction: column;
 }
 
+.dark .student-count-widget {
+  @apply bg-gray-900/50 border-gray-800/50;
+  box-shadow: 
+    0 0 30px rgba(6, 78, 59, 0.05),
+    0 0 60px rgba(0, 0, 0, 0.2);
+}
+
+:root:not(.dark) .student-count-widget {
+  @apply bg-white/80 border-gray-200/50;
+  box-shadow: 
+    0 0 20px rgba(6, 78, 59, 0.03),
+    0 0 40px rgba(0, 0, 0, 0.05);
+}
+
 .student-count-widget:hover {
   transform: translateY(-5px);
+}
+
+.dark .student-count-widget:hover {
   box-shadow: 
     0 0 40px rgba(6, 78, 59, 0.1),
     0 0 80px rgba(0, 0, 0, 0.3);
+}
+
+:root:not(.dark) .student-count-widget:hover {
+  box-shadow: 
+    0 0 30px rgba(6, 78, 59, 0.05),
+    0 0 50px rgba(0, 0, 0, 0.1);
 }
 
 .widget-header {
@@ -20,7 +41,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
-  border-bottom: 1px solid rgba(75, 85, 99, 0.3);
+  border-bottom: 1px solid var(--card-border);
   padding-bottom: 8px;
 }
 
@@ -40,7 +61,10 @@
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: white;
+  color: var(--foreground);
+}
+
+.dark .widget-title {
   text-shadow: 0 0 30px rgba(6, 78, 59, 0.3);
 }
 
@@ -57,11 +81,19 @@
   gap: 0.5rem;
   padding: 1rem;
   margin-top: 0.5rem;
-  background: rgba(22, 27, 34, 0.5);
   border-radius: 0.75rem;
-  border: 1px solid rgba(75, 85, 99, 0.3);
   position: relative;
   overflow: hidden;
+}
+
+.dark .counts-row {
+  background: rgba(22, 27, 34, 0.5);
+  border: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+:root:not(.dark) .counts-row {
+  background: rgba(240, 240, 240, 0.5);
+  border: 1px solid rgba(75, 85, 99, 0.15);
 }
 
 .counts-row::before {
@@ -91,20 +123,34 @@
 }
 
 .count-section:first-child {
-  border-right: 1px solid rgba(75, 85, 99, 0.3);
+  border-right: 1px solid var(--card-border);
 }
 
 .count-number {
   font-size: 1.75rem;
   font-weight: 700;
-  background: linear-gradient(to bottom, #ffffff, #10b981);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
   position: relative;
   display: inline-block;
   transform: translateZ(0);
   line-height: 1;
+}
+
+.dark .count-number {
+  background: linear-gradient(to bottom, #ffffff, #10b981);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  text-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+:root:not(.dark) .count-number {
+  background: linear-gradient(to bottom, #064e3b, #10b981);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  text-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
 }
 
 .count-number::after {
@@ -123,7 +169,7 @@
   position: relative;
   font-size: 0.7rem;
   font-weight: 500;
-  color: #9ca3af;
+  color: var(--muted-foreground);
   margin-top: 0.4rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;

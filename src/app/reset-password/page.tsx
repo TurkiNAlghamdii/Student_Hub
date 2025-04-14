@@ -2,13 +2,33 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
+import { EyeIcon, EyeSlashIcon, SunIcon, MoonIcon } from '@heroicons/react/24/outline'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
+import { useTheme } from '@/contexts/ThemeContext'
 import { FormEvent } from 'react'
 import './reset-password.css'
+
+// Theme Toggle Button Component
+function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme()
+  
+  return (
+    <button
+      onClick={toggleTheme}
+      className="theme-toggle-button"
+      aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+    >
+      {theme === 'dark' ? (
+        <SunIcon className="h-5 w-5" />
+      ) : (
+        <MoonIcon className="h-5 w-5" />
+      )}
+    </button>
+  )
+}
 
 export default function ResetPassword() {
   const [password, setPassword] = useState('')
@@ -24,6 +44,7 @@ export default function ResetPassword() {
   const [countdown, setCountdown] = useState(5) // Countdown timer for redirect (changed from 10 to 5)
   const router = useRouter()
   const { session, isPasswordRecovery } = useAuth()
+  const { theme } = useTheme()
 
   // Countdown timer effect
   useEffect(() => {
@@ -178,6 +199,7 @@ export default function ResetPassword() {
 
   return (
     <div className="login-container">
+      <ThemeToggle />
       <motion.div
         className="login-card"
         initial={{ opacity: 0, y: 20 }}
@@ -199,28 +221,28 @@ export default function ResetPassword() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            <div className="bg-emerald-500/20 text-emerald-400 p-3 rounded-lg mb-4 flex items-center gap-3">
+            <div className={`p-3 rounded-lg mb-4 flex items-center gap-3 ${theme === 'dark' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-700'}`}>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
               <p>Password successfully updated!</p>
             </div>
-            <p className="text-gray-300 mb-3">Your password has been changed.</p>
-            <p className="text-gray-400 mb-5">Please log in with your new password.</p>
+            <p className={`mb-3 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Your password has been changed.</p>
+            <p className={`mb-5 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Please log in with your new password.</p>
             
             {/* Countdown timer */}
             <div className="flex items-center justify-center mb-4">
-              <div className="bg-gray-800/70 text-gray-300 text-sm py-2 px-5 rounded-full border border-emerald-500/30 flex items-center gap-2 shadow-lg shadow-emerald-900/10">
-                <svg className="animate-spin h-4 w-4 text-emerald-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <div className={`text-sm py-2 px-5 rounded-full flex items-center gap-2 shadow-lg ${theme === 'dark' ? 'bg-gray-800/70 text-gray-300 border border-emerald-500/30 shadow-emerald-900/10' : 'bg-gray-100 text-gray-700 border border-emerald-300/30 shadow-emerald-900/5'}`}>
+                <svg className={`animate-spin h-4 w-4 ${theme === 'dark' ? 'text-emerald-400' : 'text-emerald-600'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <span>Redirecting to login in <span className="text-emerald-400 font-bold text-base">{countdown}</span> seconds</span>
+                <span>Redirecting to login in <span className={`font-bold text-base ${theme === 'dark' ? 'text-emerald-400' : 'text-emerald-600'}`}>{countdown}</span> seconds</span>
               </div>
             </div>
             
             <div className="mt-4">
-              <Link href="/login" className="inline-block px-4 py-2 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-lg hover:from-emerald-700 hover:to-emerald-800 transition-all w-full text-center">
+              <Link href="/login" className={`inline-block px-4 py-2 rounded-lg transition-all w-full text-center ${theme === 'dark' ? 'bg-gradient-to-r from-emerald-600 to-emerald-700 text-white hover:from-emerald-700 hover:to-emerald-800' : 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white hover:from-emerald-600 hover:to-emerald-700'}`}>
                 Go to Login
               </Link>
             </div>
@@ -228,61 +250,40 @@ export default function ResetPassword() {
         ) : (
           <>
             {processingToken ? (
-              <motion.div
-                className="processing-message"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-              >
+              <div className="processing-message">
                 <div className="loader"></div>
-                <p className="text-gray-300 mt-3">Processing your reset request...</p>
-                <p className="text-xs text-gray-500 mt-2">This should only take a moment</p>
-              </motion.div>
+                <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>Verifying your reset link...</p>
+              </div>
             ) : (
               <>
                 {!hasValidToken ? (
-                  <motion.div
-                    className="info-message"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    <div className={`rounded-lg p-4 mb-4 flex items-start gap-3 ${error?.includes('expired') ? 'bg-amber-500/20 text-amber-400' : 'bg-blue-500/20 text-blue-400'}`}>
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        {error?.includes('expired') ? (
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        ) : (
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        )}
-                      </svg>
-                      <div>
-                        <p className="font-medium">{error || "Invalid or missing reset token"}</p>
-                        <p className="text-sm mt-1 opacity-80">Please request a new password reset link.</p>
-                      </div>
-                    </div>
-                    <p className="text-gray-400 text-sm mb-4 text-center">You will be redirected in a few seconds...</p>
-                    <Link href="/forgot-password" className="inline-block w-full px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-all text-center border border-gray-700/50">
-                      Request a New Reset Link
-                    </Link>
-                  </motion.div>
+                  <div className="no-token-message">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-red-500 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <p className={`mb-3 text-center ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>{error || 'Invalid or expired reset link'}</p>
+                    <Link href="/forgot-password" className="back-to-login">Request a new reset link</Link>
+                  </div>
                 ) : (
                   <form className="login-form" onSubmit={handleResetPassword}>
                     {/* Password requirements help */}
-                    <div className="bg-gray-800/40 rounded-lg p-3 border border-gray-700/50 mb-6">
-                      <p className="text-sm text-gray-300 mb-2 font-medium">Your password must:</p>
-                      <ul className="text-xs text-gray-400 space-y-1 pl-1">
-                        <li className={`flex items-center gap-1 ${password.length >= 8 ? 'text-emerald-400' : ''}`}>
-                          <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 ${password.length >= 8 ? 'text-emerald-400' : 'text-gray-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className={`rounded-lg p-3 mb-6 ${theme === 'dark' ? 'bg-gray-800/40 border border-gray-700/50' : 'bg-gray-100 border border-gray-200'}`}>
+                      <p className={`text-sm mb-2 font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Your password must:</p>
+                      <ul className={`text-xs space-y-1 pl-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                        <li className={`flex items-center gap-1 ${password.length >= 8 ? (theme === 'dark' ? 'text-emerald-400' : 'text-emerald-600') : ''}`}>
+                          <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 ${password.length >= 8 ? (theme === 'dark' ? 'text-emerald-400' : 'text-emerald-600') : (theme === 'dark' ? 'text-gray-600' : 'text-gray-400')}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={password.length >= 8 ? "M5 13l4 4L19 7" : "M12 4v16m8-8H4"} />
                           </svg>
                           Be at least 8 characters long
                         </li>
-                        <li className={`flex items-center gap-1 ${/[A-Z]/.test(password) ? 'text-emerald-400' : ''}`}>
-                          <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 ${/[A-Z]/.test(password) ? 'text-emerald-400' : 'text-gray-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <li className={`flex items-center gap-1 ${/[A-Z]/.test(password) ? (theme === 'dark' ? 'text-emerald-400' : 'text-emerald-600') : ''}`}>
+                          <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 ${/[A-Z]/.test(password) ? (theme === 'dark' ? 'text-emerald-400' : 'text-emerald-600') : (theme === 'dark' ? 'text-gray-600' : 'text-gray-400')}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={/[A-Z]/.test(password) ? "M5 13l4 4L19 7" : "M12 4v16m8-8H4"} />
                           </svg>
                           Include at least one uppercase letter
                         </li>
-                        <li className={`flex items-center gap-1 ${/[0-9]/.test(password) ? 'text-emerald-400' : ''}`}>
-                          <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 ${/[0-9]/.test(password) ? 'text-emerald-400' : 'text-gray-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <li className={`flex items-center gap-1 ${/[0-9]/.test(password) ? (theme === 'dark' ? 'text-emerald-400' : 'text-emerald-600') : ''}`}>
+                          <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 ${/[0-9]/.test(password) ? (theme === 'dark' ? 'text-emerald-400' : 'text-emerald-600') : (theme === 'dark' ? 'text-gray-600' : 'text-gray-400')}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={/[0-9]/.test(password) ? "M5 13l4 4L19 7" : "M12 4v16m8-8H4"} />
                           </svg>
                           Include at least one number
@@ -296,7 +297,7 @@ export default function ResetPassword() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.3 }}
                       >
-                        <label htmlFor="password" className="block mb-2 text-sm">
+                        <label htmlFor="password" className={`block mb-2 text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                           New Password
                         </label>
                         <div className="relative">
@@ -340,7 +341,7 @@ export default function ResetPassword() {
                                 }`}
                               />
                             </div>
-                            <p className="text-xs text-gray-400 mt-1">
+                            <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                               {password.length >= 8 && /[A-Z]/.test(password) && /[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password)
                                 ? 'Strong password' 
                                 : password.length >= 8 && /[A-Z]/.test(password) && /[0-9]/.test(password)
@@ -360,7 +361,7 @@ export default function ResetPassword() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.4 }}
                       >
-                        <label htmlFor="confirmPassword" className="block mb-2 text-sm">
+                        <label htmlFor="confirmPassword" className={`block mb-2 text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                           Confirm Password
                         </label>
                         <div className="relative">
@@ -391,10 +392,10 @@ export default function ResetPassword() {
                         {/* Password match indicator */}
                         {confirmPassword && (
                           <div className="flex items-center gap-2 mt-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 ${password === confirmPassword ? 'text-emerald-400' : 'text-red-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 ${password === confirmPassword ? (theme === 'dark' ? 'text-emerald-400' : 'text-emerald-600') : 'text-red-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={password === confirmPassword ? "M5 13l4 4L19 7" : "M6 18L18 6M6 6l12 12"} />
                             </svg>
-                            <p className={`text-xs ${password === confirmPassword ? 'text-emerald-400' : 'text-red-400'}`}>
+                            <p className={`text-xs ${password === confirmPassword ? (theme === 'dark' ? 'text-emerald-400' : 'text-emerald-600') : 'text-red-400'}`}>
                               {password === confirmPassword ? 'Passwords match' : 'Passwords do not match'}
                             </p>
                           </div>
@@ -412,7 +413,7 @@ export default function ResetPassword() {
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                           </svg>
-                          <p>{error}</p>
+                          <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>{error}</p>
                         </div>
                       </motion.div>
                     )}
@@ -444,10 +445,10 @@ export default function ResetPassword() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.6 }}
-                      className="mt-6 text-center border-t border-gray-800 pt-4"
+                      className={`mt-6 text-center pt-4 ${theme === 'dark' ? 'border-t border-gray-800' : 'border-t border-gray-200'}`}
                     >
-                      <p className="text-sm text-gray-400 mb-2">Having trouble?</p>
-                      <Link href="/forgot-password" className="text-sm text-emerald-400 hover:text-emerald-300 transition-colors">
+                      <p className={`text-sm mb-2 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Having trouble?</p>
+                      <Link href="/forgot-password" className={`text-sm ${theme === 'dark' ? 'text-emerald-400 hover:text-emerald-300' : 'text-emerald-600 hover:text-emerald-500'} transition-colors`}>
                         Request a new reset link
                       </Link>
                     </motion.div>
@@ -460,4 +461,4 @@ export default function ResetPassword() {
       </motion.div>
     </div>
   )
-} 
+}

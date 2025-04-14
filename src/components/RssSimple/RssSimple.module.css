@@ -1,18 +1,39 @@
 .container {
-  @apply bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6
-    border border-gray-800/50 transition-all duration-300;
-  box-shadow: 
-    0 0 30px rgba(6, 78, 59, 0.05),
-    0 0 60px rgba(0, 0, 0, 0.2);
+  @apply backdrop-blur-sm rounded-2xl p-6 transition-all duration-300;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
   display: flex;
   flex-direction: column;
 }
 
+.dark.container, .dark .container, .dark-rss.container, .force-dark-rss .container {
+  @apply bg-gray-900/50 border-gray-800/50;
+  box-shadow: 
+    0 0 30px rgba(6, 78, 59, 0.05),
+    0 0 60px rgba(0, 0, 0, 0.2);
+}
+
+:root:not(.dark) .container, .container:not(.dark):not(.dark-rss), :root:not(.force-dark-rss) .container:not(.dark-rss) {
+  @apply bg-white/80 border-gray-200/50;
+  box-shadow: 
+    0 0 20px rgba(6, 78, 59, 0.03),
+    0 0 40px rgba(0, 0, 0, 0.05);
+}
+
 .container:hover {
   transform: translateY(-5px);
+}
+
+.dark.container:hover, .dark .container:hover, .dark-rss.container:hover, .force-dark-rss .container:hover {
   box-shadow: 
     0 0 40px rgba(6, 78, 59, 0.1),
     0 0 80px rgba(0, 0, 0, 0.3);
+}
+
+:root:not(.dark) .container:hover, .container:not(.dark):not(.dark-rss):hover, :root:not(.force-dark-rss) .container:not(.dark-rss):hover {
+  box-shadow: 
+    0 0 30px rgba(6, 78, 59, 0.05),
+    0 0 50px rgba(0, 0, 0, 0.1);
 }
 
 .widgetHeader {
@@ -20,7 +41,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
-  border-bottom: 1px solid rgba(75, 85, 99, 0.3);
+  border-bottom: 1px solid var(--card-border);
   padding-bottom: 10px;
 }
 
@@ -40,7 +61,10 @@
   margin: 0;
   font-size: 1.2rem;
   font-weight: 600;
-  color: white;
+  color: var(--foreground);
+}
+
+.dark .title, .dark.container .title, .dark-rss.container .title, .force-dark-rss .container .title {
   text-shadow: 0 0 30px rgba(6, 78, 59, 0.3);
 }
 
@@ -49,18 +73,35 @@
 }
 
 .viewButton {
-  @apply px-3 py-1.5 rounded-lg text-sm font-medium text-white
+  @apply px-3 py-1.5 rounded-lg text-sm font-medium
     transition-all duration-300 ease-in-out flex items-center justify-center;
-  background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
+  color: var(--primary-foreground);
+  background: var(--primary);
   border: 1px solid rgba(6, 78, 59, 0.2);
-  box-shadow: 0 4px 20px rgba(6, 78, 59, 0.15);
   width: fit-content;
   white-space: nowrap;
 }
 
+.dark .viewButton, .dark.container .viewButton, .dark-rss.container .viewButton, .force-dark-rss .container .viewButton {
+  background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
+  box-shadow: 0 4px 20px rgba(6, 78, 59, 0.15);
+}
+
+:root:not(.dark) .viewButton, .container:not(.dark):not(.dark-rss) .viewButton, :root:not(.force-dark-rss) .container:not(.dark-rss) .viewButton {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 15px rgba(6, 78, 59, 0.1);
+}
+
 .viewButton:hover {
   @apply transform scale-[1.02];
+}
+
+.dark .viewButton:hover, .dark.container .viewButton:hover, .dark-rss.container .viewButton:hover, .force-dark-rss .container .viewButton:hover {
   box-shadow: 0 4px 25px rgba(6, 78, 59, 0.25);
+}
+
+:root:not(.dark) .viewButton:hover, .container:not(.dark):not(.dark-rss) .viewButton:hover, :root:not(.force-dark-rss) .container:not(.dark-rss) .viewButton:hover {
+  box-shadow: 0 4px 20px rgba(6, 78, 59, 0.15);
 }
 
 .arrowIcon {
@@ -90,9 +131,17 @@
   padding: 0.875rem;
   margin-bottom: 0.75rem;
   border-radius: 0.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dark .item, .dark.item, .dark.container .item, .dark-rss.item, .dark-rss.container .item, .force-dark-rss .container .item {
   background-color: rgba(30, 41, 59, 0.5);
   border: 1px solid rgba(71, 85, 105, 0.3);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+:root:not(.dark) .item, .item:not(.dark):not(.dark-rss), .container:not(.dark):not(.dark-rss) .item, :root:not(.force-dark-rss) .container:not(.dark-rss) .item {
+  background-color: rgba(240, 240, 240, 0.5);
+  border: 1px solid rgba(203, 213, 225, 0.4);
 }
 
 .item:last-child {
@@ -101,7 +150,14 @@
 
 .item:hover {
   transform: translateY(-3px);
+}
+
+.dark .item:hover, .dark.item:hover, .dark.container .item:hover, .dark-rss.item:hover, .dark-rss.container .item:hover, .force-dark-rss .container .item:hover {
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+:root:not(.dark) .item:hover, .item:not(.dark):not(.dark-rss):hover, .container:not(.dark):not(.dark-rss) .item:hover, :root:not(.force-dark-rss) .container:not(.dark-rss) .item:hover {
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
 }
 
 .link {
@@ -119,14 +175,14 @@
 .itemTitle {
   font-size: 1rem;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--foreground);
   margin: 0;
   line-height: 1.4;
 }
 
 .description {
   font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--muted-foreground);
   margin: 0;
   line-height: 1.5;
 }
@@ -139,7 +195,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.dark .imageContainer, .dark-rss .imageContainer, .force-dark-rss .imageContainer {
   background-color: rgba(0, 0, 0, 0.2);
+}
+
+:root:not(.dark) .imageContainer {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .tweetImage {
@@ -166,7 +229,7 @@
 .empty {
   padding: 2rem 0;
   text-align: center;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--muted-foreground);
   font-size: 0.875rem;
 }
 

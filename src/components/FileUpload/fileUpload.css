@@ -2,9 +2,19 @@
 .file-upload-section {
   margin-bottom: 2rem;
   padding: 1.5rem;
-  background-color: #1f2937;
   border-radius: 8px;
+}
+
+/* Dark theme file upload section */
+:root.dark .file-upload-section {
+  background-color: #1f2937;
   border: 1px solid #374151;
+}
+
+/* Light theme file upload section */
+:root:not(.dark) .file-upload-section {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(209, 213, 219, 0.5);
 }
 
 .upload-container {
@@ -19,17 +29,34 @@
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  border: 2px dashed #4b5563;
   border-radius: 8px;
-  background-color: #283142;
   transition: all 0.2s ease;
   cursor: pointer;
   min-height: 150px;
 }
 
-.dropzone:hover {
+/* Dark theme dropzone */
+:root.dark .dropzone {
+  border: 2px dashed #4b5563;
+  background-color: #283142;
+}
+
+/* Light theme dropzone */
+:root:not(.dark) .dropzone {
+  border: 2px dashed #d1d5db;
+  background-color: rgba(243, 244, 246, 0.7);
+}
+
+/* Dark theme dropzone hover */
+:root.dark .dropzone:hover {
   border-color: #10b981;
   background-color: #1f2937;
+}
+
+/* Light theme dropzone hover */
+:root:not(.dark) .dropzone:hover {
+  border-color: #10b981;
+  background-color: rgba(229, 231, 235, 0.7);
 }
 
 .dropzone.active {
@@ -57,14 +84,32 @@
 
 .dropzone-text {
   font-size: 1rem;
-  color: #e2e8f0;
   margin-bottom: 0.5rem;
+}
+
+/* Dark theme dropzone text */
+:root.dark .dropzone-text {
+  color: #e2e8f0;
+}
+
+/* Light theme dropzone text */
+:root:not(.dark) .dropzone-text {
+  color: #374151;
 }
 
 .dropzone-hint {
   font-size: 0.75rem;
-  color: #94a3b8;
   text-align: center;
+}
+
+/* Dark theme dropzone hint */
+:root.dark .dropzone-hint {
+  color: #94a3b8;
+}
+
+/* Light theme dropzone hint */
+:root:not(.dark) .dropzone-hint {
+  color: #6b7280;
 }
 
 .selected-file {
@@ -91,16 +136,34 @@
 
 .file-name {
   font-weight: 500;
-  color: #e2e8f0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 250px;
 }
 
+/* Dark theme file name */
+:root.dark .file-name {
+  color: #e2e8f0;
+}
+
+/* Light theme file name */
+:root:not(.dark) .file-name {
+  color: #111827;
+}
+
 .file-size {
   font-size: 0.875rem;
+}
+
+/* Dark theme file size */
+:root.dark .file-size {
   color: #94a3b8;
+}
+
+/* Light theme file size */
+:root:not(.dark) .file-size {
+  color: #6b7280;
 }
 
 .remove-file-button {
@@ -126,19 +189,39 @@
 
 .form-label {
   font-size: 0.875rem;
+}
+
+/* Dark theme form label */
+:root.dark .form-label {
   color: #e2e8f0;
+}
+
+/* Light theme form label */
+:root:not(.dark) .form-label {
+  color: #374151;
 }
 
 .description-input {
   padding: 0.75rem;
   border-radius: 6px;
-  border: 1px solid #4b5563;
-  background-color: #283142;
-  color: #e2e8f0;
   font-size: 0.875rem;
   resize: vertical;
   min-height: 80px;
   transition: all 0.2s ease;
+}
+
+/* Dark theme description input */
+:root.dark .description-input {
+  border: 1px solid #4b5563;
+  background-color: #283142;
+  color: #e2e8f0;
+}
+
+/* Light theme description input */
+:root:not(.dark) .description-input {
+  border: 1px solid #d1d5db;
+  background-color: rgba(255, 255, 255, 0.8);
+  color: #111827;
 }
 
 .description-input:focus {
@@ -178,17 +261,34 @@
 
 .cancel-button {
   padding: 0.5rem 1rem;
-  background-color: transparent;
-  color: #e2e8f0;
-  border: 1px solid #4b5563;
   border-radius: 6px;
   font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.cancel-button:hover:not(:disabled) {
+/* Dark theme cancel button */
+:root.dark .cancel-button {
+  background-color: transparent;
+  color: #e2e8f0;
+  border: 1px solid #4b5563;
+}
+
+/* Light theme cancel button */
+:root:not(.dark) .cancel-button {
+  background-color: transparent;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+/* Dark theme cancel button hover */
+:root.dark .cancel-button:hover:not(:disabled) {
   background-color: #283142;
+}
+
+/* Light theme cancel button hover */
+:root:not(.dark) .cancel-button:hover:not(:disabled) {
+  background-color: rgba(243, 244, 246, 0.8);
 }
 
 .cancel-button:disabled {
@@ -250,16 +350,35 @@
 .files-list-section {
   margin-bottom: 2rem;
   padding: 1.5rem;
-  background-color: #1f2937;
   border-radius: 8px;
+}
+
+/* Dark theme files list section */
+:root.dark .files-list-section {
+  background-color: #1f2937;
   border: 1px solid #374151;
+}
+
+/* Light theme files list section */
+:root:not(.dark) .files-list-section {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(209, 213, 219, 0.5);
 }
 
 .section-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #e2e8f0;
   margin-bottom: 1.25rem;
+}
+
+/* Dark theme section title */
+:root.dark .section-title {
+  color: #e2e8f0;
+}
+
+/* Light theme section title */
+:root:not(.dark) .section-title {
+  color: #111827;
 }
 
 .section-title.collapsible {
@@ -311,10 +430,24 @@
 .empty-files-message {
   padding: 2rem;
   text-align: center;
-  color: #94a3b8;
-  background-color: #283142;
   border-radius: 8px;
   font-size: 0.875rem;
+}
+
+/* Dark theme messages */
+:root.dark .loading-message,
+:root.dark .error-message,
+:root.dark .empty-files-message {
+  color: #94a3b8;
+  background-color: #283142;
+}
+
+/* Light theme messages */
+:root:not(.dark) .loading-message,
+:root:not(.dark) .error-message,
+:root:not(.dark) .empty-files-message {
+  color: #6b7280;
+  background-color: rgba(243, 244, 246, 0.7);
 }
 
 .error-message {
@@ -331,15 +464,32 @@
   display: flex;
   gap: 1rem;
   padding: 1rem;
-  background-color: #283142;
   border-radius: 8px;
-  border: 1px solid #374151;
   transition: all 0.2s ease;
 }
 
-.file-item:hover {
+/* Dark theme file item */
+:root.dark .file-item {
+  background-color: #283142;
+  border: 1px solid #374151;
+}
+
+/* Light theme file item */
+:root:not(.dark) .file-item {
+  background-color: rgba(243, 244, 246, 0.7);
+  border: 1px solid rgba(209, 213, 219, 0.5);
+}
+
+/* Dark theme file item hover */
+:root.dark .file-item:hover {
   border-color: #4b5563;
   background-color: #323d4f;
+}
+
+/* Light theme file item hover */
+:root:not(.dark) .file-item:hover {
+  border-color: #d1d5db;
+  background-color: rgba(229, 231, 235, 0.8);
 }
 
 .file-details {
@@ -361,7 +511,6 @@
 }
 
 .file-name {
-  color: #60a5fa;
   font-weight: 500;
   text-decoration: none;
   max-width: 80%;
@@ -371,8 +520,25 @@
   transition: color 0.2s ease;
 }
 
-.file-name:hover {
+/* Dark theme file name */
+:root.dark .file-name {
+  color: #60a5fa;
+}
+
+/* Light theme file name */
+:root:not(.dark) .file-name {
+  color: #3b82f6;
+}
+
+/* Dark theme file name hover */
+:root.dark .file-name:hover {
   color: #93c5fd;
+  text-decoration: underline;
+}
+
+/* Light theme file name hover */
+:root:not(.dark) .file-name:hover {
+  color: #2563eb;
   text-decoration: underline;
 }
 
@@ -412,16 +578,34 @@
 
 .file-description {
   font-size: 0.875rem;
-  color: #e2e8f0;
   margin: 0.25rem 0;
+}
+
+/* Dark theme file description */
+:root.dark .file-description {
+  color: #e2e8f0;
+}
+
+/* Light theme file description */
+:root:not(.dark) .file-description {
+  color: #374151;
 }
 
 .file-meta {
   display: flex;
   justify-content: space-between;
   font-size: 0.75rem;
-  color: #94a3b8;
   margin-top: 0.25rem;
+}
+
+/* Dark theme file meta */
+:root.dark .file-meta {
+  color: #94a3b8;
+}
+
+/* Light theme file meta */
+:root:not(.dark) .file-meta {
+  color: #6b7280;
 }
 
 .file-date {
@@ -452,17 +636,34 @@
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  border: 2px dashed rgba(75, 85, 99, 0.4);
   border-radius: 8px;
-  background-color: rgba(17, 24, 39, 0.4);
   transition: all 0.2s ease;
   cursor: pointer;
   min-height: 150px;
 }
 
-.dropzone-modern:hover {
+/* Dark theme modern dropzone */
+:root.dark .dropzone-modern {
+  border: 2px dashed rgba(75, 85, 99, 0.4);
+  background-color: rgba(17, 24, 39, 0.4);
+}
+
+/* Light theme modern dropzone */
+:root:not(.dark) .dropzone-modern {
+  border: 2px dashed rgba(209, 213, 219, 0.6);
+  background-color: rgba(243, 244, 246, 0.4);
+}
+
+/* Dark theme modern dropzone hover */
+:root.dark .dropzone-modern:hover {
   border-color: #10b981;
   background-color: rgba(17, 24, 39, 0.6);
+}
+
+/* Light theme modern dropzone hover */
+:root:not(.dark) .dropzone-modern:hover {
+  border-color: #10b981;
+  background-color: rgba(243, 244, 246, 0.6);
 }
 
 .dropzone-modern.active {
@@ -493,14 +694,32 @@
 .dropzone-text-modern {
   font-size: 1rem;
   font-weight: 500;
-  color: #e2e8f0;
   margin-bottom: 0.5rem;
+}
+
+/* Dark theme modern dropzone text */
+:root.dark .dropzone-text-modern {
+  color: #e2e8f0;
+}
+
+/* Light theme modern dropzone text */
+:root:not(.dark) .dropzone-text-modern {
+  color: #111827;
 }
 
 .dropzone-hint-modern {
   font-size: 0.75rem;
-  color: #94a3b8;
   text-align: center;
+}
+
+/* Dark theme modern dropzone hint */
+:root.dark .dropzone-hint-modern {
+  color: #94a3b8;
+}
+
+/* Light theme modern dropzone hint */
+:root:not(.dark) .dropzone-hint-modern {
+  color: #6b7280;
 }
 
 .selected-file-modern {
@@ -555,11 +774,20 @@
 
 .file-name-modern {
   font-weight: 500;
-  color: #e2e8f0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 250px;
+}
+
+/* Dark theme modern file name */
+:root.dark .file-name-modern {
+  color: #e2e8f0;
+}
+
+/* Light theme modern file name */
+:root:not(.dark) .file-name-modern {
+  color: #111827;
 }
 
 .file-size-modern {
@@ -597,19 +825,39 @@
 .form-label-modern {
   font-size: 0.875rem;
   font-weight: 500;
+}
+
+/* Dark theme modern form label */
+:root.dark .form-label-modern {
   color: #d1d5db;
+}
+
+/* Light theme modern form label */
+:root:not(.dark) .form-label-modern {
+  color: #374151;
 }
 
 .description-input-modern {
   padding: 0.75rem;
   border-radius: 8px;
-  border: 1px solid rgba(75, 85, 99, 0.4);
-  background-color: rgba(17, 24, 39, 0.3);
-  color: #e2e8f0;
   font-size: 0.875rem;
   resize: vertical;
   min-height: 80px;
   transition: all 0.2s ease;
+}
+
+/* Dark theme modern description input */
+:root.dark .description-input-modern {
+  border: 1px solid rgba(75, 85, 99, 0.4);
+  background-color: rgba(17, 24, 39, 0.3);
+  color: #e2e8f0;
+}
+
+/* Light theme modern description input */
+:root:not(.dark) .description-input-modern {
+  border: 1px solid rgba(209, 213, 219, 0.6);
+  background-color: rgba(255, 255, 255, 0.7);
+  color: #111827;
 }
 
 .description-input-modern:focus {
@@ -618,8 +866,14 @@
   box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
 }
 
-.description-input-modern::placeholder {
+/* Dark theme modern description input placeholder */
+:root.dark .description-input-modern::placeholder {
   color: #6b7280;
+}
+
+/* Light theme modern description input placeholder */
+:root:not(.dark) .description-input-modern::placeholder {
+  color: #9ca3af;
 }
 
 .status-message-modern {
@@ -656,10 +910,19 @@
   margin-top: 1rem;
   height: 0.5rem;
   width: 100%;
-  background-color: rgba(31, 41, 55, 0.4);
   border-radius: 9999px;
   overflow: hidden;
   position: relative;
+}
+
+/* Dark theme upload progress container */
+:root.dark .upload-progress-container {
+  background-color: rgba(31, 41, 55, 0.4);
+}
+
+/* Light theme upload progress container */
+:root:not(.dark) .upload-progress-container {
+  background-color: rgba(209, 213, 219, 0.4);
 }
 
 .upload-progress-bar {
@@ -687,9 +950,6 @@
 
 .cancel-button-modern {
   padding: 0.625rem 1.25rem;
-  background-color: rgba(31, 41, 55, 0.4);
-  color: #e2e8f0;
-  border: 1px solid rgba(75, 85, 99, 0.4);
   border-radius: 8px;
   font-size: 0.875rem;
   font-weight: 500;
@@ -700,8 +960,29 @@
   justify-content: center;
 }
 
-.cancel-button-modern:hover:not(:disabled) {
+/* Dark theme modern cancel button */
+:root.dark .cancel-button-modern {
+  background-color: rgba(31, 41, 55, 0.4);
+  color: #e2e8f0;
+  border: 1px solid rgba(75, 85, 99, 0.4);
+}
+
+/* Light theme modern cancel button */
+:root:not(.dark) .cancel-button-modern {
+  background-color: rgba(243, 244, 246, 0.7);
+  color: #374151;
+  border: 1px solid rgba(209, 213, 219, 0.6);
+}
+
+/* Dark theme modern cancel button hover */
+:root.dark .cancel-button-modern:hover:not(:disabled) {
   background-color: rgba(31, 41, 55, 0.6);
+  transform: translateY(-1px);
+}
+
+/* Light theme modern cancel button hover */
+:root:not(.dark) .cancel-button-modern:hover:not(:disabled) {
+  background-color: rgba(229, 231, 235, 0.8);
   transform: translateY(-1px);
 }
 

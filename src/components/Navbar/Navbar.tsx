@@ -20,6 +20,7 @@ import {
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon
 } from '@heroicons/react/24/outline'
+import ThemeToggle from '@/components/ThemeToggle/ThemeToggle'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import './Navbar.css'
@@ -378,8 +379,9 @@ export default function Navbar({ showBack = false }: NavbarProps) {
             </button>
           )}
           <Link href="/" className="flex items-center">
-            <h1 className="text-xl font-bold text-white mx-2 hover:text-emerald-400 transition-colors">
-              <span className="text-emerald-500">#</span>Student_Hub
+            <h1 className="mx-2 flex items-center text-xl font-bold">
+              <span className="text-emerald-500 mr-0.5">#</span>
+              <span className="title-text">Student_Hub</span>
             </h1>
           </Link>
         </div>
@@ -426,6 +428,7 @@ export default function Navbar({ showBack = false }: NavbarProps) {
         {/* Sidebar toggle on the right */}
         <div className="nav-right">
           <div className="nav-buttons">
+            <ThemeToggle />
             {studentProfile?.avatar_url ? (
               <div 
                 className="profile-avatar-wrapper"
@@ -493,6 +496,7 @@ export default function Navbar({ showBack = false }: NavbarProps) {
           <div className="sidebar-header">
             <h2 className="sidebar-title">Menu</h2>
             <div className="sidebar-actions">
+              <ThemeToggle />
               <button 
                 onClick={toggleCompactMode}
                 className="sidebar-compact-toggle"

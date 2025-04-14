@@ -5,22 +5,46 @@
 
 /* Override specific styles for the academic calendar page */
 .home-container {
-  @apply min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
-  background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.15) 1px, transparent 0);
+  @apply min-h-screen;
   background-size: 40px 40px;
 }
 
+/* Dark theme background */
+:root.dark .home-container {
+  @apply bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
+  background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.15) 1px, transparent 0);
+}
+
+/* Light theme background */
+:root:not(.dark) .home-container {
+  @apply bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50;
+  background-image: radial-gradient(circle at 1px 1px, rgb(156, 163, 175, 0.15) 1px, transparent 0);
+}
+
 .welcome-section {
-  background-color: rgba(16, 22, 36, 0.6);
-  border-radius: 1rem;
   position: relative;
+  border-radius: 1rem;
   overflow: hidden;
-  border: 1px solid rgba(16, 185, 129, 0.15);
   backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+/* Dark theme welcome section */
+:root.dark .welcome-section {
+  background-color: rgba(16, 22, 36, 0.6);
+  border: 1px solid rgba(16, 185, 129, 0.15);
   box-shadow: 
     0 10px 25px rgba(0, 0, 0, 0.1),
     0 5px 10px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+}
+
+/* Light theme welcome section */
+:root:not(.dark) .welcome-section {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.05),
+    0 5px 10px rgba(0, 0, 0, 0.03);
 }
 
 .welcome-section::before {
@@ -30,32 +54,73 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, transparent 50%, rgba(16, 185, 129, 0.05) 100%);
   border-radius: inherit;
   z-index: 0;
 }
 
+/* Dark theme welcome section gradient */
+:root.dark .welcome-section::before {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, transparent 50%, rgba(16, 185, 129, 0.05) 100%);
+}
+
+/* Light theme welcome section gradient */
+:root:not(.dark) .welcome-section::before {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, transparent 50%, rgba(16, 185, 129, 0.03) 100%);
+}
+
 .welcome-section:hover {
+  transform: translateY(-2px);
+}
+
+/* Dark theme welcome section hover */
+:root.dark .welcome-section:hover {
   box-shadow: 
     0 15px 30px rgba(0, 0, 0, 0.15),
     0 5px 15px rgba(0, 0, 0, 0.1);
   border-color: rgba(16, 185, 129, 0.3);
-  transform: translateY(-2px);
+}
+
+/* Light theme welcome section hover */
+:root:not(.dark) .welcome-section:hover {
+  box-shadow: 
+    0 15px 30px rgba(0, 0, 0, 0.08),
+    0 5px 15px rgba(0, 0, 0, 0.05);
+  border-color: rgba(16, 185, 129, 0.4);
 }
 
 .pdf-container {
   display: flex;
   flex-direction: column;
   height: 100%;
+  backdrop-filter: blur(10px);
+}
+
+/* Dark theme PDF container */
+:root.dark .pdf-container {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   background-color: rgba(17, 24, 39, 0.8);
-  backdrop-filter: blur(10px);
+}
+
+/* Light theme PDF container */
+:root:not(.dark) .pdf-container {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(229, 231, 235, 0.5);
 }
 
 .pdf-container iframe {
   flex-grow: 1;
-  background-color: rgba(17, 24, 39, 0.4);
   transition: all 0.3s ease-in-out;
+}
+
+/* Dark theme iframe */
+:root.dark .pdf-container iframe {
+  background-color: rgba(17, 24, 39, 0.4);
+}
+
+/* Light theme iframe */
+:root:not(.dark) .pdf-container iframe {
+  background-color: rgba(249, 250, 251, 0.8);
 }
 
 /* Ensure PDF iframe fits correctly */
@@ -66,8 +131,15 @@
 }
 
 /* Add subtle glow effect to the PDF container */
-.pdf-container:hover {
+/* Dark theme PDF container hover */
+:root.dark .pdf-container:hover {
   box-shadow: 0 6px 12px rgba(16, 185, 129, 0.1);
+}
+
+/* Light theme PDF container hover */
+:root:not(.dark) .pdf-container:hover {
+  box-shadow: 0 6px 12px rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.2);
 }
 
 /* Add animation for loading spinner */

@@ -1,0 +1,60 @@
+.theme-toggle-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  border: 1px solid var(--card-border);
+}
+
+/* Standalone theme toggle (for auth pages) */
+.login-container .theme-toggle-button,
+.register-container .theme-toggle-button,
+.forgot-password-container .theme-toggle-button,
+.reset-password-container .theme-toggle-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 50;
+}
+
+/* Hide standalone theme toggle on pages with navbar */
+body:has(.navbar) > .theme-toggle-button,
+body:has(.home-container) > .theme-toggle-button,
+.home-container .theme-toggle-button:not(.nav-buttons .theme-toggle-button),
+.navbar ~ .theme-toggle-button {
+  display: none !important;
+}
+
+.theme-toggle-button:hover {
+  background-color: var(--accent);
+  transform: scale(1.05);
+}
+
+.theme-toggle-button:active {
+  transform: scale(0.95);
+}
+
+/* Animation for icon transition */
+.theme-toggle-button svg {
+  transition: transform 0.3s ease;
+}
+
+.theme-toggle-button:hover svg {
+  transform: rotate(12deg);
+}
+
+/* Navbar specific styling */
+.nav-right .theme-toggle-button {
+  margin-right: 8px;
+}
+
+/* Sidebar specific styling */
+.sidebar-header .theme-toggle-button {
+  margin-right: 8px;
+}

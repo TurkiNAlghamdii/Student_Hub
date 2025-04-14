@@ -12,11 +12,22 @@
 
 /* Admin container with home-like background */
 .admin-container {
-  @apply bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
-  background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.15) 1px, transparent 0);
-  background-size: 40px 40px;
   position: relative;
   overflow: hidden;
+  background-size: 40px 40px;
+  min-height: 100vh;
+}
+
+/* Dark theme background */
+:root.dark .admin-container {
+  background: linear-gradient(to bottom right, #030712, #111827, #030712);
+  background-image: radial-gradient(circle at 1px 1px, rgba(55, 65, 81, 0.15) 1px, transparent 0);
+}
+
+/* Light theme background */
+:root:not(.dark) .admin-container {
+  background: linear-gradient(to bottom right, #f9fafb, #f3f4f6, #f9fafb);
+  background-image: radial-gradient(circle at 1px 1px, rgba(156, 163, 175, 0.15) 1px, transparent 0);
 }
 
 .admin-container::before {
@@ -38,16 +49,29 @@
 
 /* Welcome section styling like home screen */
 .welcome-section {
-  background-color: rgba(16, 22, 36, 0.6);
   border-radius: 1rem;
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(16, 185, 129, 0.15);
   backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+/* Dark theme welcome section */
+:root.dark .welcome-section {
+  background-color: rgba(16, 22, 36, 0.6);
+  border: 1px solid rgba(16, 185, 129, 0.15);
   box-shadow: 
     0 10px 25px rgba(0, 0, 0, 0.1),
     0 5px 10px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+}
+
+/* Light theme welcome section */
+:root:not(.dark) .welcome-section {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(5, 150, 105, 0.15);
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.05),
+    0 5px 10px rgba(0, 0, 0, 0.02);
 }
 
 .welcome-section::before {
@@ -84,11 +108,8 @@
 }
 
 .admin-card {
-  background-color: rgba(16, 22, 36, 0.6);
-  border: 1px solid rgba(16, 185, 129, 0.15);
   backdrop-filter: blur(10px);
   border-radius: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
@@ -97,6 +118,20 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+/* Dark theme admin card */
+:root.dark .admin-card {
+  background-color: rgba(16, 22, 36, 0.6);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Light theme admin card */
+:root:not(.dark) .admin-card {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(5, 150, 105, 0.15);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .admin-card:hover {
@@ -161,15 +196,35 @@
 
 /* Shortcuts section like home screen */
 .shortcuts-section {
-  @apply bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 mb-8
-    border border-gray-800/50 transition-all duration-300 relative z-10;
-  box-shadow: 
-    0 0 30px rgba(6, 78, 59, 0.05),
-    0 0 60px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(8px);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 10;
   will-change: transform;
   transform: translateZ(0);
   backface-visibility: hidden;
   perspective: 1000px;
+}
+
+/* Dark theme shortcuts section */
+:root.dark .shortcuts-section {
+  background-color: rgba(17, 24, 39, 0.5);
+  border: 1px solid rgba(31, 41, 55, 0.5);
+  box-shadow: 
+    0 0 30px rgba(6, 78, 59, 0.05),
+    0 0 60px rgba(0, 0, 0, 0.2);
+}
+
+/* Light theme shortcuts section */
+:root:not(.dark) .shortcuts-section {
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(209, 213, 219, 0.5);
+  box-shadow: 
+    0 0 30px rgba(5, 150, 105, 0.05),
+    0 0 40px rgba(0, 0, 0, 0.05);
 }
 
 .shortcuts-section:hover {

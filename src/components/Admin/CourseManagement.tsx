@@ -210,12 +210,12 @@ export default function CourseManagement() {
   }
 
   return (
-    <div className="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-800/50 shadow-lg">
+    <div className="dark:bg-gray-900/50 bg-white/80 backdrop-blur-sm rounded-2xl p-6 dark:border-gray-800/50 border-gray-200/70 shadow-lg">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-white">Course Management</h2>
+        <h2 className="text-2xl font-bold dark:text-white text-gray-800">Course Management</h2>
         <button
           onClick={openAddModal}
-          className="px-4 py-2 bg-emerald-500/10 text-emerald-400 rounded-lg hover:bg-emerald-500/20 transition-colors flex items-center gap-2 border border-emerald-500/20 hover:border-emerald-500/30"
+          className="px-4 py-2 dark:bg-emerald-500/10 bg-emerald-500/20 dark:text-emerald-400 text-emerald-600 rounded-lg hover:bg-emerald-500/20 transition-colors flex items-center gap-2 dark:border-emerald-500/20 border-emerald-500/30 hover:border-emerald-500/30"
         >
           <PlusIcon className="h-5 w-5" />
           Add Course
@@ -225,13 +225,13 @@ export default function CourseManagement() {
       <div className="mb-6">
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+            <MagnifyingGlassIcon className="h-5 w-5 dark:text-gray-400 text-gray-500" />
           </div>
           <input
             type="text"
             value={searchQuery}
             onChange={handleSearchChange}
-            className="w-full bg-gray-800/70 backdrop-blur-sm border border-gray-700 rounded-lg pl-10 pr-10 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full dark:bg-gray-800/70 bg-gray-100/70 backdrop-blur-sm dark:border-gray-700 border-gray-300 rounded-lg pl-10 pr-10 py-2 dark:text-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
             placeholder="Search courses by code, name, or section..."
           />
           {searchQuery && (
@@ -239,39 +239,39 @@ export default function CourseManagement() {
               onClick={clearSearch}
               className="absolute inset-y-0 right-0 pr-3 flex items-center"
             >
-              <XMarkIcon className="h-5 w-5 text-gray-400 hover:text-white" />
+              <XMarkIcon className="h-5 w-5 dark:text-gray-400 text-gray-500 dark:hover:text-white hover:text-gray-800" />
             </button>
           )}
         </div>
         {searchQuery && (
-          <div className="mt-2 text-sm text-gray-400">
+          <div className="mt-2 text-sm dark:text-gray-400 text-gray-600">
             Found {filteredCourses.length} {filteredCourses.length === 1 ? 'course' : 'courses'} matching &quot;{searchQuery}&quot;
           </div>
         )}
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-gray-800/60">
+      <div className="overflow-x-auto rounded-lg dark:border-gray-800/60 border-gray-300/60">
         <table className="w-full">
           <thead>
-            <tr className="text-left bg-gray-800/50 backdrop-blur-sm">
-              <th className="px-4 py-3 text-gray-300 font-medium text-sm">Code</th>
-              <th className="px-4 py-3 text-gray-300 font-medium text-sm">Name</th>
-              <th className="px-4 py-3 text-gray-300 font-medium text-sm">Section</th>
-              <th className="px-4 py-3 text-gray-300 font-medium text-sm">Actions</th>
+            <tr className="text-left dark:bg-gray-800/50 bg-gray-200/70 backdrop-blur-sm">
+              <th className="px-4 py-3 dark:text-gray-300 text-gray-700 font-medium text-sm">Code</th>
+              <th className="px-4 py-3 dark:text-gray-300 text-gray-700 font-medium text-sm">Name</th>
+              <th className="px-4 py-3 dark:text-gray-300 text-gray-700 font-medium text-sm">Section</th>
+              <th className="px-4 py-3 dark:text-gray-300 text-gray-700 font-medium text-sm">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-800/50">
+          <tbody className="divide-y dark:divide-gray-800/50 divide-gray-300/50">
             {filteredCourses.length > 0 ? (
               filteredCourses.map((course) => (
-                <tr key={course.course_code} className="hover:bg-gray-800/30 transition-colors">
-                  <td className="px-4 py-4 font-mono font-medium text-emerald-500">{course.course_code}</td>
+                <tr key={course.course_code} className="dark:hover:bg-gray-800/30 hover:bg-gray-200/50 transition-colors">
+                  <td className="px-4 py-4 font-mono font-medium dark:text-emerald-500 text-emerald-600">{course.course_code}</td>
                   <td className="px-4 py-4">
                     <div className="flex flex-col">
-                      <span className="text-white">{course.course_name}</span>
-                      <span className="text-sm text-gray-400">{course.description}</span>
+                      <span className="dark:text-white text-gray-800">{course.course_name}</span>
+                      <span className="text-sm dark:text-gray-400 text-gray-600">{course.description}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-4 text-gray-300">{course.section}</td>
+                  <td className="px-4 py-4 dark:text-gray-300 text-gray-700">{course.section}</td>
                   <td className="px-4 py-4">
                     <div className="flex items-center gap-2">
                       <button
@@ -292,13 +292,13 @@ export default function CourseManagement() {
               ))
             ) : (
               <tr>
-                <td colSpan={4} className="py-8 text-center text-gray-400">
+                <td colSpan={4} className="py-8 text-center dark:text-gray-400 text-gray-600">
                   {searchQuery ? (
                     <div>
                       <div>No courses found matching your search.</div>
                       <button 
                         onClick={clearSearch}
-                        className="mt-2 text-emerald-400 hover:text-emerald-300 underline"
+                        className="mt-2 dark:text-emerald-400 text-emerald-600 dark:hover:text-emerald-300 hover:text-emerald-500 underline"
                       >
                         Clear search
                       </button>
@@ -316,14 +316,14 @@ export default function CourseManagement() {
       {/* Course Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-center z-50 pt-20 overflow-y-auto">
-          <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 w-full max-w-md mx-auto my-8 shadow-lg">
+          <div className="dark:bg-gray-900 bg-white rounded-xl dark:border-gray-800 border-gray-200 p-6 w-full max-w-md mx-auto my-8 shadow-lg">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold text-white">
+              <h3 className="text-xl font-semibold dark:text-white text-gray-800">
                 {editingCourse ? 'Edit Course' : 'Add New Course'}
               </h3>
               <button 
                 onClick={() => setIsModalOpen(false)}
-                className="text-gray-400 hover:text-white"
+                className="dark:text-gray-400 text-gray-500 dark:hover:text-white hover:text-gray-800"
               >
                 <XMarkIcon className="h-5 w-5" />
               </button>
@@ -332,7 +332,7 @@ export default function CourseManagement() {
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="course_code" className="block text-sm font-medium text-gray-400 mb-1">
+                  <label htmlFor="course_code" className="block text-sm font-medium dark:text-gray-400 text-gray-600 mb-1">
                     Course Code
                   </label>
                   <input
@@ -341,7 +341,7 @@ export default function CourseManagement() {
                     name="course_code"
                     value={formData.course_code}
                     onChange={handleInputChange}
-                    className="w-full bg-gray-800/70 backdrop-blur-sm border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full dark:bg-gray-800/70 bg-gray-100/70 backdrop-blur-sm dark:border-gray-700 border-gray-300 rounded-lg px-3 py-2 dark:text-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     placeholder="e.g. CS101"
                     required
                     disabled={!!editingCourse}
@@ -349,7 +349,7 @@ export default function CourseManagement() {
                 </div>
                 
                 <div>
-                  <label htmlFor="course_name" className="block text-sm font-medium text-gray-400 mb-1">
+                  <label htmlFor="course_name" className="block text-sm font-medium dark:text-gray-400 text-gray-600 mb-1">
                     Course Name
                   </label>
                   <input
@@ -358,14 +358,14 @@ export default function CourseManagement() {
                     name="course_name"
                     value={formData.course_name}
                     onChange={handleInputChange}
-                    className="w-full bg-gray-800/70 backdrop-blur-sm border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full dark:bg-gray-800/70 bg-gray-100/70 backdrop-blur-sm dark:border-gray-700 border-gray-300 rounded-lg px-3 py-2 dark:text-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     placeholder="Introduction to Computer Science"
                     required
                   />
                 </div>
                 
                 <div>
-                  <label htmlFor="description" className="block text-sm font-medium text-gray-400 mb-1">
+                  <label htmlFor="description" className="block text-sm font-medium dark:text-gray-400 text-gray-600 mb-1">
                     Description
                   </label>
                   <textarea
@@ -374,13 +374,13 @@ export default function CourseManagement() {
                     value={formData.description}
                     onChange={handleInputChange}
                     rows={3}
-                    className="w-full bg-gray-800/70 backdrop-blur-sm border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full dark:bg-gray-800/70 bg-gray-100/70 backdrop-blur-sm dark:border-gray-700 border-gray-300 rounded-lg px-3 py-2 dark:text-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     placeholder="Course description..."
                   />
                 </div>
                 
                 <div>
-                  <label htmlFor="department" className="block text-sm font-medium text-gray-400 mb-1">
+                  <label htmlFor="department" className="block text-sm font-medium dark:text-gray-400 text-gray-600 mb-1">
                     Department
                   </label>
                   <input
@@ -389,14 +389,14 @@ export default function CourseManagement() {
                     name="department"
                     value={formData.department}
                     onChange={handleInputChange}
-                    className="w-full bg-gray-800/70 backdrop-blur-sm border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full dark:bg-gray-800/70 bg-gray-100/70 backdrop-blur-sm dark:border-gray-700 border-gray-300 rounded-lg px-3 py-2 dark:text-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     placeholder="Computer Science"
                     required
                   />
                 </div>
                 
                 <div>
-                  <label htmlFor="credits" className="block text-sm font-medium text-gray-400 mb-1">
+                  <label htmlFor="credits" className="block text-sm font-medium dark:text-gray-400 text-gray-600 mb-1">
                     Credits
                   </label>
                   <input
@@ -405,14 +405,14 @@ export default function CourseManagement() {
                     name="credits"
                     value={formData.credits}
                     onChange={handleInputChange}
-                    className="w-full bg-gray-800/70 backdrop-blur-sm border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full dark:bg-gray-800/70 bg-gray-100/70 backdrop-blur-sm dark:border-gray-700 border-gray-300 rounded-lg px-3 py-2 dark:text-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     placeholder="3"
                     required
                   />
                 </div>
                 
                 <div>
-                  <label htmlFor="level" className="block text-sm font-medium text-gray-400 mb-1">
+                  <label htmlFor="level" className="block text-sm font-medium dark:text-gray-400 text-gray-600 mb-1">
                     Level
                   </label>
                   <input
@@ -421,14 +421,14 @@ export default function CourseManagement() {
                     name="level"
                     value={formData.level}
                     onChange={handleInputChange}
-                    className="w-full bg-gray-800/70 backdrop-blur-sm border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full dark:bg-gray-800/70 bg-gray-100/70 backdrop-blur-sm dark:border-gray-700 border-gray-300 rounded-lg px-3 py-2 dark:text-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     placeholder="Undergraduate"
                     required
                   />
                 </div>
                 
                 <div>
-                  <label htmlFor="section" className="block text-sm font-medium text-gray-400 mb-1">
+                  <label htmlFor="section" className="block text-sm font-medium dark:text-gray-400 text-gray-600 mb-1">
                     Section
                   </label>
                   <input
@@ -437,7 +437,7 @@ export default function CourseManagement() {
                     name="section"
                     value={formData.section}
                     onChange={handleInputChange}
-                    className="w-full bg-gray-800/70 backdrop-blur-sm border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full dark:bg-gray-800/70 bg-gray-100/70 backdrop-blur-sm dark:border-gray-700 border-gray-300 rounded-lg px-3 py-2 dark:text-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     placeholder="A1"
                     required
                   />
@@ -448,13 +448,13 @@ export default function CourseManagement() {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 bg-gray-800 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors border border-gray-700"
+                  className="w-full dark:bg-gray-700 bg-gray-200 dark:hover:bg-gray-600 hover:bg-gray-300 dark:text-white text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors mt-2"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-emerald-500/20 text-emerald-400 rounded-lg hover:bg-emerald-500/30 transition-colors flex items-center gap-2 border border-emerald-500/20 hover:border-emerald-500/30"
+                  className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-2 px-4 rounded-lg transition-colors"
                 >
                   <CheckIcon className="h-4 w-4" />
                   {editingCourse ? 'Update' : 'Create'}

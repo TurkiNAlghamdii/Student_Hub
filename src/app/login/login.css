@@ -1,15 +1,21 @@
 .login-container {
-  @apply min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 py-12 px-4 sm:px-6 lg:px-8;
-  background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.15) 1px, transparent 0);
+  @apply min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8;
   background-size: 40px 40px;
+  position: relative;
+}
+
+.dark .login-container {
+  @apply bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
+  background-image: radial-gradient(circle at 1px 1px, rgba(55, 65, 81, 0.15) 1px, transparent 0);
+}
+
+:root:not(.dark) .login-container {
+  @apply bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50;
+  background-image: radial-gradient(circle at 1px 1px, rgba(203, 213, 225, 0.4) 1px, transparent 0);
 }
 
 .login-card {
-  @apply max-w-md w-full bg-gray-900/50 backdrop-blur-sm p-10 rounded-2xl;
-  box-shadow: 
-    0 0 40px rgba(6, 78, 59, 0.1),
-    0 0 80px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(6, 78, 59, 0.1);
+  @apply max-w-md w-full backdrop-blur-sm p-10 rounded-2xl;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -17,14 +23,38 @@
   position: relative;
 }
 
+.dark .login-card {
+  @apply bg-gray-900/50;
+  box-shadow: 
+    0 0 40px rgba(6, 78, 59, 0.1),
+    0 0 80px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(6, 78, 59, 0.1);
+}
+
+:root:not(.dark) .login-card {
+  @apply bg-white/80;
+  box-shadow: 
+    0 0 40px rgba(6, 78, 59, 0.05),
+    0 0 80px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(6, 78, 59, 0.1);
+}
+
 .login-title {
   @apply text-center text-4xl font-extrabold;
   background: linear-gradient(to right, #10b981, #064e3b);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 30px rgba(6, 78, 59, 0.5);
   margin-bottom: 2rem;
   margin-top: 1rem;
+}
+
+.dark .login-title {
+  text-shadow: 0 0 30px rgba(6, 78, 59, 0.5);
+}
+
+:root:not(.dark) .login-title {
+  text-shadow: 0 0 20px rgba(6, 78, 59, 0.2);
 }
 
 .login-form {
@@ -39,16 +69,31 @@
 }
 
 .input-field {
-  @apply appearance-none relative block w-full px-4 py-3 border placeholder-gray-400 text-white rounded-xl 
-    bg-gray-800/50 backdrop-blur-sm
-    border-gray-700/50
+  @apply appearance-none relative block w-full px-4 py-3 border rounded-xl 
+    backdrop-blur-sm
     focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50
     transition-all duration-200 ease-in-out;
 }
 
+.dark .input-field {
+  @apply bg-gray-800/50 border-gray-700/50 text-white placeholder-gray-400;
+}
+
+:root:not(.dark) .input-field {
+  @apply bg-gray-100/50 border-gray-300/70 text-gray-800 placeholder-gray-500;
+}
+
 .password-toggle {
-  @apply absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 
+  @apply absolute inset-y-0 right-0 pr-4 flex items-center
     hover:text-emerald-400 transition-colors duration-200;
+}
+
+.dark .password-toggle {
+  @apply text-gray-400;
+}
+
+:root:not(.dark) .password-toggle {
+  @apply text-gray-500;
 }
 
 .error-message {
@@ -98,13 +143,29 @@
 }
 
 .register-link-text {
-  @apply mt-4 text-center text-sm text-gray-400;
+  @apply mt-4 text-center text-sm;
+}
+
+.dark .register-link-text {
+  @apply text-gray-400;
+}
+
+:root:not(.dark) .register-link-text {
+  @apply text-gray-600;
 }
 
 .register-link {
-  @apply font-medium text-emerald-400 hover:text-emerald-300 
-    transition-all duration-200;
+  @apply font-medium transition-all duration-200;
+}
+
+.dark .register-link {
+  @apply text-emerald-400 hover:text-emerald-300;
   text-shadow: 0 0 20px rgba(6, 78, 59, 0.3);
+}
+
+:root:not(.dark) .register-link {
+  @apply text-emerald-600 hover:text-emerald-500;
+  text-shadow: 0 0 15px rgba(6, 78, 59, 0.15);
 }
 
 /* Add animation classes */
@@ -115,9 +176,18 @@
 /* Optional: Add a subtle animation to the entire card on hover */
 .login-card:hover {
   @apply transform transition-all duration-500;
+}
+
+.dark .login-card:hover {
   box-shadow: 
     0 0 50px rgba(6, 78, 59, 0.15),
     0 0 90px rgba(0, 0, 0, 0.3);
+}
+
+:root:not(.dark) .login-card:hover {
+  box-shadow: 
+    0 0 50px rgba(6, 78, 59, 0.1),
+    0 0 90px rgba(0, 0, 0, 0.1);
 }
 
 .success-message {
@@ -126,8 +196,17 @@
 }
 
 .forgot-password-link {
-  @apply text-sm text-gray-400 hover:text-emerald-400 transition-all duration-200;
+  @apply text-sm transition-all duration-200;
+}
+
+.dark .forgot-password-link {
+  @apply text-gray-400 hover:text-emerald-400;
   text-shadow: 0 0 10px rgba(6, 78, 59, 0.2);
+}
+
+:root:not(.dark) .forgot-password-link {
+  @apply text-gray-500 hover:text-emerald-600;
+  text-shadow: 0 0 8px rgba(6, 78, 59, 0.1);
 }
 
 /* These classes are no longer needed but keeping them for reference in case they're used elsewhere
@@ -163,4 +242,47 @@
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
   margin: 0 auto;
 } 
-*/ 
+*/
+
+/* Theme toggle button */
+.theme-toggle-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+.dark .theme-toggle-button {
+  background-color: rgba(17, 24, 39, 0.7);
+  color: #f9fafb;
+  border: 1px solid rgba(75, 85, 99, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+:root:not(.dark) .theme-toggle-button {
+  background-color: rgba(255, 255, 255, 0.8);
+  color: #1f2937;
+  border: 1px solid rgba(203, 213, 225, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.theme-toggle-button:hover {
+  transform: scale(1.05);
+}
+
+.dark .theme-toggle-button:hover {
+  background-color: rgba(31, 41, 55, 0.8);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+:root:not(.dark) .theme-toggle-button:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+} 

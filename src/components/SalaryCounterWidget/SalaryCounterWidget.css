@@ -1,18 +1,39 @@
 .salary-counter-widget {
-  @apply bg-gray-900/50 backdrop-blur-sm rounded-2xl p-5
-    border border-gray-800/50 transition-all duration-300;
-  box-shadow: 
-    0 0 30px rgba(6, 78, 59, 0.05),
-    0 0 60px rgba(0, 0, 0, 0.2);
+  @apply backdrop-blur-sm rounded-2xl p-5 transition-all duration-300;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
   display: flex;
   flex-direction: column;
 }
 
+.dark .salary-counter-widget {
+  @apply bg-gray-900/50 border-gray-800/50;
+  box-shadow: 
+    0 0 30px rgba(6, 78, 59, 0.05),
+    0 0 60px rgba(0, 0, 0, 0.2);
+}
+
+:root:not(.dark) .salary-counter-widget {
+  @apply bg-white/80 border-gray-200/50;
+  box-shadow: 
+    0 0 20px rgba(6, 78, 59, 0.03),
+    0 0 40px rgba(0, 0, 0, 0.05);
+}
+
 .salary-counter-widget:hover {
   transform: translateY(-5px);
+}
+
+.dark .salary-counter-widget:hover {
   box-shadow: 
     0 0 40px rgba(6, 78, 59, 0.1),
     0 0 80px rgba(0, 0, 0, 0.3);
+}
+
+:root:not(.dark) .salary-counter-widget:hover {
+  box-shadow: 
+    0 0 30px rgba(6, 78, 59, 0.05),
+    0 0 50px rgba(0, 0, 0, 0.1);
 }
 
 .widget-header {
@@ -40,7 +61,10 @@
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: white;
+  color: var(--foreground);
+}
+
+.dark .widget-title {
   text-shadow: 0 0 30px rgba(6, 78, 59, 0.3);
 }
 
@@ -49,18 +73,35 @@
 }
 
 .counter-info-button {
-  @apply px-2.5 py-1 rounded-lg text-xs font-medium text-white
+  @apply px-2.5 py-1 rounded-lg text-xs font-medium
     transition-all duration-300 ease-in-out flex items-center justify-center;
-  background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
+  color: var(--primary-foreground);
+  background: var(--primary);
   border: 1px solid rgba(6, 78, 59, 0.2);
-  box-shadow: 0 4px 20px rgba(6, 78, 59, 0.15);
   width: fit-content;
   white-space: nowrap;
 }
 
+.dark .counter-info-button {
+  background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
+  box-shadow: 0 4px 20px rgba(6, 78, 59, 0.15);
+}
+
+:root:not(.dark) .counter-info-button {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 15px rgba(6, 78, 59, 0.1);
+}
+
 .counter-info-button:hover {
   @apply transform scale-[1.02];
+}
+
+.dark .counter-info-button:hover {
   box-shadow: 0 4px 25px rgba(6, 78, 59, 0.25);
+}
+
+:root:not(.dark) .counter-info-button:hover {
+  box-shadow: 0 4px 20px rgba(6, 78, 59, 0.15);
 }
 
 .widget-content {
@@ -74,9 +115,18 @@
   gap: 0.5rem;
   padding: 1rem;
   margin-top: 0.5rem;
-  background: rgba(22, 27, 34, 0.5);
   border-radius: 0.75rem;
+  border: 1px solid var(--card-border);
+}
+
+.dark .countdown-container {
+  background: rgba(22, 27, 34, 0.5);
   border: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+:root:not(.dark) .countdown-container {
+  background: rgba(240, 240, 240, 0.5);
+  border: 1px solid rgba(75, 85, 99, 0.15);
 }
 
 .countdown-item {
@@ -96,7 +146,7 @@
 
 .countdown-label {
   font-size: 0.7rem;
-  color: #9ca3af;
+  color: var(--muted-foreground);
   margin-top: 0.4rem;
 }
 

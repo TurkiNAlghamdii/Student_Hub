@@ -6,6 +6,10 @@ export const metadata: Metadata = {
   description: 'Calculate your GPA and track your academic progress',
 }
 
-export default function GpaCalculatorPage() {
-  return <GpaCalculatorClient />
-} 
+export default function GpaCalculator() {
+  return (
+    <div>
+      <GpaCalculatorClient />
+    </div>
+  )
+}

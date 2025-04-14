@@ -2,13 +2,33 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
+import { EyeIcon, EyeSlashIcon, SunIcon, MoonIcon } from '@heroicons/react/24/outline'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
+import { useTheme } from '@/contexts/ThemeContext'
 import './login.css'
 import { FormEvent } from 'react'
+
+// Theme Toggle Button Component
+function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme()
+  
+  return (
+    <button
+      onClick={toggleTheme}
+      className="theme-toggle-button"
+      aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+    >
+      {theme === 'dark' ? (
+        <SunIcon className="h-5 w-5" />
+      ) : (
+        <MoonIcon className="h-5 w-5" />
+      )}
+    </button>
+  )
+}
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -18,6 +38,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { session } = useAuth()
+  const { theme } = useTheme()
 
   useEffect(() => {
     if (session) {
@@ -61,6 +82,7 @@ export default function Login() {
 
   return (
     <div className="login-container">
+      <ThemeToggle />
       <motion.div
         className="login-card"
         initial={{ opacity: 0, y: 20 }}

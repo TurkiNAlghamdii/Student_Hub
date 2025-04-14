@@ -71,7 +71,7 @@ const TrainingInstitutionsTable: React.FC = () => {
 
   if (error) {
     return (
-      <div className="text-red-400 text-center p-4">
+      <div className="dark:text-red-400 text-red-500 text-center p-4">
         Error: {error}
       </div>
     );
@@ -81,8 +81,8 @@ const TrainingInstitutionsTable: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h2 className="text-2xl font-bold text-white mb-2">Training Institutions</h2>
-          <p className="text-gray-400">Find and apply to approved training institutions for your summer training program</p>
+          <h2 className="text-2xl font-bold dark:text-white text-gray-800 mb-2">Training Institutions</h2>
+          <p className="dark:text-gray-400 text-gray-600">Find and apply to approved training institutions for your summer training program</p>
         </div>
         <button
           onClick={() => setShowAddForm(true)}
@@ -95,14 +95,14 @@ const TrainingInstitutionsTable: React.FC = () => {
 
       <div className="relative">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+          <MagnifyingGlassIcon className="h-5 w-5 dark:text-gray-400 text-gray-500" />
         </div>
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search by name, category, or city..."
-          className="block w-full pl-10 pr-3 py-2 border border-gray-700 rounded-md leading-5 bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+          className="block w-full pl-10 pr-3 py-2 dark:border-gray-700 border-gray-300 rounded-md leading-5 dark:bg-gray-800 bg-white dark:text-white text-gray-800 dark:placeholder-gray-400 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
         />
       </div>
 
@@ -122,56 +122,56 @@ const TrainingInstitutionsTable: React.FC = () => {
       )}
 
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-700/50">
+        <table className="min-w-full divide-y dark:divide-gray-700/50 divide-gray-200/50">
           <thead>
             <tr>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium dark:text-gray-400 text-gray-500 uppercase tracking-wider">
                 Institution
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium dark:text-gray-400 text-gray-500 uppercase tracking-wider">
                 Category
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium dark:text-gray-400 text-gray-500 uppercase tracking-wider">
                 Location
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium dark:text-gray-400 text-gray-500 uppercase tracking-wider">
                 Links
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium dark:text-gray-400 text-gray-500 uppercase tracking-wider">
                 Notes
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-700/50">
+          <tbody className="divide-y dark:divide-gray-700/50 divide-gray-200/50">
             {filteredInstitutions.map((institution) => (
               <motion.tr
                 key={institution.id}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="hover:bg-gray-800/50 transition-colors duration-200"
+                className="dark:hover:bg-gray-800/50 hover:bg-gray-100/70 transition-colors duration-200"
               >
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-10 w-10">
-                      <div className="bg-emerald-500/10 rounded-full p-2">
+                      <div className="dark:bg-emerald-500/10 bg-emerald-500/20 rounded-full p-2">
                         <BuildingOfficeIcon className="h-6 w-6 text-emerald-400" />
                       </div>
                     </div>
                     <div className="ml-4">
-                      <div className="text-sm font-medium text-white">{institution.name}</div>
+                      <div className="text-sm font-medium dark:text-white text-gray-800">{institution.name}</div>
                     </div>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <DocumentTextIcon className="h-5 w-5 text-emerald-400 mr-2" />
-                    <span className="text-sm text-gray-300">{institution.category}</span>
+                    <span className="text-sm dark:text-gray-300 text-gray-600">{institution.category}</span>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <MapPinIcon className="h-5 w-5 text-emerald-400 mr-2" />
-                    <span className="text-sm text-gray-300">{institution.city}</span>
+                    <span className="text-sm dark:text-gray-300 text-gray-600">{institution.city}</span>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -199,9 +199,7 @@ const TrainingInstitutionsTable: React.FC = () => {
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <div className="text-sm text-gray-400 max-w-xs truncate">
-                    {institution.notes}
-                  </div>
+                  <p className="text-sm dark:text-gray-400 text-gray-600">{institution.notes || 'No additional notes'}</p>
                 </td>
               </motion.tr>
             ))}

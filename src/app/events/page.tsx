@@ -458,7 +458,7 @@ export default function EventsPage() {
       {/* Hidden admin toggle button */}
       <button 
         onClick={() => setShowAdminTools(!showAdminTools)} 
-        className="opacity-0 hover:opacity-100 fixed bottom-4 right-4 text-xs text-gray-700 bg-gray-900/30 p-2 rounded-full"
+        className="opacity-0 hover:opacity-100 fixed bottom-4 right-4 text-xs dark:text-gray-700 text-gray-500 dark:bg-gray-900/30 bg-gray-200/50 p-2 rounded-full"
       >
         Admin
       </button>
