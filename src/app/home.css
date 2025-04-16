@@ -58,7 +58,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   text-shadow: 0 0 30px rgba(6, 78, 59, 0.3);
 }
 
-.logout-button {
+.action-button {
   @apply px-4 py-2 rounded-xl text-sm font-medium
     transition-all duration-300 ease-in-out;
   color: var(--primary-foreground);
@@ -66,29 +66,29 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   border: 1px solid rgba(6, 78, 59, 0.2);
 }
 
-.dark .logout-button {
+.dark .action-button {
   background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
   box-shadow: 0 4px 20px rgba(6, 78, 59, 0.15);
 }
 
-:root:not(.dark) .logout-button {
+:root:not(.dark) .action-button {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   box-shadow: 0 4px 15px rgba(6, 78, 59, 0.1);
 }
 
-.logout-button:hover {
+.action-button:hover {
   @apply transform scale-[1.02];
 }
 
-.dark .logout-button:hover {
+.dark .action-button:hover {
   box-shadow: 0 4px 25px rgba(6, 78, 59, 0.25);
 }
 
-:root:not(.dark) .logout-button:hover {
+:root:not(.dark) .action-button:hover {
   box-shadow: 0 4px 20px rgba(6, 78, 59, 0.15);
 }
 
-.logout-button:active {
+.action-button:active {
   @apply transform scale-[0.98];
 }
 

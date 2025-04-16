@@ -1,6 +1,6 @@
 'use client'
 
-import SummerTrainingNavbar from '@/components/Navbar/SummerTrainingNavbar'
+import Navbar from '@/components/Navbar/Navbar'
 import SummerTrainingGuide from '@/components/SummerTrainingGuide/SummerTrainingGuide'
 import TrainingInstitutionsTable from '@/components/TrainingInstitutionsTable/TrainingInstitutionsTable'
 import { BriefcaseIcon } from '@heroicons/react/24/outline'
@@ -10,7 +10,7 @@ import './summer-training.css'
 export default function SummerTrainingPage() {
   return (
     <div className="summer-training-container">
-      <SummerTrainingNavbar />
+      <Navbar />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <AnimatedContent>

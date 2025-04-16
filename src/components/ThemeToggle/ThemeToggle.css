@@ -4,7 +4,7 @@
   justify-content: center;
   width: 36px;
   height: 36px;
-  border-radius: 50%;
+  border-radius: 0.375rem;
   background-color: var(--secondary);
   color: var(--secondary-foreground);
   transition: all 0.2s ease-in-out;
@@ -51,10 +51,23 @@ body:has(.home-container) > .theme-toggle-button,
 
 /* Navbar specific styling */
 .nav-right .theme-toggle-button {
-  margin-right: 8px;
+  margin-right: 0;
 }
 
 /* Sidebar specific styling */
 .sidebar-header .theme-toggle-button {
   margin-right: 8px;
+}
+
+/* Media query for smaller devices */
+@media (max-width: 640px) {
+  .theme-toggle-button {
+    width: 34px;
+    height: 34px;
+  }
+  
+  .theme-toggle-button svg {
+    width: 1rem;
+    height: 1rem;
+  }
 }

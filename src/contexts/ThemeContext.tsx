@@ -12,7 +12,7 @@ interface ThemeContextType {
 
 // Provide default values for the context
 const defaultContext: ThemeContextType = {
-  theme: 'light',
+  theme: 'dark', // Default to dark theme to match the layout.tsx default
   toggleTheme: () => {},
   setTheme: () => {}
 }
@@ -20,14 +20,13 @@ const defaultContext: ThemeContextType = {
 const ThemeContext = createContext<ThemeContextType>(defaultContext)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  // Initialize with a default theme that matches the server
-  const [theme, setTheme] = useState<Theme>('light')
+  // Initialize with dark theme to match server-side rendering
+  const [theme, setTheme] = useState<Theme>('dark')
   const [mounted, setMounted] = useState(false)
 
   // Initialize theme from localStorage on client side
   useEffect(() => {
     try {
-      setMounted(true)
       if (typeof window !== 'undefined') {
         const storedTheme = localStorage.getItem('theme') as Theme | null
         if (storedTheme) {
@@ -35,11 +34,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         } else {
           // Check system preference if no stored theme
           const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-          setTheme(prefersDark ? 'dark' : 'light')
+          const newTheme = prefersDark ? 'dark' : 'light'
+          setTheme(newTheme)
+          localStorage.setItem('theme', newTheme)
         }
+        setMounted(true)
       }
     } catch (error) {
       console.error('Error initializing theme:', error)
+      setMounted(true)
     }
   }, [])
 

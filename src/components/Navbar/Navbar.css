@@ -222,7 +222,8 @@
 .nav-buttons {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1.25rem;
+  padding: 0 0.25rem;
 }
 
 /* Profile button */
@@ -259,8 +260,8 @@
 
 /* Profile avatar styling */
 .profile-avatar-wrapper {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   overflow: hidden;
   cursor: pointer;
@@ -290,8 +291,8 @@
 }
 
 .profile-avatar-fallback {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
@@ -316,12 +317,13 @@
 
 /* Sidebar toggle button */
 .sidebar-toggle-button {
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  transition: all 0.2s ease;
+  width: 36px;
+  height: 36px;
+  border-radius: 0.375rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s ease;
 }
 
 .dark .sidebar-toggle-button {
@@ -699,16 +701,51 @@
   transform: scale(0.95);
 }
 
-.menu-link-logout {
-  margin-top: 1rem;
-  background-color: rgba(220, 38, 38, 0.1);
-  color: rgba(252, 165, 165, 0.9);
+/* Menu logout button styling (in sidebar) - with increased specificity */
+.sidebar .sidebar-content .menu-link-logout {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  width: calc(100% - 1rem);
+  margin-left: 0.5rem;
+  align-items: center;
 }
 
-.menu-link-logout:hover {
-  background-color: rgba(220, 38, 38, 0.2);
-  border-color: rgba(220, 38, 38, 0.3);
-  color: rgba(252, 165, 165, 1);
+.dark .sidebar .sidebar-content .menu-link-logout {
+  color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.08) !important;
+  border: 1px solid rgba(239, 68, 68, 0.15);
+}
+
+.dark .sidebar .sidebar-content .menu-link-logout:hover {
+  background-color: rgba(239, 68, 68, 0.12) !important;
+  border-color: rgba(239, 68, 68, 0.25);
+  transform: translateX(-2px);
+}
+
+:root:not(.dark) .sidebar .sidebar-content .menu-link-logout {
+  color: #dc2626;
+  background-color: rgba(220, 38, 38, 0.05) !important;
+  border: 1px solid rgba(220, 38, 38, 0.1);
+}
+
+:root:not(.dark) .sidebar .sidebar-content .menu-link-logout:hover {
+  background-color: rgba(220, 38, 38, 0.08) !important;
+  border-color: rgba(220, 38, 38, 0.15);
+  transform: translateX(-2px);
+}
+
+.sidebar .sidebar-content .menu-link-logout .sidebar-icon {
+  color: inherit;
+}
+
+.sidebar-compact .sidebar-content .menu-link-logout {
+  padding: 0.75rem;
+  justify-content: center;
 }
 
 .menu-label {
@@ -983,39 +1020,125 @@
   .sidebar-compact .mobile-search-container {
     display: none;
   }
+  
+  .nav-buttons {
+    gap: 0.75rem; /* Reduce gap on mobile */
+  }
+  
+  /* Make buttons slightly smaller on mobile */
+  .navbar .nav-buttons .logout-button,
+  .sidebar-toggle-button {
+    width: 34px;
+    height: 34px;
+  }
+  
+  .profile-avatar-wrapper,
+  .profile-avatar-fallback {
+    width: 34px;
+    height: 34px;
+  }
+  
+  /* Ensure the title doesn't take too much space */
+  .title-text {
+    font-size: 0.95rem;
+  }
+  
+  /* Adjust padding to maximize available space */
+  .nav-content {
+    padding: 0 0.5rem;
+  }
 }
 
-/* Logout button */
-.logout-button {
+/* Logout button - with increased specificity */
+.navbar .nav-buttons .logout-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.25rem;
-  margin: 0 0.25rem;
-  border-radius: 0.25rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 0.375rem;
   transition: all 0.2s ease;
-  color: var(--text-secondary);
-  background-color: transparent;
-  border: none;
-  font-size: 0.75rem;
+  background-color: transparent !important;
+  border: 1px solid transparent;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
 }
 
-.dark .logout-button {
+.dark .navbar .nav-buttons .logout-button {
   color: #9ca3af;
+  border-color: rgba(75, 85, 99, 0.2);
+  background: none !important;
 }
 
-.dark .logout-button:hover {
+.dark .navbar .nav-buttons .logout-button:hover {
   color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.1) !important;
+  border-color: rgba(239, 68, 68, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-:root:not(.dark) .logout-button {
+:root:not(.dark) .navbar .nav-buttons .logout-button {
   color: #6b7280;
+  border-color: rgba(209, 213, 219, 0.2);
+  background: none !important;
 }
 
-:root:not(.dark) .logout-button:hover {
+:root:not(.dark) .navbar .nav-buttons .logout-button:hover {
   color: #dc2626;
+  background-color: rgba(239, 68, 68, 0.1) !important;
+  border-color: rgba(220, 38, 38, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
-.logout-button:active {
-  transform: scale(0.95);
+.navbar .nav-buttons .logout-button:active {
+  transform: scale(0.95) translateY(0);
+  box-shadow: none;
+}
+
+.navbar .nav-buttons .logout-button .h-4,
+.navbar .nav-buttons .logout-button .h-5 {
+  transition: transform 0.2s ease;
+}
+
+.navbar .nav-buttons .logout-button:hover .h-4,
+.navbar .nav-buttons .logout-button:hover .h-5 {
+  transform: translateX(2px);
+}
+
+/* Additional mobile improvements */
+@media (max-width: 480px) {
+  /* Further reduce size for very small screens */
+  .navbar .nav-buttons .logout-button,
+  .sidebar-toggle-button,
+  .theme-toggle-button,
+  .profile-avatar-wrapper,
+  .profile-avatar-fallback {
+    width: 32px;
+    height: 32px;
+  }
+  
+  /* Tighten the gap even further */
+  .nav-buttons {
+    gap: 0.5rem;
+  }
+  
+  /* Make the title text smaller instead of hiding the hashtag */
+  .title-text {
+    font-size: 0.85rem;
+  }
+  
+  /* Make icons smaller */
+  .sidebar-toggle-button .h-6,
+  .sidebar-toggle-button .w-6 {
+    height: 1rem;
+    width: 1rem;
+  }
+  
+  /* Reduce navbar height slightly */
+  .nav-content {
+    height: 3.5rem;
+  }
 }

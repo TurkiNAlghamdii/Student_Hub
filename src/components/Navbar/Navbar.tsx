@@ -286,6 +286,9 @@ export default function Navbar({ showBack = false }: NavbarProps) {
 
   const handleLogout = async () => {
     try {
+      // Clear any session data in localStorage before signout
+      localStorage.removeItem('sessionStartTime')
+      // Proceed with signout
       await signOut()
     } catch (error) {
       console.error('Error logging out:', error)
@@ -452,7 +455,7 @@ export default function Navbar({ showBack = false }: NavbarProps) {
                 }
               }}
             >
-              <ArrowRightOnRectangleIcon className="h-4 w-4" />
+              <ArrowRightOnRectangleIcon className="h-5 w-5" />
             </button>
             {studentProfile?.avatar_url ? (
               <div 
