@@ -49,19 +49,26 @@ export default function Home() {
 
   useEffect(() => {
     const fetchStudentProfile = async () => {
-      if (!user) return
+      if (!user) {
+        setLoading(false);
+        return
+      }
 
-      const { data } = await supabase
-        .from('students')
-        .select('*')
-        .eq('id', user.id)
-        .single()
-
-      setStudentProfile(data)
-      setLoading(false)
-      
-      // Ensure shortcuts animation starts after page content is loaded
-      setTimeout(() => setShortcutsReady(true), 100)
+      try {
+        const { data } = await supabase
+          .from('students')
+          .select('*')
+          .eq('id', user.id)
+          .single()
+        setStudentProfile(data)
+        if (data) { 
+          setTimeout(() => setShortcutsReady(true), 100)
+        }
+      } catch (error) {
+        console.error("Error fetching student profile:", error);
+      } finally {
+        setLoading(false)
+      }
     }
 
     if (!authLoading) {
@@ -70,26 +77,30 @@ export default function Home() {
       } else {
         fetchStudentProfile()
       }
+    } else {
+      setLoading(true);
     }
   }, [user, authLoading, router])
 
   if (authLoading || loading) {
-    return <LoadingSpinner />
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm translate-z-0">
+        <LoadingSpinner size="xlarge" /> 
+      </div>
+    );
   }
 
-  if (!user) return null
+  if (!user) {
+    return null; 
+  }
 
-  // Extract first name from full name or use email as fallback
   const getFirstName = () => {
     if (studentProfile?.full_name) {
-      // Split the full name and take the first part as the first name
       return studentProfile.full_name.split(' ')[0];
     }
-    // If no full name, use the part of the email before the @ symbol
     return user.email ? user.email.split('@')[0] : 'Student';
   }
 
-  // Get time-based greeting based on user's local time
   const getTimeBasedGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return "Good morning";
@@ -97,7 +108,6 @@ export default function Home() {
     return "Good evening";
   }
 
-  // Navigation shortcuts data
   const shortcuts = [
     {
       title: "Courses",
@@ -145,7 +155,6 @@ export default function Home() {
     }
   ];
 
-  // Rendering skeleton placeholders for shortcuts when not ready
   const renderSkeletonShortcuts = () => {
     return Array(4).fill(0).map((_, index) => (
       <div key={`skeleton-${index}`} className="shortcut-skeleton">
@@ -263,6 +272,5 @@ export default function Home() {
       </main>
       <Footer />
     </div>
-  )
+  );
 }
-

@@ -10,6 +10,7 @@ import {
   DocumentIcon
 } from '@heroicons/react/24/outline'
 import Navbar from '@/components/Navbar/Navbar'
+import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
 import './academic-calendar.css'
 
 interface CalendarData {
@@ -119,6 +120,16 @@ export default function AcademicCalendarPage() {
     }
   }
 
+  // Show full-page spinner if either calendar type is loading
+  if (loading || loadingExams) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm translate-z-0">
+        <LoadingSpinner size="large" />
+      </div>
+    )
+  }
+
+  // Render page content only when both loading states are false
   return (
     <div className="home-container">
       <Navbar />
@@ -182,11 +193,7 @@ export default function AcademicCalendarPage() {
           </div>
           
           {activeTab === 'academic' ? (
-            loading ? (
-              <div className="flex items-center justify-center h-64 dark:bg-gray-900/50 bg-white/80 backdrop-blur-sm rounded-2xl p-6 dark:border-gray-800/50 border border-gray-200">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500 dark:border-emerald-400"></div>
-              </div>
-            ) : error ? (
+            error ? (
               <div className="dark:bg-red-900/20 bg-red-50 dark:border-red-800 border border-red-200 dark:text-red-400 text-red-600 px-6 py-4 rounded-2xl">
                 <p>{error}</p>
               </div>
@@ -238,11 +245,7 @@ export default function AcademicCalendarPage() {
               </div>
             )
           ) : (
-            loadingExams ? (
-              <div className="flex items-center justify-center h-64 dark:bg-gray-900/50 bg-white/80 backdrop-blur-sm rounded-2xl p-6 dark:border-gray-800/50 border border-gray-200">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500 dark:border-emerald-400"></div>
-              </div>
-            ) : examError ? (
+            examError ? (
               <div className="dark:bg-red-900/20 bg-red-50 dark:border-red-800 border border-red-200 dark:text-red-400 text-red-600 px-6 py-4 rounded-2xl">
                 <p>{examError}</p>
               </div>

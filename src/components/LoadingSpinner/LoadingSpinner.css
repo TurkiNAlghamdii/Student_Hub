@@ -1,20 +1,114 @@
-.loading-container {
-  @apply flex items-center justify-center;
+/* Define spinner color variable if not defined globally (fallback) */
+:root {
+  /* Assuming emerald-500 corresponds to #10b981 */
+  --spinner-color: #10b981; 
 }
 
-.loading-spinner {
-  @apply border-t-emerald-500 rounded-full animate-spin;
-  background-color: transparent;
-  border-color: rgba(16, 185, 129, 0.15);
-  box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
-  animation: spinner 0.8s linear infinite;
+.dark {
+  /* Assuming emerald-400 corresponds to #34d399 */
+  --spinner-color: #34d399;
 }
 
-@keyframes spinner {
+/* --- SVG Draw Spinner Styles --- */
+
+.loading-hash-svg {
+  /* Default size (medium: 28px) - overridden below */
+  width: 28px;
+  height: 28px;
+  transform-origin: 50% 50%;
+  /* Optional: Add rotation back if desired */
+  /* animation: svg-spin 2s linear infinite; */
+}
+
+.hash-line {
+  fill: none;
+  stroke: var(--spinner-color);
+  stroke-width: 8; /* Adjust thickness as needed */
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  /* Animation - Reduce duration from 2.5s to 1.5s */
+  animation: draw-stroke 1.5s ease-in-out infinite;
+}
+
+/* Set dash array/offset based on line lengths (vertical=80, horizontal=70) */
+.hash-line.line-1, 
+.hash-line.line-2 {
+  stroke-dasharray: 80;
+  stroke-dashoffset: 80;
+}
+
+.hash-line.line-3, 
+.hash-line.line-4 {
+  stroke-dasharray: 70;
+  stroke-dashoffset: 70;
+}
+
+/* Optional: Stagger animation start times - Adjust delays for faster animation */
+.hash-line.line-1 { animation-delay: 0s; }
+.hash-line.line-2 { animation-delay: 0.05s; } /* Faster delay */
+.hash-line.line-3 { animation-delay: 0.1s; }  /* Faster delay */
+.hash-line.line-4 { animation-delay: 0.15s; } /* Faster delay */
+
+/* Drawing Animation */
+@keyframes draw-stroke {
   0% {
-    transform: rotate(0deg);
+    stroke-dashoffset: var(--initial-offset, 80); /* Use actual length */
+    opacity: 0;
   }
-  100% {
-    transform: rotate(360deg);
+  10% {
+     opacity: 1; /* Fade in quickly */
   }
-} 
+  50% {
+    stroke-dashoffset: 0; /* Draw the line */
+    opacity: 1;
+  }
+  70% {
+    stroke-dashoffset: 0; /* Hold */
+    opacity: 1;
+  }
+  90%, 100% {
+    stroke-dashoffset: var(--initial-offset, 80); /* Reset for loop */
+    opacity: 0; /* Fade out */
+  }
+}
+
+/* We need to set the --initial-offset for horizontal lines specifically */
+.hash-line.line-3, 
+.hash-line.line-4 {
+  /* Override the offset used in the keyframes for these lines */
+   animation-name: draw-stroke-h; /* Use a dedicated animation */
+   /* Make sure this animation also uses the faster duration */
+   animation-duration: 1.5s;
+}
+
+@keyframes draw-stroke-h {
+  0% { stroke-dashoffset: 70; opacity: 0; }
+  10% { opacity: 1; }
+  50% { stroke-dashoffset: 0; opacity: 1; }
+  70% { stroke-dashoffset: 0; opacity: 1; }
+  90%, 100% { stroke-dashoffset: 70; opacity: 0; }
+}
+
+/* Size Variations */
+.size-small.loading-hash-svg {
+  width: 18px;
+  height: 18px;
+}
+
+.size-medium.loading-hash-svg {
+  width: 28px;
+  height: 28px;
+}
+
+.size-large.loading-hash-svg {
+  width: 40px;
+  height: 40px;
+}
+
+.size-xlarge.loading-hash-svg {
+  width: 52px;
+  height: 52px;
+}
+
+/* Optional spin animation */
+/* @keyframes svg-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } */

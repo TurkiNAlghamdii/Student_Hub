@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
 import './ChatInterface.css';
 
 type Message = {
@@ -332,11 +333,7 @@ export default function ChatInterface({
                 Assistant
               </span>
             </div>
-            <div className="loading-dots">
-              <div className="loading-dot"></div>
-              <div className="loading-dot delay-75"></div>
-              <div className="loading-dot delay-150"></div>
-            </div>
+            <LoadingSpinner size="small" />
           </div>
         )}
       </div>

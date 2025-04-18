@@ -18,6 +18,7 @@
   --muted-foreground: #6b7280;
   --input: #e5e7eb;
   --ring: #2563eb;
+  --spinner-color: #34d399; /* emerald-600 for light mode */
 }
 
 .dark {
@@ -36,6 +37,7 @@
   --muted-foreground: #9ca3af;
   --input: #374151;
   --ring: #3b82f6;
+  --spinner-color: #10b981; /* emerald-500 for dark mode */
 }
 
 html {

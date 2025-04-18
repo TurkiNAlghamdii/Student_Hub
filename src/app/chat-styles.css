@@ -318,47 +318,6 @@
   background-color: rgba(5, 150, 105, 0.2);
 }
 
-.loading-container {
-  min-height: 16rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0.5rem;
-  transition: all 0.3s ease;
-}
+/* Removed conflicting .loading-container and .loading-spinner styles */
 
-/* Dark theme loading container */
-:root.dark .loading-container {
-  background-color: rgba(17, 24, 39, 0.3);
-}
-
-/* Light theme loading container */
-:root:not(.dark) .loading-container {
-  background-color: rgba(243, 244, 246, 0.5);
-}
-
-.loading-spinner {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-/* Dark theme loading spinner */
-:root.dark .loading-spinner {
-  border: 4px solid rgba(16, 185, 129, 0.2);
-  border-top: 4px solid rgb(16, 185, 129);
-}
-
-/* Light theme loading spinner */
-:root:not(.dark) .loading-spinner {
-  border: 4px solid rgba(5, 150, 105, 0.2);
-  border-top: 4px solid rgb(5, 150, 105);
-  box-shadow: 0 0 10px rgba(5, 150, 105, 0.1);
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-} 
+/* ... (other chat-specific styles if any) ... */

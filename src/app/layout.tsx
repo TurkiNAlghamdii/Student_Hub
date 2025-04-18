@@ -32,7 +32,36 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" suppressHydrationWarning={true}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                function getInitialTheme() {
+                  try {
+                    const storedTheme = window.localStorage.getItem('theme');
+                    if (storedTheme) return storedTheme;
+                    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                  } catch (e) {
+                    // localStorage access might be restricted
+                    return 'light'; // Default to light if checks fail
+                  }
+                }
+                const theme = getInitialTheme();
+                const root = document.documentElement;
+                root.classList.remove('light', 'dark'); // Remove potential server-rendered default
+                root.classList.add(theme);
+
+                // REMOVED: Apply background color immediately - This causes hydration mismatch
+                // These colors should match your globals.css variables for :root and .dark
+                // const bgColor = theme === 'dark' ? '#111827' : '#ffffff'; 
+                // root.style.backgroundColor = bgColor;
+              })();
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >

@@ -194,16 +194,22 @@ interface StudentProfile {
         }
       }
     }, [user, authLoading, router])
+
+    // Show centered spinner if auth or profile data is loading
     if (authLoading || loading) {
-      return <LoadingSpinner />
+      // Wrap the spinner in the standard fixed centering container
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm translate-z-0">
+          <LoadingSpinner size="xlarge" /> 
+        </div>
+      );
     }
+
+    // If auth is done, loading is done, but no user, render nothing (redirect should handle)
     if (!user) return null
     
-    // Display error message if there is one
-    if (error && !updateMessage) {
-      setUpdateMessage(`Error: ${error}`)
-    }
-    
+    // --- If we get here, !authLoading, !loading, and user exists --- 
+
     return (
       <div className="profile-container">
         <Navbar />
