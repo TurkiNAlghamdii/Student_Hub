@@ -831,6 +831,176 @@
   .upload-section-wrapper {
     padding: 0.5rem;
   }
+  
+  .files-list-section .section-title {
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+  }
+  
+  .files-list-section .files-content {
+    padding: 0.75rem 0.75rem;
+  }
+}
+
+/* Additional mobile improvements */
+@media (max-width: 384px) {
+  /* Further optimize for very small screens */
+  .course-content {
+    @apply px-2 py-4;
+  }
+  
+  .course-section {
+    @apply p-3;
+  }
+  
+  .course-header {
+    margin: -0.75rem -0.75rem 0.75rem -0.75rem;
+    padding: 1.25rem 0.75rem 0.75rem;
+  }
+  
+  .course-code {
+    font-size: 1.25rem;
+  }
+  
+  .course-name {
+    font-size: 1.25rem;
+    line-height: 1.2;
+  }
+  
+  .metadata-item {
+    @apply text-xs;
+  }
+  
+  .metadata-icon {
+    @apply h-3.5 w-3.5 mr-1;
+  }
+  
+  /* Make buttons easier to tap on small screens */
+  .primary-action-button, .enrolled-button {
+    @apply py-1.5 text-xs;
+    min-height: 38px; /* Ensure good tap target size */
+  }
+  
+  .chat-button, .back-button {
+    @apply py-1.5 px-2 text-xs;
+    min-height: 36px; /* Ensure good tap target size */
+  }
+  
+  /* Improve the section content spacing */
+  .description-content {
+    padding: 1rem;
+  }
+  
+  .description-paragraph {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+  }
+  
+  /* Files section mobile improvements */
+  .files-list-section .files-content {
+    padding: 0.5rem 0.5rem;
+  }
+  
+  .files-list-section .section-title {
+    padding: 0.6rem 0.75rem;
+    font-size: 0.9rem;
+  }
+  
+  .files-list-wrapper {
+    border-radius: 0.5rem;
+  }
+  
+  /* Course materials section enhancements */
+  .files-section-container {
+    margin-top: 1.25rem;
+  }
+  
+  .files-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+  
+  .files-action-button {
+    @apply text-xs py-1.5;
+    justify-content: center;
+    min-height: 34px; /* Better tap target */
+  }
+  
+  .files-action-button .button-icon {
+    @apply h-3.5 w-3.5;
+  }
+  
+  .upload-section-wrapper {
+    margin-top: 0.5rem;
+    padding: 0.5rem 0.25rem;
+  }
+  
+  /* Adjust collapsible controls */
+  .collapse-control {
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .collapse-status {
+    font-size: 0.8rem;
+  }
+  
+  .collapse-icon {
+    font-size: 0.7rem;
+  }
+  
+  /* Comment section mobile improvements */
+  .comment-list {
+    padding: 0.75rem;
+  }
+  
+  .comment-content {
+    font-size: 0.875rem;
+  }
+  
+  .comment-item {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+  }
+  
+  .section-title {
+    @apply text-base mb-3;
+  }
+  
+  .section-title:before {
+    @apply h-3.5;
+  }
+}
+
+/* Additional optimizations for tiny screens */
+@media (max-width: 320px) {
+  .course-code {
+    font-size: 1.1rem;
+  }
+  
+  .course-name {
+    font-size: 1.1rem;
+  }
+  
+  .files-list-section .section-title {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.85rem;
+  }
+  
+  .files-list-section .files-content {
+    padding: 0.4rem;
+  }
+  
+  .files-action-button {
+    min-height: 32px;
+    font-size: 0.7rem;
+  }
+  
+  .action-btn {
+    width: 24px;
+    height: 24px;
+  }
 }
 
 /* Add styling for discussion section */

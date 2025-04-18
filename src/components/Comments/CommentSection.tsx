@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase'
 import { format } from 'date-fns'
@@ -13,7 +13,9 @@ import {
   TrashIcon,
   ExclamationCircleIcon,
   ClockIcon,
-  ArrowPathIcon
+  ArrowPathIcon,
+  ChevronDownIcon,
+  ChevronUpIcon
 } from '@heroicons/react/24/outline'
 import './comments.css'
 
@@ -49,6 +51,8 @@ export default function CommentSection({ courseCode }: CommentSectionProps) {
   const [replyingTo, setReplyingTo] = useState<string | null>(null)
   const [deletingComments, setDeletingComments] = useState<string[]>([])
   const [menuOpenFor, setMenuOpenFor] = useState<string | null>(null)
+  const [collapsedThreads, setCollapsedThreads] = useState<Set<string>>(new Set())
+  const [isMobile, setIsMobile] = useState(false)
 
   // Function to close any open menu when clicking outside
   useEffect(() => {
@@ -75,6 +79,48 @@ export default function CommentSection({ courseCode }: CommentSectionProps) {
       setIsAdmin(false);
     }
   }, [user]);
+
+  // Add useEffect to detect mobile screen size and auto-collapse deeply nested threads
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth <= 640);
+    };
+    
+    // Check initially
+    checkIfMobile();
+    
+    // Add event listener for window resize
+    window.addEventListener('resize', checkIfMobile);
+    
+    // Clean up
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
+
+  // Modify the useEffect to populate all comments with replies into collapsedThreads initially
+  useEffect(() => {
+    if (comments.length > 0) {
+      // Function to collect all comment IDs that have replies
+      const collectCommentIdsWithReplies = (comments: CommentWithReplies[]): string[] => {
+        let ids: string[] = [];
+        
+        comments.forEach(comment => {
+          if (comment.replies && comment.replies.length > 0) {
+            ids.push(comment.id);
+            // Also collect IDs from nested replies that have their own replies
+            ids = [...ids, ...collectCommentIdsWithReplies(comment.replies)];
+          }
+        });
+        
+        return ids;
+      };
+      
+      // Get all comment IDs with replies
+      const commentIdsWithReplies = collectCommentIdsWithReplies(comments);
+      
+      // Set all threads to collapsed by default
+      setCollapsedThreads(new Set(commentIdsWithReplies));
+    }
+  }, [comments]);
 
   // Function to organize comments into a hierarchical structure with parent/child relationships
   const organizeComments = (allComments: Comment[]): CommentWithReplies[] => {
@@ -365,16 +411,57 @@ export default function CommentSection({ courseCode }: CommentSectionProps) {
     return comment.user?.avatar_url || null
   }
   
+  // Add this function to toggle thread collapse state
+  const toggleThreadCollapse = (commentId: string) => {
+    setCollapsedThreads(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(commentId)) {
+        newSet.delete(commentId);
+      } else {
+        newSet.add(commentId);
+      }
+      return newSet;
+    });
+  };
+  
+  // Add this function to count replies including nested ones
+  const countAllReplies = (comment: CommentWithReplies): number => {
+    if (!comment.replies || comment.replies.length === 0) {
+      return 0;
+    }
+    
+    let count = comment.replies.length;
+    for (const reply of comment.replies) {
+      count += countAllReplies(reply);
+    }
+    return count;
+  };
+
   // Component to render a single comment with its replies
-  const CommentItem = ({ comment, isReply = false }: { comment: CommentWithReplies, isReply?: boolean }) => {
+  const CommentItem = ({ 
+    comment, 
+    replies, 
+    onReply, 
+    onDelete, 
+    nestingLevel = 0 
+  }: { 
+    comment: CommentWithReplies, 
+    replies: CommentWithReplies[],
+    onReply: (parentId: string) => void,
+    onDelete: (id: string) => void,
+    nestingLevel?: number
+  }) => {
     const isAuthor = user && comment.user_id === user.id
     const canDelete = isAdmin || isAuthor
     const isDeleting: boolean = Boolean(deletingComments.includes(comment.id))
     const isMenuOpen = menuOpenFor === comment.id
+    const hasReplies = replies && replies.length > 0
+    const isThreadCollapsed = collapsedThreads.has(comment.id)
+    const repliesCount = hasReplies ? countAllReplies(comment) : 0
     
     return (
       <div 
-        className={`comment-item ${isReply ? 'comment-reply' : ''}`}
+        className={`comment-item ${isThreadCollapsed ? 'thread-collapsed' : ''} nesting-level-${nestingLevel}`}
       >
         <div className="comment-header">
           <div className="comment-avatar">
@@ -429,7 +516,7 @@ export default function CommentSection({ courseCode }: CommentSectionProps) {
               {isMenuOpen && (
                 <div className="comment-menu">
                   <button
-                    onClick={() => handleDeleteComment(comment.id, Boolean(isAuthor))}
+                    onClick={() => onDelete(comment.id)}
                     className={`comment-menu-item ${!isAdmin && isAuthor ? 'delete' : 'admin-delete'}`}
                     disabled={isDeleting}
                   >
@@ -444,9 +531,9 @@ export default function CommentSection({ courseCode }: CommentSectionProps) {
         
         <div className="comment-content">{comment.content}</div>
         
-        {/* Reply button - only show if user is logged in */}
-        {user && (
-          <div className="comment-actions">
+        <div className="comment-actions">
+          {/* Reply button - only show if user is logged in */}
+          {user && (
             <button 
               onClick={() => {
                 if (replyingTo === comment.id) {
@@ -460,8 +547,29 @@ export default function CommentSection({ courseCode }: CommentSectionProps) {
               <ArrowUturnLeftIcon className="reply-icon" />
               Reply
             </button>
-          </div>
-        )}
+          )}
+          
+          {/* Thread collapse button - only show if there are replies */}
+          {hasReplies && (
+            <button 
+              onClick={() => toggleThreadCollapse(comment.id)}
+              className="thread-toggle-button"
+              aria-label={isThreadCollapsed ? "Expand replies" : "Collapse replies"}
+            >
+              {isThreadCollapsed ? (
+                <>
+                  <ChevronDownIcon className="thread-toggle-icon" />
+                  <span>{repliesCount} {repliesCount === 1 ? 'reply' : 'replies'}</span>
+                </>
+              ) : (
+                <>
+                  <ChevronUpIcon className="thread-toggle-icon" />
+                  <span>Hide</span>
+                </>
+              )}
+            </button>
+          )}
+        </div>
         
         {/* Reply form */}
         {replyingTo === comment.id && (
@@ -472,11 +580,18 @@ export default function CommentSection({ courseCode }: CommentSectionProps) {
           />
         )}
         
-        {/* Replies */}
-        {comment.replies && comment.replies.length > 0 && (
+        {/* Replies - now with nesting level tracking */}
+        {hasReplies && !isThreadCollapsed && (
           <div className="replies-container">
-            {comment.replies.map(reply => (
-              <CommentItem key={reply.id} comment={reply} isReply={true} />
+            {replies.map(reply => (
+              <CommentItem 
+                key={reply.id} 
+                comment={reply} 
+                replies={reply.replies || []}
+                onReply={onReply}
+                onDelete={onDelete}
+                nestingLevel={nestingLevel + 1} 
+              />
             ))}
           </div>
         )}
@@ -624,7 +739,14 @@ export default function CommentSection({ courseCode }: CommentSectionProps) {
           </div>
         ) : (
           comments.map(comment => (
-            <CommentItem key={comment.id} comment={comment} />
+            <CommentItem
+              key={comment.id}
+              comment={comment}
+              replies={comment.replies || []}
+              onReply={(parentId) => setReplyingTo(parentId)}
+              onDelete={(id) => handleDeleteComment(id, Boolean(user && comment.user_id === user.id))}
+              nestingLevel={0}
+            />
           ))
         )}
       </div>

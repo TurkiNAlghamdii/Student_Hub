@@ -1,0 +1,148 @@
+.file-item {
+  @apply relative w-full flex flex-col border rounded-lg mb-2 overflow-hidden;
+  transition: all 0.2s ease-in-out;
+}
+
+.file-item:hover {
+  @apply shadow-md;
+  transform: translateY(-2px);
+}
+
+.file-item .file-content {
+  @apply p-3 flex items-start gap-3 w-full;
+}
+
+.file-item .file-icon {
+  @apply flex-shrink-0 text-blue-500;
+}
+
+.file-item .file-details {
+  @apply flex-grow overflow-hidden;
+}
+
+.file-item .file-name {
+  @apply font-medium mb-1 text-sm text-gray-800 dark:text-gray-200 break-all;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.file-item .file-meta {
+  @apply text-xs text-gray-500 dark:text-gray-400 flex flex-wrap gap-x-3 gap-y-1;
+}
+
+.file-item .file-size {
+  @apply flex items-center;
+}
+
+.file-item .file-date {
+  @apply flex items-center;
+}
+
+.file-item .meta-icon {
+  @apply mr-1;
+}
+
+.file-item .file-actions {
+  @apply flex flex-shrink-0 gap-1;
+}
+
+.file-item .action-btn {
+  @apply p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors;
+}
+
+.file-item .action-btn:focus {
+  @apply outline-none ring-2 ring-blue-500;
+}
+
+.file-item .action-btn:hover {
+  @apply text-blue-600 dark:text-blue-400;
+}
+
+/* Responsive styles */
+@media (max-width: 640px) {
+  .file-item .file-content {
+    @apply p-2.5 gap-2;
+  }
+  
+  .file-item .file-icon svg {
+    @apply h-5 w-5;
+  }
+  
+  .file-item .file-name {
+    @apply text-xs mb-0.5;
+    max-width: 100%;
+  }
+  
+  .file-item .file-meta {
+    @apply text-[10px] gap-x-2;
+  }
+  
+  .file-item .action-btn {
+    @apply p-1;
+  }
+  
+  .file-item .action-btn svg {
+    @apply h-4 w-4;
+  }
+}
+
+/* Extra small device optimizations */
+@media (max-width: 480px) {
+  .file-item .file-content {
+    @apply p-2 gap-1.5;
+  }
+  
+  .file-item {
+    @apply mb-1.5;
+  }
+  
+  .file-item .file-icon svg {
+    @apply h-4 w-4;
+  }
+  
+  .file-item .file-meta {
+    @apply gap-x-1.5;
+  }
+  
+  .file-item .meta-icon {
+    @apply h-3 w-3;
+  }
+  
+  .file-item .action-btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .file-item .action-btn svg {
+    @apply h-3.5 w-3.5;
+  }
+}
+
+/* Tiny screens */
+@media (max-width: 320px) {
+  .file-item .file-content {
+    @apply p-1.5 gap-1;
+  }
+  
+  .file-item .action-btn {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .file-item .action-btn svg {
+    @apply h-3 w-3;
+  }
+}
+
+/* Dark mode adjustments */
+.dark .file-item {
+  @apply border-gray-700;
+  background-color: rgba(31, 41, 55, 0.4);
+}
+
+.dark .file-item:hover {
+  background-color: rgba(31, 41, 55, 0.6);
+} 

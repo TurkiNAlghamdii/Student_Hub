@@ -1060,4 +1060,366 @@
     width: 28px;
     height: 28px;
   }
+}
+
+/* Additional responsive styles for very small devices */
+@media (max-width: 384px) {
+  .comment-form {
+    padding: 12px;
+  }
+  
+  .comments-list {
+    padding: 8px;
+  }
+  
+  .comment-item {
+    padding: 10px 8px;
+    margin-bottom: 8px;
+  }
+  
+  .comment-avatar {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .comment-header {
+    margin-bottom: 6px;
+  }
+  
+  .comment-author {
+    font-size: 13px;
+  }
+  
+  .comment-date {
+    font-size: 11px;
+  }
+  
+  .comment-content {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  
+  .comment-actions {
+    margin-top: 6px;
+  }
+  
+  .reply-button {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+  
+  .replies-container {
+    margin-left: 8px;
+    padding-left: 8px;
+    border-left-width: 1px;
+  }
+  
+  .comment-reply {
+    padding: 8px 6px;
+    margin-top: 6px;
+  }
+  
+  .comment-reply .comment-avatar {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .comment-reply .comment-content {
+    font-size: 12px;
+  }
+  
+  .comment-input, .reply-input {
+    padding: 8px;
+    font-size: 13px;
+    min-height: 60px;
+  }
+  
+  .comment-form-footer, .reply-form-footer {
+    margin-top: 8px;
+  }
+  
+  .comment-submit, .reply-submit, .reply-cancel {
+    padding: 6px 10px;
+    font-size: 12px;
+    min-height: 34px; /* Ensure tap target size */
+  }
+  
+  .empty-icon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .comments-empty-title {
+    font-size: 14px;
+  }
+  
+  .comments-empty-description {
+    font-size: 12px;
+  }
+}
+
+/* Thread collapse button styles */
+.thread-toggle-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: transparent;
+  font-size: 13px;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Collapsed state styling - make it subtle but noticeable */
+.thread-collapsed .thread-toggle-button {
+  font-weight: 500;
+  border: none;
+  padding: 5px 8px;
+  background-color: transparent;
+}
+
+/* Dark theme thread toggle button */
+:root.dark .thread-toggle-button {
+  color: #8a94a6;
+}
+
+:root.dark .thread-collapsed .thread-toggle-button {
+  color: #4483f5;
+}
+
+/* Light theme thread toggle button */
+:root:not(.dark) .thread-toggle-button {
+  color: #6b7280;
+}
+
+:root:not(.dark) .thread-collapsed .thread-toggle-button {
+  color: #10b981;
+}
+
+/* Dark theme thread toggle button hover */
+:root.dark .thread-toggle-button:hover {
+  background-color: rgba(42, 48, 60, 0.5);
+  color: #e6e8ec;
+}
+
+:root.dark .thread-collapsed .thread-toggle-button:hover {
+  background-color: rgba(68, 131, 245, 0.1);
+}
+
+/* Light theme thread toggle button hover */
+:root:not(.dark) .thread-toggle-button:hover {
+  background-color: rgba(243, 244, 246, 0.8);
+}
+
+:root:not(.dark) .thread-collapsed .thread-toggle-button:hover {
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+.thread-toggle-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* Even smaller screens need more compact UI */
+@media (max-width: 480px) {
+  .thread-toggle-button {
+    padding: 3px 6px;
+    font-size: 11px;
+  }
+  
+  .thread-toggle-button .thread-toggle-icon {
+    width: 12px;
+    height: 12px;
+  }
+  
+  /* For very small screens, make the text shorter */
+  .thread-toggle-button span {
+    max-width: 130px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+  }
+  
+  /* Nested comments on mobile need even more compact buttons */
+  .nesting-level-1 .thread-toggle-button,
+  .nesting-level-2 .thread-toggle-button,
+  .nesting-level-3 .thread-toggle-button,
+  .nesting-level-4 .thread-toggle-button,
+  .nesting-level-5 .thread-toggle-button,
+  .nesting-level-6 .thread-toggle-button {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+  
+  /* Compact the comment actions further on mobile */
+  .comment-actions {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+}
+
+/* Add styles for nesting levels */
+.nesting-level-0 {
+  /* Base level - no special styling needed */
+}
+
+.nesting-level-1 {
+  /* First level of nesting */
+  margin-left: 1.5rem;
+}
+
+.nesting-level-2 {
+  /* Second level of nesting */
+  margin-left: 1.5rem;
+}
+
+.nesting-level-3, 
+.nesting-level-4, 
+.nesting-level-5,
+.nesting-level-6 {
+  /* Third level and deeper - reduce left margin to prevent excessive indentation */
+  margin-left: 1rem;
+  border-left: 2px solid var(--border-color-light);
+  padding-left: 0.5rem;
+}
+
+/* Mobile optimizations for nested comments */
+@media (max-width: 640px) {
+  .nesting-level-1 {
+    margin-left: 1rem;
+  }
+  
+  .nesting-level-2,
+  .nesting-level-3, 
+  .nesting-level-4, 
+  .nesting-level-5,
+  .nesting-level-6 {
+    margin-left: 0.5rem;
+    padding-left: 0.5rem;
+  }
+  
+  .nesting-level-2 {
+    border-left: 2px solid var(--border-color-light);
+  }
+  
+  /* Styling differently based on theme */
+  html.dark .nesting-level-2,
+  html.dark .nesting-level-3,
+  html.dark .nesting-level-4,
+  html.dark .nesting-level-5,
+  html.dark .nesting-level-6 {
+    border-left: 2px solid var(--border-color-dark);
+  }
+}
+
+/* Even smaller screens */
+@media (max-width: 384px) {
+  .replies-container {
+    margin-top: 0.5rem;
+  }
+  
+  .nesting-level-1,
+  .nesting-level-2,
+  .nesting-level-3, 
+  .nesting-level-4, 
+  .nesting-level-5,
+  .nesting-level-6 {
+    margin-left: 0.25rem;
+    padding-left: 0.25rem;
+  }
+  
+  /* Add more vertical space between nesting levels for clarity */
+  .comment-reply {
+    margin-top: 0.75rem;
+  }
+}
+
+/* Add a visual indicator for collapsed threads */
+.comment-item.thread-collapsed {
+  position: relative;
+}
+
+.comment-item.thread-collapsed::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 40%;
+  height: 2px;
+  opacity: 0.4;
+  transition: all 0.2s ease;
+}
+
+/* Dark theme collapsed thread indicator */
+:root.dark .comment-item.thread-collapsed::after {
+  background: linear-gradient(to right, #4483f5, transparent);
+}
+
+/* Light theme collapsed thread indicator */
+:root:not(.dark) .comment-item.thread-collapsed::after {
+  background: linear-gradient(to right, #10b981, transparent);
+}
+
+/* Nested comments have slightly smaller toggle buttons */
+.nesting-level-1 .thread-toggle-button,
+.nesting-level-2 .thread-toggle-button,
+.nesting-level-3 .thread-toggle-button,
+.nesting-level-4 .thread-toggle-button,
+.nesting-level-5 .thread-toggle-button,
+.nesting-level-6 .thread-toggle-button {
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+.nesting-level-1 .thread-toggle-icon,
+.nesting-level-2 .thread-toggle-icon,
+.nesting-level-3 .thread-toggle-icon,
+.nesting-level-4 .thread-toggle-icon,
+.nesting-level-5 .thread-toggle-icon,
+.nesting-level-6 .thread-toggle-icon {
+  width: 12px;
+  height: 12px;
+}
+
+/* Even smaller screens need more compact UI */
+@media (max-width: 480px) {
+  .thread-toggle-button {
+    padding: 3px 6px;
+    font-size: 11px;
+  }
+  
+  .thread-toggle-button .thread-toggle-icon {
+    width: 12px;
+    height: 12px;
+  }
+  
+  /* For very small screens, make the text shorter */
+  .thread-toggle-button span {
+    max-width: 130px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+  }
+  
+  /* Nested comments on mobile need even more compact buttons */
+  .nesting-level-1 .thread-toggle-button,
+  .nesting-level-2 .thread-toggle-button,
+  .nesting-level-3 .thread-toggle-button,
+  .nesting-level-4 .thread-toggle-button,
+  .nesting-level-5 .thread-toggle-button,
+  .nesting-level-6 .thread-toggle-button {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+  
+  /* Compact the comment actions further on mobile */
+  .comment-actions {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
 } 

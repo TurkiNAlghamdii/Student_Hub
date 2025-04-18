@@ -1076,4 +1076,54 @@
     width: 100%;
     justify-content: center;
   }
+}
+
+/* Additional responsive styles for very small screens */
+@media (max-width: 384px) {
+  .dropzone-modern {
+    padding: 1rem;
+  }
+  
+  .upload-icon-modern {
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+  
+  .dropzone-text-modern {
+    font-size: 0.875rem;
+  }
+  
+  .dropzone-hint-modern {
+    font-size: 0.75rem;
+  }
+  
+  .file-name-modern {
+    max-width: 140px;
+    font-size: 0.875rem;
+  }
+  
+  .file-size-modern {
+    font-size: 0.75rem;
+  }
+  
+  .form-label-modern {
+    font-size: 0.875rem;
+  }
+  
+  .description-input-modern {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+  }
+  
+  .status-message-modern {
+    font-size: 0.75rem;
+    padding: 0.5rem;
+  }
+  
+  .cancel-button-modern,
+  .upload-button-modern {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    min-height: 36px; /* Ensure good tap target size */
+  }
 } 
