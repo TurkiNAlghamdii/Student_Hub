@@ -2,31 +2,15 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { EyeIcon, EyeSlashIcon, SunIcon, MoonIcon } from '@heroicons/react/24/outline'
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useTheme } from '@/contexts/ThemeContext'
+import ThemeToggle from '@/components/ThemeToggle/ThemeToggle'
 import './register.css'
 
-// Theme Toggle Button Component
-function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme()
-  
-  return (
-    <button
-      onClick={toggleTheme}
-      className="theme-toggle-button"
-      aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-    >
-      {theme === 'dark' ? (
-        <SunIcon className="h-5 w-5" />
-      ) : (
-        <MoonIcon className="h-5 w-5" />
-      )}
-    </button>
-  )
-}
+
 
 const ALLOWED_DOMAINS = ['@stu.kau.edu.sa', '@kau.edu.sa']
 const FACULTIES = ['Faculty of Computing', 'Faculty of Engineering', 'Faculty of Science']
@@ -47,8 +31,10 @@ export default function Register() {
   const { theme } = useTheme()
 
   useEffect(() => {
-    const domain = email.substring(email.indexOf('@'))
-    setIsStudent(domain === '@stu.kau.edu.sa')
+    if (email.includes('@')) {
+      const domain = email.substring(email.indexOf('@'))
+      setIsStudent(domain === '@stu.kau.edu.sa')
+    }
   }, [email])
 
   const validateEmail = (email: string) => {
@@ -103,6 +89,12 @@ export default function Register() {
         setError('All fields are required for student registration')
         return
       }
+    } else {
+      // For faculty/staff email (@kau.edu.sa)
+      if (!fullName) {
+        setError('Full name is required for faculty/staff registration')
+        return
+      }
     }
 
     // Validate password
@@ -147,6 +139,20 @@ export default function Register() {
           ])
 
         if (profileError) throw profileError
+      } 
+      // If faculty/staff, create faculty record using the UUID from auth
+      else if (authData.user) {
+        const { error: profileError } = await supabase
+          .from('faculty_members')
+          .insert([
+            {
+              id: authData.user.id,
+              full_name: fullName,
+              email: email
+            }
+          ])
+
+        if (profileError) throw profileError
       }
 
       router.push('/login?message=Check your email to confirm your account')
@@ -178,7 +184,28 @@ export default function Register() {
 
   return (
     <div className="register-container">
-      <ThemeToggle />
+      {/* Mini Nav for Public Links and Theme Toggle */}
+      <motion.div 
+        className="register-public-nav" 
+        key="register-nav"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+      >
+        <div className="public-nav-links">
+          <Link href="/academic-calendar" className="public-tool-link">
+            Academic Calendar
+          </Link>
+          <Link href="/gpa-calculator" className="public-tool-link">
+            GPA Calculator
+          </Link>
+          <Link href="/pomodoro" className="public-tool-link">
+            Pomodoro Clock
+          </Link>
+        </div>
+        <ThemeToggle />
+      </motion.div>
+      
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -211,7 +238,7 @@ export default function Register() {
             </motion.div>
 
             {/* Student Information - Only shown for student emails */}
-            {isStudent && (
+            {isStudent ? (
               <>
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
@@ -263,6 +290,22 @@ export default function Register() {
                   </select>
                 </motion.div>
               </>
+            ) : email.includes('@kau.edu.sa') && (
+              // Faculty/Staff information - Only shown for faculty emails
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                <input
+                  type="text"
+                  required
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="input-field"
+                  placeholder="Full Name"
+                />
+              </motion.div>
             )}
 
             {/* Password Fields */}

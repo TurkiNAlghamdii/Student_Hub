@@ -1,5 +1,5 @@
 .login-container {
-  @apply min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8;
+  @apply min-h-screen flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8;
   background-size: 40px 40px;
   position: relative;
 }
@@ -209,80 +209,124 @@
   text-shadow: 0 0 8px rgba(6, 78, 59, 0.1);
 }
 
-/* These classes are no longer needed but keeping them for reference in case they're used elsewhere
-.logo-container {
-  width: 100%;
+/* Mini Nav for Public Links and Theme Toggle */
+.login-public-nav {
+  width: fit-content; /* Fit width to content */
   display: flex;
-  justify-content: center;
+  justify-content: center; /* Center items horizontally */
+  gap: 2rem; /* Add space between link group and theme toggle */
   align-items: center;
-  animation: fadeIn 0.8s ease-in;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  padding: 0.5rem 1rem; /* Reduced padding for compactness */
+  /* Position determined by flex layout now */
+  margin-bottom: 1.5rem; /* Space above login card */
+  border-radius: 8px; /* Rounded corners for sleek look */
+  backdrop-filter: blur(4px); /* Match card blur */
 }
 
-.logo-wrapper {
-  width: 200px;
-  height: 200px;
-  position: relative;
-  transition: transform 0.3s ease, filter 0.3s ease;
+.dark .login-public-nav {
+  background-color: rgba(17, 24, 39, 0.5); /* Match dark card bg: bg-gray-900/50 */
+  box-shadow:
+    0 0 40px rgba(6, 78, 59, 0.1),
+    0 0 80px rgba(0, 0, 0, 0.3); /* Match dark card shadow */
+}
+
+:root:not(.dark) .login-public-nav {
+  background-color: rgba(255, 255, 255, 0.8); /* Match light card bg: bg-white/80 */
+  box-shadow: 
+    0 0 40px rgba(6, 78, 59, 0.05),
+    0 0 80px rgba(0, 0, 0, 0.1); /* Match light card shadow */
+}
+
+.public-nav-links {
   display: flex;
-  justify-content: center;
+  gap: 0.75rem; /* Reduced space between links */
   align-items: center;
 }
 
-.logo-wrapper:hover {
-  transform: scale(1.05);
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+.public-tool-link {
+  display: inline-block;
+  padding: 0.5rem 1rem; /* Button padding */
+  border-radius: 6px; /* Rounded corners */
+  font-size: 0.875rem; /* 14px */
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+  border: 1px solid transparent; /* Placeholder for potential border */
+  cursor: pointer;
 }
 
-.logo-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-  margin: 0 auto;
-} 
-*/
-
-/* Theme toggle button */
-.theme-toggle-button {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  transition: all 0.3s ease;
+.dark .public-tool-link {
+  color: var(--muted-foreground);
+  background-color: transparent; /* Start transparent */
 }
 
-.dark .theme-toggle-button {
-  background-color: rgba(17, 24, 39, 0.7);
-  color: #f9fafb;
-  border: 1px solid rgba(75, 85, 99, 0.4);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+.dark .public-tool-link:hover {
+  color: var(--primary-foreground); /* Brighter text on hover */
+  background-color: rgba(16, 185, 129, 0.2); /* Subtle green background */
+  border-color: rgba(16, 185, 129, 0.3);
+  transform: translateY(-1px) scale(1.02); /* Subtle lift and scale */
+  box-shadow: 0 2px 8px rgba(6, 78, 59, 0.1);
 }
 
-:root:not(.dark) .theme-toggle-button {
-  background-color: rgba(255, 255, 255, 0.8);
-  color: #1f2937;
-  border: 1px solid rgba(203, 213, 225, 0.4);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+:root:not(.dark) .public-tool-link {
+  color: var(--muted-foreground);
+  background-color: transparent;
 }
 
-.theme-toggle-button:hover {
-  transform: scale(1.05);
+:root:not(.dark) .public-tool-link:hover {
+  color: var(--foreground); /* Use foreground (black/dark) color */
+  background-color: rgba(16, 185, 129, 0.1); /* Lighter green background */
+  border-color: rgba(16, 185, 129, 0.2);
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 2px 8px rgba(6, 78, 59, 0.05);
 }
 
-.dark .theme-toggle-button:hover {
-  background-color: rgba(31, 41, 55, 0.8);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+/* Override ThemeToggle.css absolute positioning AND apply mini-nav styles */
+.login-container .login-public-nav .theme-toggle-button {
+  position: static; /* Revert to default flow positioning */
+  top: auto;
+  right: auto;
+  z-index: auto;
+  
+  /* Match mini-nav base styles */
+  border-radius: 8px; 
+  backdrop-filter: blur(4px);
+  border: none; /* Remove default button border */
+  
+  /* Keep original button sizing/flex/color/cursor properties */
+  /* width, height, display, align-items, justify-content, color, cursor, transition */
+  /* These should be inherited from ThemeToggle.css unless overridden */
 }
 
-:root:not(.dark) .theme-toggle-button:hover {
-  background-color: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-} 
+.dark .login-container .login-public-nav .theme-toggle-button {
+  background-color: rgba(17, 24, 39, 0.5); /* Match dark nav bg */
+  box-shadow:
+    0 0 40px rgba(6, 78, 59, 0.1),
+    0 0 80px rgba(0, 0, 0, 0.3); /* Match dark nav shadow */
+}
+
+:root:not(.dark) .login-container .login-public-nav .theme-toggle-button {
+  background-color: rgba(255, 255, 255, 0.8); /* Match light nav bg */
+  box-shadow: 
+    0 0 40px rgba(6, 78, 59, 0.05),
+    0 0 80px rgba(0, 0, 0, 0.1); /* Match light nav shadow */
+}
+
+/* Hover/active animations from ThemeToggle.css should still apply */
+
+/* Styles related to theme variables (keep these) */
+:root {
+  --border-color: #e5e7eb; /* Light mode border */
+  --border-rgb: 229, 231, 235; /* Light mode border RGB */
+  --text-secondary: #6b7280; /* Light mode default */
+  --primary-color: #10b981; /* Emerald-500 */
+  --primary-hover-color: #059669; /* Emerald-600 */
+}
+
+:root.dark {
+  --border-color: #374151; /* Dark mode border */
+  --border-rgb: 55, 65, 81; /* Dark mode border RGB */
+  --text-secondary: #9ca3af; /* Dark mode default */
+  --primary-color: #34d399; /* Emerald-400 */
+  --primary-hover-color: #6ee7b7; /* Emerald-300 */
+}

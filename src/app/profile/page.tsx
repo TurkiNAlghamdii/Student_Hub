@@ -103,12 +103,10 @@ interface StudentProfile {
         
         reader.onload = async () => {
           if (reader.result) {
-            // Store the base64 image data in localStorage
+            // Get the base64 image data
             const base64Image = reader.result.toString()
             if (user) {
-              localStorage.setItem(`avatar_${user.id}`, base64Image)
-              
-              // Also update the student profile in the database with the avatar URL
+              // Update the student profile in the database with the avatar URL
               try {
                 const { error } = await supabase
                   .from('students')
@@ -117,9 +115,11 @@ interface StudentProfile {
                   
                 if (error) {
                   console.error('Error updating avatar in database:', error)
+                  throw error
                 }
               } catch (dbError) {
                 console.error('Database error:', dbError)
+                throw dbError
               }
             }
             
@@ -166,13 +166,10 @@ interface StudentProfile {
         }
   
         if (data) {
-          // Check if we have an avatar in localStorage (it might be more recent)
-          const savedAvatar = localStorage.getItem(`avatar_${user.id}`)
-          
           setStudentProfile({
             ...data,
-            // Use localStorage avatar if available, otherwise use the one from the database
-            avatar_url: savedAvatar || data.avatar_url
+            // Use only the database avatar
+            avatar_url: data.avatar_url
           })
           
           setFormData({

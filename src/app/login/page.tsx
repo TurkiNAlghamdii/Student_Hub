@@ -8,27 +8,9 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import { useTheme } from '@/contexts/ThemeContext'
+import ThemeToggle from '@/components/ThemeToggle/ThemeToggle'
 import './login.css'
 import { FormEvent } from 'react'
-
-// Theme Toggle Button Component
-function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme()
-  
-  return (
-    <button
-      onClick={toggleTheme}
-      className="theme-toggle-button"
-      aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-    >
-      {theme === 'dark' ? (
-        <SunIcon className="h-5 w-5" />
-      ) : (
-        <MoonIcon className="h-5 w-5" />
-      )}
-    </button>
-  )
-}
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -82,9 +64,30 @@ export default function Login() {
 
   return (
     <div className="login-container">
-      <ThemeToggle />
+      {/* Mini Nav for Public Links and Theme Toggle */}
+      <motion.div 
+        className="login-public-nav" 
+        key="login-nav"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+      >
+        <div className="public-nav-links">
+          <Link href="/academic-calendar" className="public-tool-link">
+            Academic Calendar
+          </Link>
+          <Link href="/gpa-calculator" className="public-tool-link">
+            GPA Calculator
+          </Link>
+          <Link href="/pomodoro" className="public-tool-link">
+            Pomodoro Clock
+          </Link>
+        </div>
+        <ThemeToggle />
+      </motion.div>
+
       <motion.div
-        className="login-card"
+        className="login-card" key="login-card"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}

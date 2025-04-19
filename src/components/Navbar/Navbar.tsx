@@ -87,18 +87,7 @@ export default function Navbar({ showBack = false }: NavbarProps) {
       if (!user) return;
 
       try {
-        // First check if we have a cached avatar in localStorage
-        const savedAvatar = localStorage.getItem(`avatar_${user.id}`);
-        
-        if (savedAvatar) {
-          setStudentProfile({
-            id: user.id,
-            avatar_url: savedAvatar
-          });
-          return;
-        }
-        
-        // If no cached avatar, fetch from database
+        // Fetch directly from database without using localStorage
         const { data, error } = await supabase
           .from('students')
           .select('id, full_name, avatar_url')
@@ -112,11 +101,6 @@ export default function Navbar({ showBack = false }: NavbarProps) {
         
         if (data) {
           setStudentProfile(data);
-          
-          // Cache the avatar if available
-          if (data.avatar_url) {
-            localStorage.setItem(`avatar_${user.id}`, data.avatar_url);
-          }
         }
       } catch (error) {
         console.error('Error in profile fetch:', error);

@@ -1,5 +1,5 @@
 .register-container {
-  @apply min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8;
+  @apply min-h-screen flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8;
   background-size: 40px 40px;
   position: relative;
 }
@@ -237,18 +237,84 @@ select.input-field option {
   animation: slideDown 0.3s ease-out;
 }
 
+/* Mini Nav for Public Links and Theme Toggle */
+.register-public-nav {
+  width: fit-content; /* Fit width to content */
+  display: flex;
+  justify-content: center; /* Center items horizontally */
+  gap: 2rem; /* Add space between link group and theme toggle */
+  align-items: center;
+  padding: 0.5rem 1rem; /* Reduced padding for compactness */
+  /* Position determined by flex layout now */
+  margin-bottom: 1.5rem; /* Space above login card */
+  border-radius: 8px; /* Rounded corners for sleek look */
+  backdrop-filter: blur(4px); /* Match card blur */
+}
+
+.dark .register-public-nav {
+  background-color: rgba(17, 24, 39, 0.5); /* Match dark card bg: bg-gray-900/50 */
+  box-shadow:
+    0 0 40px rgba(6, 78, 59, 0.1),
+    0 0 80px rgba(0, 0, 0, 0.3); /* Match dark card shadow */
+}
+
+:root:not(.dark) .register-public-nav {
+  background-color: rgba(255, 255, 255, 0.8); /* Match light card bg: bg-white/80 */
+  box-shadow: 
+    0 0 40px rgba(6, 78, 59, 0.05),
+    0 0 80px rgba(0, 0, 0, 0.1); /* Match light card shadow */
+}
+
+.public-nav-links {
+  display: flex;
+  gap: 0.75rem; /* Reduced space between links */
+  align-items: center;
+}
+
+.public-tool-link {
+  display: inline-block;
+  padding: 0.5rem 1rem; /* Button padding */
+  border-radius: 6px; /* Rounded corners */
+  font-size: 0.875rem; /* 14px */
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.dark .public-tool-link {
+  background-color: rgba(17, 24, 39, 0.7); /* Slightly darker than nav */
+  color: #d1d5db; /* text-gray-300 */
+  border: 1px solid rgba(75, 85, 99, 0.3); /* border-gray-600/30 */
+}
+
+.dark .public-tool-link:hover {
+  background-color: rgba(31, 41, 55, 0.8); /* bg-gray-800/80 */
+  color: #10b981; /* text-emerald-500 */
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(6, 78, 59, 0.2);
+}
+
+:root:not(.dark) .public-tool-link {
+  background-color: rgba(243, 244, 246, 0.7); /* bg-gray-100/70 */
+  color: #4b5563; /* text-gray-600 */
+  border: 1px solid rgba(209, 213, 219, 0.5); /* border-gray-300/50 */
+}
+
+:root:not(.dark) .public-tool-link:hover {
+  background-color: rgba(255, 255, 255, 0.9); /* bg-white/90 */
+  color: #059669; /* text-emerald-600 */
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(6, 78, 59, 0.1);
+}
+
 /* Theme toggle button */
 .theme-toggle-button {
-  position: absolute;
-  top: 20px;
-  right: 20px;
+  position: relative;
   width: 40px;
   height: 40px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10;
   transition: all 0.3s ease;
 }
 
@@ -278,4 +344,74 @@ select.input-field option {
 :root:not(.dark) .theme-toggle-button:hover {
   background-color: rgba(255, 255, 255, 0.9);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+select.input-field option {
+  /* ... (rest of the code remains the same) */
+}
+
+.dark select.input-field option {
+  @apply bg-gray-800;
+}
+
+:root:not(.dark) select.input-field option {
+  @apply bg-gray-200 text-gray-800;
+}
+
+/* Adjust spacing for student fields */
+.input-container > div {
+  @apply mb-4;
+}
+
+/* Animation for conditional fields */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.student-fields {
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Override ThemeToggle.css absolute positioning AND apply mini-nav styles */
+.register-container .register-public-nav .theme-toggle-button {
+  position: static; /* Revert to default flow positioning */
+  top: auto;
+  right: auto;
+  z-index: auto;
+  
+  /* Match mini-nav base styles */
+  border-radius: 8px; 
+  backdrop-filter: blur(4px);
+  border: none; /* Remove default button border */
+  
+  /* Keep original button sizing/flex/color/cursor properties */
+  /* width, height, display, align-items, justify-content, color, cursor, transition */
+  /* These should be inherited from ThemeToggle.css unless overridden */
+}
+
+.dark .register-container .register-public-nav .theme-toggle-button {
+  background-color: rgba(31, 41, 55, 0.6); /* Slightly darker than nav */
+  color: var(--primary-foreground);
+}
+
+.dark .register-container .register-public-nav .theme-toggle-button:hover {
+  background-color: rgba(16, 185, 129, 0.2); /* Match public-tool-link hover */
+  transform: translateY(-1px) scale(1.05);
+}
+
+:root:not(.dark) .register-container .register-public-nav .theme-toggle-button {
+  background-color: rgba(243, 244, 246, 0.6);
+  color: var(--foreground);
+}
+
+:root:not(.dark) .register-container .register-public-nav .theme-toggle-button:hover {
+  background-color: rgba(16, 185, 129, 0.1); /* Match public-tool-link hover */
+  transform: translateY(-1px) scale(1.05);
 }

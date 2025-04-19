@@ -1,10 +1,15 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/contexts/AuthContext'
 import Navbar from '@/components/Navbar/Navbar'
 import ChatInterface from '@/components/Chat/ChatInterface'
+import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner'
 
 export default function ChatPage() {
+  const router = useRouter()
+  const { user, loading: authLoading } = useAuth()
   const [showApiKeyInfo, setShowApiKeyInfo] = useState(false)
   const [initialQuestion, setInitialQuestion] = useState<string | null>(null)
   
@@ -27,6 +32,13 @@ export default function ChatPage() {
   }, []);
   
   useEffect(() => {
+    // Redirect to login if not authenticated
+    if (!authLoading && !user) {
+      console.log('User not authenticated, redirecting to login')
+      router.push('/login')
+      return
+    }
+    
     // Check if there's a pre-defined question from the AI Assistant widget
     if (typeof window !== 'undefined') {
       let foundQuestion = null;
@@ -71,7 +83,30 @@ export default function ChatPage() {
     };
     
     checkApiKeySetup();
-  }, [sendQuestionToChat]);
+  }, [sendQuestionToChat, user, authLoading, router]);
+  
+  // Show loading spinner while checking authentication
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <LoadingSpinner size="large" />
+      </div>
+    )
+  }
+  
+  // If not authenticated, show a message and redirect
+  if (!user) {
+    // Force immediate redirect
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login'
+    }
+    return (
+      <div className="flex items-center justify-center h-screen flex-col">
+        <LoadingSpinner size="large" />
+        <p className="mt-4">Please log in to access the chat...</p>
+      </div>
+    )
+  }
   
   return (
     <div className="home-container">
