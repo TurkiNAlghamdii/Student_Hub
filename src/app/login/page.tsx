@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { EyeIcon, EyeSlashIcon, SunIcon, MoonIcon } from '@heroicons/react/24/outline'
 import { supabase } from '@/lib/supabase'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import { useTheme } from '@/contexts/ThemeContext'
@@ -17,8 +17,10 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { session } = useAuth()
   const { theme } = useTheme()
 
@@ -26,7 +28,13 @@ export default function Login() {
     if (session) {
       router.push('/')
     }
-  }, [session, router])
+    
+    // Check for message parameter in URL
+    const message = searchParams.get('message')
+    if (message) {
+      setSuccess(message)
+    }
+  }, [session, router, searchParams])
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -161,6 +169,16 @@ export default function Login() {
               className="error-message"
             >
               {error}
+            </motion.div>
+          )}
+
+          {success && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="success-message"
+            >
+              {success}
             </motion.div>
           )}
 

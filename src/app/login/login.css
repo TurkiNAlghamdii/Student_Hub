@@ -191,8 +191,32 @@
 }
 
 .success-message {
-  @apply text-emerald-400 text-sm text-center font-medium mb-4;
+  @apply text-emerald-500 text-sm text-center font-medium;
   text-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border-left: 4px solid #10b981;
+  background-color: rgba(16, 185, 129, 0.1);
+  animation: fadeIn 0.3s ease-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.success-message::before {
+  content: "✓";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.5rem;
+  min-width: 18px;
+  height: 18px;
+  background-color: #10b981;
+  color: white;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: bold;
 }
 
 .forgot-password-link {
