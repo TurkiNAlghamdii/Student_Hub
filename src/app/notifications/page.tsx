@@ -37,11 +37,10 @@ export default function NotificationsPage() {
   
   // Fetch all notifications when the page loads
   useEffect(() => {
-    if (user) {
-      // Fetch all notifications (default limit is 50)
-      fetchNotifications()
-    }
-  }, [user, fetchNotifications])
+    // We'll disable automatic fetching to prevent request loops
+    console.log('Notifications page loaded - manual fetch only');
+    // The user can click the "Try again" button if needed
+  }, []);  // Empty dependency array - only runs once
 
   const handleMarkAsReadClick = async (id: string) => {
     await markAsRead(id)
@@ -52,7 +51,10 @@ export default function NotificationsPage() {
   }
 
   const handleRetry = () => {
-    fetchNotifications()
+    if (user) {
+      console.log('Manual fetch triggered');
+      fetchNotifications();
+    }
   }
 
   if (isLoading) {
@@ -79,16 +81,27 @@ export default function NotificationsPage() {
               )}
             </div>
             
-            {unreadCount > 0 && (
-              <button 
-                onClick={handleMarkAllAsReadClick}
-                className="mark-all-read-button"
-                aria-label="Mark all as read"
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleRetry}
+                className="refresh-button px-2 py-2 text-gray-400 hover:text-emerald-500 rounded-lg transition-colors"
+                aria-label="Refresh notifications"
+                title="Refresh notifications"
               >
-                <CheckCircleIcon className="h-5 w-5" />
-                <span>Mark all as read</span>
+                <ArrowPathIcon className="h-5 w-5" />
               </button>
-            )}
+              
+              {unreadCount > 0 && (
+                <button 
+                  onClick={handleMarkAllAsReadClick}
+                  className="mark-all-read-button"
+                  aria-label="Mark all as read"
+                >
+                  <CheckCircleIcon className="h-5 w-5" />
+                  <span>Mark all as read</span>
+                </button>
+              )}
+            </div>
           </div>
 
           {notificationsLoading ? (

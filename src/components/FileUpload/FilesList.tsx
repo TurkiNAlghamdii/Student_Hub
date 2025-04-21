@@ -20,10 +20,13 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   UserCircleIcon,
-  DocumentArrowDownIcon
+  DocumentArrowDownIcon,
+  FlagIcon
 } from '@heroicons/react/24/outline';
 import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid';
 import './filesList.css';
+import ReportMaterialDialog from './ReportMaterialDialog';
+import { toast } from 'react-hot-toast';
 
 
 interface UserInfo {
@@ -70,6 +73,8 @@ const FilesList: React.FC<FilesListProps> = ({ courseCode, refreshTrigger }) => 
   const [isTogglingFavorite, setIsTogglingFavorite] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [isDownloading, setIsDownloading] = useState<string | null>(null);
+  const [reportingMaterialId, setReportingMaterialId] = useState<string | null>(null);
+  const [reportingMaterialName, setReportingMaterialName] = useState<string>('');
 
   useEffect(() => {
     if (user) {
@@ -492,6 +497,15 @@ const FilesList: React.FC<FilesListProps> = ({ courseCode, refreshTrigger }) => 
     setIsCollapsed(prev => !prev);
   };
 
+  const handleReportMaterial = (file: CourseFile) => {
+    setReportingMaterialId(file.id);
+    setReportingMaterialName(file.file_name);
+  };
+
+  const handleReportSuccess = () => {
+    toast.success("Thank you for reporting this material. Our administrators will review it.");
+  };
+
   return (
     <div className="enhanced-files-list">
       <div className="files-header" onClick={toggleCollapse}>
@@ -748,21 +762,33 @@ const FilesList: React.FC<FilesListProps> = ({ courseCode, refreshTrigger }) => 
                               onClick={() => handleDownload(file)}
                               className="action-btn download-btn"
                               aria-label="Download file"
-                              title="Download"
+                              title="Download file"
                               disabled={isDownloading === file.id}
                             >
-                              <ArrowDownTrayIcon className="h-5 w-5" />
+                              <ArrowDownTrayIcon className="h-5 w-5 text-emerald-400" />
                             </button>
                             
-                            {(file.user_id === user?.id || isAdmin) && (
+                            {(isAdmin || file.user_id === user?.id) && (
                               <button
                                 onClick={() => handleDeleteFile(file.id)}
                                 className="action-btn delete-btn"
                                 aria-label="Delete file"
-                                title="Delete"
+                                title="Delete file"
                                 disabled={isDeleting === file.id}
                               >
-                                <TrashIcon className="h-5 w-5" />
+                                <TrashIcon className="h-5 w-5 text-red-400" />
+                              </button>
+                            )}
+                            
+                            {/* Add report button for materials in list view */}
+                            {user && file.user_id !== user.id && (
+                              <button
+                                onClick={() => handleReportMaterial(file)}
+                                className="action-btn report-btn"
+                                aria-label="Report material"
+                                title="Report material"
+                              >
+                                <FlagIcon className="h-5 w-5 text-amber-400" />
                               </button>
                             )}
                           </div>
@@ -791,21 +817,33 @@ const FilesList: React.FC<FilesListProps> = ({ courseCode, refreshTrigger }) => 
                         onClick={() => handleDownload(file)}
                         className="action-btn download-btn"
                         aria-label="Download file"
-                        title="Download"
+                        title="Download file"
                         disabled={isDownloading === file.id}
                       >
-                        <ArrowDownTrayIcon className="h-5 w-5" />
+                        <ArrowDownTrayIcon className="h-5 w-5 text-emerald-400" />
                       </button>
                       
-                      {(file.user_id === user?.id || isAdmin) && (
+                      {(isAdmin || file.user_id === user?.id) && (
                         <button
                           onClick={() => handleDeleteFile(file.id)}
                           className="action-btn delete-btn"
                           aria-label="Delete file"
-                          title="Delete"
+                          title="Delete file"
                           disabled={isDeleting === file.id}
                         >
-                          <TrashIcon className="h-5 w-5" />
+                          <TrashIcon className="h-5 w-5 text-red-400" />
+                        </button>
+                      )}
+                      
+                      {/* Add report button for materials in list view */}
+                      {user && file.user_id !== user.id && (
+                        <button
+                          onClick={() => handleReportMaterial(file)}
+                          className="action-btn report-btn"
+                          aria-label="Report material"
+                          title="Report material"
+                        >
+                          <FlagIcon className="h-5 w-5 text-amber-400" />
                         </button>
                       )}
                     </div>
@@ -816,6 +854,15 @@ const FilesList: React.FC<FilesListProps> = ({ courseCode, refreshTrigger }) => 
           </div>
         )}
       </div>
+      
+      {/* Material Report Dialog */}
+      <ReportMaterialDialog
+        materialId={reportingMaterialId || ''}
+        materialName={reportingMaterialName}
+        isOpen={reportingMaterialId !== null}
+        onClose={() => setReportingMaterialId(null)}
+        onSuccess={handleReportSuccess}
+      />
     </div>
   );
 };

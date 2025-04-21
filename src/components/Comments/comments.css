@@ -525,148 +525,187 @@
   right: 0;
 }
 
+.comment-options {
+  position: relative;
+  z-index: 50;
+}
+
 .comment-menu-button {
+  color: var(--text-muted);
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
   background: transparent;
   border: none;
-  padding: 6px;
-  border-radius: 6px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
 }
 
-/* Dark theme comment menu button */
 :root.dark .comment-menu-button {
-  color: #8a94a6;
+  color: #9ca3af;
 }
 
-/* Light theme comment menu button */
 :root:not(.dark) .comment-menu-button {
   color: #6b7280;
 }
 
-/* Dark theme comment menu button hover */
-:root.dark .comment-menu-button:hover {
-  color: #e6e8ec;
-  background-color: #2a303c;
+.comment-menu-button:hover {
+  background-color: var(--hover-bg);
+  color: var(--text);
 }
 
-/* Light theme comment menu button hover */
+:root.dark .comment-menu-button:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #f3f4f6;
+}
+
 :root:not(.dark) .comment-menu-button:hover {
-  color: #10b981;
-  background-color: #f3f4f6;
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #1f2937;
 }
 
 .comment-menu {
   position: absolute;
-  top: calc(100% + 4px);
+  top: 100%;
   right: 0;
-  border-radius: 6px;
+  min-width: 160px;
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   overflow: hidden;
-  z-index: 10;
-  min-width: 150px;
+  z-index: 100;
+  padding: 4px 0;
 }
 
-/* Dark theme comment menu */
 :root.dark .comment-menu {
-  background-color: #1e2434;
-  border: 1px solid #2a303c;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background-color: #1f2937;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Light theme comment menu */
 :root:not(.dark) .comment-menu {
   background-color: #ffffff;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.comment-menu-item {
+.menu-item {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 16px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
   width: 100%;
+  padding: 8px 16px;
+  font-size: 14px;
   text-align: left;
+  background: none;
   border: none;
-  background: transparent;
+  cursor: pointer;
+  color: var(--text);
+  transition: background-color 0.2s;
 }
 
-/* Dark theme comment menu item */
-:root.dark .comment-menu-item {
-  color: #e6e8ec;
+:root.dark .menu-item {
+  color: #f3f4f6;
 }
 
-/* Light theme comment menu item */
-:root:not(.dark) .comment-menu-item {
+:root:not(.dark) .menu-item {
   color: #1f2937;
 }
 
-/* Dark theme comment menu item hover */
-:root.dark .comment-menu-item:hover {
-  background-color: #2a303c;
+.menu-item:hover {
+  background-color: var(--hover-bg);
 }
 
-/* Light theme comment menu item hover */
-:root:not(.dark) .comment-menu-item:hover {
-  background-color: #f3f4f6;
-  color: #10b981;
+:root.dark .menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
-/* Dark theme delete menu item */
-:root.dark .comment-menu-item.delete {
+:root:not(.dark) .menu-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.menu-item.destructive {
+  color: var(--red);
+}
+
+:root.dark .menu-item.destructive {
   color: #f87171;
 }
 
-/* Light theme delete menu item */
-:root:not(.dark) .comment-menu-item.delete {
+:root:not(.dark) .menu-item.destructive {
   color: #ef4444;
 }
 
-/* Dark theme delete menu item hover */
-:root.dark .comment-menu-item.delete:hover {
+.menu-item.destructive:hover {
+  background-color: var(--red-bg);
+}
+
+:root.dark .menu-item.destructive:hover {
   background-color: rgba(248, 113, 113, 0.1);
 }
 
-/* Light theme delete menu item hover */
-:root:not(.dark) .comment-menu-item.delete:hover {
+:root:not(.dark) .menu-item.destructive:hover {
   background-color: rgba(239, 68, 68, 0.1);
 }
 
-.comment-menu-item.admin-delete {
+.menu-item.report {
+  color: var(--amber);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+:root.dark .menu-item.report {
   color: #fbbf24;
 }
 
-.comment-menu-item.admin-delete:hover {
+:root:not(.dark) .menu-item.report {
+  color: #f59e0b;
+}
+
+.menu-item.report:hover {
+  background-color: var(--amber-bg);
+}
+
+:root.dark .menu-item.report:hover {
   background-color: rgba(251, 191, 36, 0.1);
 }
 
-.comment-menu-item .menu-icon {
+:root:not(.dark) .menu-item.report:hover {
+  background-color: rgba(245, 158, 11, 0.1);
+}
+
+.menu-icon {
   width: 16px;
   height: 16px;
+  flex-shrink: 0;
 }
 
-.comment-content {
-  font-size: 15px;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  word-break: break-word;
-  margin-bottom: 14px;
+/* CSS variables for theme colors */
+:root {
+  --bg-elevated: #ffffff;
+  --border: rgba(0, 0, 0, 0.1);
+  --hover-bg: rgba(0, 0, 0, 0.05);
+  --text: #1f2937;
+  --text-muted: #6b7280;
+  --red: #ef4444;
+  --red-bg: rgba(239, 68, 68, 0.1);
+  --amber: #f59e0b;
+  --amber-bg: rgba(245, 158, 11, 0.1);
+  --border-color-light: #e5e7eb;
+  --border-color-dark: #374151;
 }
 
-/* Dark theme comment content */
-:root.dark .comment-content {
-  color: #e6e8ec;
-}
-
-/* Light theme comment content */
-:root:not(.dark) .comment-content {
-  color: #1f2937;
+:root.dark {
+  --bg-elevated: #1f2937;
+  --border: rgba(255, 255, 255, 0.1);
+  --hover-bg: rgba(255, 255, 255, 0.05);
+  --text: #f3f4f6;
+  --text-muted: #9ca3af;
+  --red: #f87171;
+  --red-bg: rgba(248, 113, 113, 0.1);
+  --amber: #fbbf24;
+  --amber-bg: rgba(251, 191, 36, 0.1);
+  --border-color-light: #4b5563;
+  --border-color-dark: #6b7280;
 }
 
 /* Reply functionality */
@@ -1307,11 +1346,11 @@
   }
   
   /* Styling differently based on theme */
-  html.dark .nesting-level-2,
-  html.dark .nesting-level-3,
-  html.dark .nesting-level-4,
-  html.dark .nesting-level-5,
-  html.dark .nesting-level-6 {
+  :root.dark .nesting-level-2,
+  :root.dark .nesting-level-3,
+  :root.dark .nesting-level-4,
+  :root.dark .nesting-level-5,
+  :root.dark .nesting-level-6 {
     border-left: 2px solid var(--border-color-dark);
   }
 }

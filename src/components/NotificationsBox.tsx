@@ -62,10 +62,12 @@ const NotificationsBox = () => {
 
   useEffect(() => {
     // Fetch notifications when the dropdown is opened
-    if (isOpen) {
-      fetchNotifications(5) // Only fetch 5 for the dropdown
+    if (isOpen && user) {
+      console.log('Dropdown opened - manual fetch only');
+      // Don't automatically fetch - let user click "Try again" if needed
+      // This prevents automatic loops of requests
     }
-  }, [isOpen, fetchNotifications])
+  }, [isOpen, user]);
 
   // Calculate position function
   const calculatePosition = () => {
@@ -107,8 +109,6 @@ const NotificationsBox = () => {
     }
   }, [isOpen])
 
-
-
   const handleMarkAsReadClick = async (id: string) => {
     await markAsRead(id)
   }
@@ -126,6 +126,13 @@ const NotificationsBox = () => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
       handleToggle()
+    }
+  }
+
+  // Manual fetch handler
+  const handleManualFetch = () => {
+    if (user) {
+      fetchNotifications(5);
     }
   }
 
@@ -165,16 +172,27 @@ const NotificationsBox = () => {
         >
           <div className="notifications-header">
             <h3 className="notifications-title">Notifications</h3>
-            {unreadCount > 0 && (
-              <button 
-                onClick={handleMarkAllAsReadClick}
-                className="mark-all-read-button"
-                aria-label="Mark all as read"
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleManualFetch}
+                className="p-1.5 text-gray-400 hover:text-emerald-500 rounded-full transition-colors"
+                aria-label="Refresh notifications"
+                title="Refresh notifications"
               >
-                <CheckCircleIcon className="h-4 w-4" />
-                <span>Mark all as read</span>
+                <ArrowPathIcon className="h-4 w-4" />
               </button>
-            )}
+              
+              {unreadCount > 0 && (
+                <button 
+                  onClick={handleMarkAllAsReadClick}
+                  className="mark-all-read-button"
+                  aria-label="Mark all as read"
+                >
+                  <CheckCircleIcon className="h-4 w-4" />
+                  <span>Mark all as read</span>
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="notifications-content">
@@ -188,7 +206,7 @@ const NotificationsBox = () => {
                 <ExclamationCircleIcon className="w-8 h-8 mx-auto mb-2" />
                 <p>{error}</p>
                 <button 
-                  onClick={() => fetchNotifications(5)}
+                  onClick={handleManualFetch}
                   className="mt-3 px-4 py-1.5 bg-gradient-to-r from-emerald-600/20 to-emerald-700/30 hover:from-emerald-600/30 hover:to-emerald-700/40 border border-emerald-600/30 text-emerald-500 rounded-md text-sm flex items-center justify-center gap-2 mx-auto transition-all duration-300 hover:shadow-md hover:shadow-emerald-900/10"
                 >
                   <ArrowPathIcon className="h-3.5 w-3.5" />

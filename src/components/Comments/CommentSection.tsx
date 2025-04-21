@@ -15,9 +15,12 @@ import {
   ClockIcon,
   ArrowPathIcon,
   ChevronDownIcon,
-  ChevronUpIcon
+  ChevronUpIcon,
+  FlagIcon
 } from '@heroicons/react/24/outline'
 import './comments.css'
+import ReportCommentDialog from './ReportCommentDialog'
+import { toast } from 'react-hot-toast'
 
 interface Comment {
   id: string
@@ -53,13 +56,19 @@ export default function CommentSection({ courseCode }: CommentSectionProps) {
   const [menuOpenFor, setMenuOpenFor] = useState<string | null>(null)
   const [collapsedThreads, setCollapsedThreads] = useState<Set<string>>(new Set())
   const [isMobile, setIsMobile] = useState(false)
+  const [reportingCommentId, setReportingCommentId] = useState<string | null>(null)
 
   // Function to close any open menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuOpenFor !== null) {
-        const menuElement = document.getElementById(`menu-${menuOpenFor}`);
-        if (menuElement && !menuElement.contains(event.target as Node)) {
+        const targetElement = event.target as Element;
+        // Check if click is inside any menu button
+        const isMenuButton = targetElement.closest('.comment-options button');
+        // Check if click is inside any open menu
+        const isInsideMenu = targetElement.closest(`#menu-${menuOpenFor}`);
+        
+        if (!isMenuButton && !isInsideMenu) {
           setMenuOpenFor(null);
         }
       }
@@ -437,6 +446,12 @@ export default function CommentSection({ courseCode }: CommentSectionProps) {
     return count;
   };
 
+  // Add new function to handle reporting a comment
+  const handleReportComment = (commentId: string) => {
+    setMenuOpenFor(null) // Close the menu
+    setReportingCommentId(commentId)
+  }
+
   // Component to render a single comment with its replies
   const CommentItem = ({ 
     comment, 
@@ -458,6 +473,7 @@ export default function CommentSection({ courseCode }: CommentSectionProps) {
     const hasReplies = replies && replies.length > 0
     const isThreadCollapsed = collapsedThreads.has(comment.id)
     const repliesCount = hasReplies ? countAllReplies(comment) : 0
+    const isOwnComment = isAuthor
     
     return (
       <div 
@@ -492,41 +508,59 @@ export default function CommentSection({ courseCode }: CommentSectionProps) {
             </div>
           </div>
           
-          {canDelete && (
-            <div className="comment-actions-menu" id={`menu-${comment.id}`}>
-              <button 
-                className="comment-menu-button"
-                onClick={() => {
-                  if (isMenuOpen) {
-                    setMenuOpenFor(null);
-                  } else {
-                    setMenuOpenFor(comment.id);
-                  }
+          {/* Comment Options Menu */}
+          <div className="comment-options relative ml-auto">
+            <button 
+              className="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
+              onClick={() => setMenuOpenFor(menuOpenFor === comment.id ? null : comment.id)}
+              aria-label="Comment options"
+            >
+              <EllipsisVerticalIcon className="h-5 w-5" />
+            </button>
+            
+            {menuOpenFor === comment.id && (
+              <div 
+                id={`menu-${comment.id}`} 
+                className="absolute top-full right-0 min-w-[160px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden z-[100] origin-top-right"
+                style={{ 
+                  marginTop: '4px',
+                  transformOrigin: 'top right',
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
                 }}
-                disabled={Boolean(isDeleting)}
-                aria-label="Comment options"
               >
-                {isDeleting ? (
-                  <ArrowPathIcon className="h-5 w-5 animate-spin" />
-                ) : (
-                  <EllipsisVerticalIcon className="h-5 w-5" />
-                )}
-              </button>
-              
-              {isMenuOpen && (
-                <div className="comment-menu">
-                  <button
-                    onClick={() => onDelete(comment.id)}
-                    className={`comment-menu-item ${!isAdmin && isAuthor ? 'delete' : 'admin-delete'}`}
-                    disabled={isDeleting}
+                {isOwnComment && (
+                  <button 
+                    className="flex items-center gap-2 w-full px-4 py-2 text-sm text-left text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    onClick={() => handleDeleteComment(comment.id, true)}
                   >
-                    <TrashIcon className="menu-icon" />
-                    {isAdmin && !isAuthor ? "Delete as Admin" : "Delete Comment"}
+                    <TrashIcon className="h-4 w-4" />
+                    <span>Delete</span>
                   </button>
-                </div>
-              )}
-            </div>
-          )}
+                )}
+                
+                {/* Add Report Option */}
+                {!isOwnComment && user && (
+                  <button 
+                    className="flex items-center gap-2 w-full px-4 py-2 text-sm text-left text-amber-600 dark:text-amber-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    onClick={() => handleReportComment(comment.id)}
+                  >
+                    <FlagIcon className="h-4 w-4" />
+                    <span>Report</span>
+                  </button>
+                )}
+                
+                {isAdmin && !isOwnComment && (
+                  <button 
+                    className="flex items-center gap-2 w-full px-4 py-2 text-sm text-left text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    onClick={() => handleDeleteComment(comment.id, false)}
+                  >
+                    <TrashIcon className="h-4 w-4" />
+                    <span>Remove as Admin</span>
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
         
         <div className="comment-content">{comment.content}</div>
@@ -750,6 +784,17 @@ export default function CommentSection({ courseCode }: CommentSectionProps) {
           ))
         )}
       </div>
+      
+      {/* Add the ReportCommentDialog component */}
+      <ReportCommentDialog 
+        commentId={reportingCommentId || ''}
+        isOpen={reportingCommentId !== null}
+        onClose={() => setReportingCommentId(null)}
+        onSuccess={() => {
+          // Optional success callback
+          toast.success("Thank you for reporting this comment. Our moderators will review it.")
+        }}
+      />
     </div>
   )
 } 

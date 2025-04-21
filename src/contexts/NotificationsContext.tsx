@@ -93,7 +93,7 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     } finally {
       setLoading(false);
     }
-  }, [user, notifications.length, lastFetched]);
+  }, [user?.id]);
 
   const markAsRead = useCallback(async (id: string) => {
     if (!user) return;
@@ -120,13 +120,15 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error('Error marking notification as read:', error);
-        fetchNotifications();
+        // Don't call fetchNotifications to avoid circular dependencies
+        console.error('Not refreshing notifications to avoid circular dependencies');
       } else {
         console.error('Unknown error marking notification as read:', error);
-        fetchNotifications();
+        // Don't call fetchNotifications to avoid circular dependencies
+        console.error('Not refreshing notifications to avoid circular dependencies');
       }
     }
-  }, [user, fetchNotifications]);
+  }, [user?.id]);
 
   const markAllAsRead = useCallback(async () => {
     if (!user) return;
@@ -149,16 +151,23 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error('Error marking all notifications as read:', error);
-        fetchNotifications();
+        // Don't call fetchNotifications to avoid circular dependencies
+        console.error('Not refreshing notifications to avoid circular dependencies');
       } else {
         console.error('Unknown error marking all notifications as read:', error);
-        fetchNotifications();
+        // Don't call fetchNotifications to avoid circular dependencies
+        console.error('Not refreshing notifications to avoid circular dependencies');
       }
     }
-  }, [user, fetchNotifications]);
+  }, [user?.id]);
 
   // Setup real-time subscription for new notifications
   useEffect(() => {
+    // DISABLED - Causing too many requests
+    console.log('Real-time notifications subscription is DISABLED to prevent excessive requests');
+    
+    // Original code:
+    /*
     if (!user) return;
 
     console.log('Setting up real-time notifications subscription');
@@ -172,7 +181,7 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
           event: '*', // Listen for all events (insert, update, delete)
           schema: 'public',
           table: 'notifications',
-          filter: `user_id=eq.${user.id}`
+          filter: `user_id=eq.${user?.id}`
         },
         (payload) => {
           console.log('Received notification update:', payload);
@@ -190,17 +199,16 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
           } else if (payload.eventType === 'UPDATE') {
             // Update the notification in the list
             const updatedNotification = payload.new as Notification;
-            setNotifications(prev => 
-              prev.map(notification => 
+            setNotifications(prev => {
+              const updated = prev.map(notification => 
                 notification.id === updatedNotification.id ? updatedNotification : notification
-              )
-            );
-            
-            // Recalculate unread count
-            setNotifications(current => {
-              const unreadCount = current.filter(n => !n.is_read).length;
-              setUnreadCount(unreadCount);
-              return current;
+              );
+              
+              // Recalculate unread count here
+              const newUnreadCount = updated.filter(n => !n.is_read).length;
+              setUnreadCount(newUnreadCount);
+              
+              return updated;
             });
           } else if (payload.eventType === 'DELETE') {
             // Remove the notification from the list
@@ -223,14 +231,28 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
       console.log('Cleaning up real-time notifications subscription');
       supabase.removeChannel(subscription);
     };
-  }, [user]);
+    */
+  }, []);
 
   // Initial fetch of notifications
   useEffect(() => {
-    if (user) {
-      fetchNotifications();
+    // Only fetch once when the component mounts and the user is available
+    const alreadyFetched = !!lastFetched;
+    
+    if (user && !alreadyFetched) {
+      console.log('Initial notifications fetch - will only happen once');
+      
+      // Use this timeout to delay the initial fetch slightly
+      // This helps avoid race conditions during app startup
+      const timeoutId = setTimeout(() => {
+        if (user) {
+          fetchNotifications();
+        }
+      }, 1000);
+      
+      return () => clearTimeout(timeoutId);
     }
-  }, [user, fetchNotifications]);
+  }, [user?.id, lastFetched, fetchNotifications]);
 
   const contextValue = {
     notifications,
