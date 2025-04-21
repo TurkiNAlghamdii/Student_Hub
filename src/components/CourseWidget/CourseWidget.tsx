@@ -30,8 +30,6 @@ export default function CourseWidget() {
     if (!user) return
 
     const fetchUserCourses = async () => {
-      setLoading(true)
-      
       // Try to get data from cache first
       const cachedData = localStorage.getItem('userCourses');
       const cachedTimestamp = localStorage.getItem('userCoursesTimestamp');
@@ -47,7 +45,11 @@ export default function CourseWidget() {
             const parsedData = JSON.parse(cachedData);
             setCourses(parsedData);
             setLoading(false);
-            setTimeout(() => setAnimationReady(true), 100);
+            // Make animation ready immediately for cached data
+            setAnimationReady(true);
+            
+            // Still fetch in the background to update cache
+            fetchFreshData(false);
             return;
           } catch (err) {
             // If parsing fails, continue to fetch fresh data
@@ -57,6 +59,14 @@ export default function CourseWidget() {
       }
       
       // If no valid cache or parsing failed, fetch fresh data
+      fetchFreshData(true);
+    }
+    
+    const fetchFreshData = async (showLoading: boolean) => {
+      if (showLoading) {
+        setLoading(true);
+      }
+      
       try {
         const response = await fetch('/api/user/courses', {
           headers: {
@@ -68,7 +78,9 @@ export default function CourseWidget() {
           const errorData = await response.json()
           console.error('Error fetching courses:', errorData)
           setError(errorData.error || 'Failed to fetch your courses')
-          setLoading(false)
+          if (showLoading) {
+            setLoading(false)
+          }
           return
         }
         
@@ -88,9 +100,11 @@ export default function CourseWidget() {
         console.error('An error occurred while fetching your courses:', error)
         setError('An error occurred while fetching your courses')
       } finally {
-        setLoading(false)
-        // Start animation after content is loaded
-        setTimeout(() => setAnimationReady(true), 100)
+        if (showLoading) {
+          setLoading(false)
+        }
+        // Start animation immediately after content is loaded
+        setAnimationReady(true)
       }
     }
 
@@ -189,4 +203,4 @@ export default function CourseWidget() {
       </div>
     </div>
   )
-} 
+}
