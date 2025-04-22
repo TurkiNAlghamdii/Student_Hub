@@ -1,8 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
-import { format } from 'date-fns'
+import { useState, useEffect, useRef } from 'react'
 import { 
   PencilIcon,
   TrashIcon,
@@ -11,17 +9,111 @@ import {
   CheckIcon,
   MagnifyingGlassIcon
 } from '@heroicons/react/24/outline'
+import ReactMarkdown from 'react-markdown'
+import rehypeRaw from 'rehype-raw'
 
 interface Course {
   course_code: string
   course_name: string
   description: string | null
-  department: string | null
-  credits: number
-  level: string | null
+  Instractions: string | null
   section: string | null
   created_at: string
 }
+
+// Add a new Color interface
+interface ColorOption {
+  name: string;
+  value: string;
+}
+
+// Add color options
+const colorOptions: ColorOption[] = [
+  { name: 'Red', value: '#ef4444' },
+  { name: 'Blue', value: '#3b82f6' },
+  { name: 'Green', value: '#10b981' },
+  { name: 'Yellow', value: '#f59e0b' },
+  { name: 'Purple', value: '#8b5cf6' },
+  { name: 'Pink', value: '#ec4899' },
+  { name: 'Indigo', value: '#6366f1' },
+  { name: 'Gray', value: '#6b7280' },
+  { name: 'White', value: '#ffffff' },
+];
+
+// Helper functions for text formatting
+const insertMarkdown = (
+  textArea: HTMLTextAreaElement,
+  beforeText: string,
+  afterText: string = "",
+  defaultText: string = ""
+) => {
+  const start = textArea.selectionStart;
+  const end = textArea.selectionEnd;
+  const selectedText = textArea.value.substring(start, end);
+  const textToInsert = selectedText || defaultText;
+  
+  const newText = 
+    textArea.value.substring(0, start) + 
+    beforeText + 
+    textToInsert + 
+    afterText + 
+    textArea.value.substring(end);
+  
+  return {
+    newText,
+    selectionStart: start + beforeText.length,
+    selectionEnd: start + beforeText.length + textToInsert.length
+  };
+};
+
+// Add a custom implementation for ReactMarkdown span component
+const MarkdownSpan = (props: {
+  node?: {
+    properties?: {
+      style?: string;
+    };
+  };
+  children?: React.ReactNode;
+} & React.HTMLAttributes<HTMLSpanElement>) => {
+  // Extract style from props if it exists
+  const style = props.node?.properties?.style;
+  
+  if (style && typeof style === 'string') {
+    // Extract color if present
+    if (style.includes('color:')) {
+      const colorMatch = style.match(/color:\s*([^;]+)/);
+      if (colorMatch && colorMatch[1]) {
+        return <span style={{ color: colorMatch[1] }} {...props} />;
+      }
+    }
+  }
+  
+  // Default rendering
+  return <span {...props} />;
+};
+
+// Add custom components for ReactMarkdown
+const MarkdownComponents = {
+  span: MarkdownSpan,
+  font: ({ node, ...props }: {
+    node?: {
+      properties?: {
+        color?: string;
+      };
+    };
+    children?: React.ReactNode;
+  } & React.HTMLAttributes<HTMLSpanElement>) => {
+    // Extract color attribute
+    const color = node?.properties?.color;
+    
+    if (color) {
+      return <span style={{ color }} {...props} />;
+    }
+    
+    // Default rendering
+    return <span {...props} />;
+  }
+};
 
 export default function CourseManagement() {
   const [courses, setCourses] = useState<Course[]>([])
@@ -37,6 +129,7 @@ export default function CourseManagement() {
     course_code: string
     course_name: string
     description: string
+    Instractions: string
     department: string
     credits: string
     level: string
@@ -45,11 +138,19 @@ export default function CourseManagement() {
     course_code: '',
     course_name: '',
     description: '',
+    Instractions: '',
     department: '',
     credits: '',
     level: '',
     section: ''
   })
+
+  // Add a ref for the instructions textarea
+  const instructionsTextareaRef = useRef<HTMLTextAreaElement>(null);
+  
+  // Add state for preview mode
+  const [previewMode, setPreviewMode] = useState(false);
+  const [showColorPicker, setShowColorPicker] = useState(false);
 
   useEffect(() => {
     fetchCourses()
@@ -112,12 +213,24 @@ export default function CourseManagement() {
       
       const method = editingCourse ? 'PUT' : 'POST'
       
+      // Only include fields that exist in the database
+      const finalFormData = {
+        course_code: formData.course_code,
+        course_name: formData.course_name,
+        description: formData.description,
+        Instractions: formData.Instractions,
+        section: formData.section || ''
+      }
+      
+      // When updating, the API will preserve existing values for fields not explicitly changed
+      console.log('Submitting form data:', finalFormData, 'Editing course?', !!editingCourse)
+      
       const response = await fetch(endpoint, {
         method,
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(finalFormData)
       })
       
       if (!response.ok) {
@@ -153,15 +266,19 @@ export default function CourseManagement() {
   }
 
   const handleEdit = (course: Course) => {
+    console.log('Editing course with data:', course)
+    console.log('Instractions field:', course.Instractions)
+    
     setEditingCourse(course)
-    // Ensure all form fields have string values
+    // Ensure all form fields have string values and preserve existing data
     setFormData({
       course_code: course.course_code || '',
       course_name: course.course_name || '',
       description: course.description || '',
-      department: course.department || '',
-      credits: course.credits?.toString() || '',
-      level: course.level || '',
+      Instractions: course.Instractions || '', // Important: preserve existing instructions
+      department: '', // Keep for UI but not sent to database
+      credits: '3', // Keep for UI but not sent to database
+      level: '', // Keep for UI but not sent to database
       section: course.section || ''
     })
     setIsModalOpen(true)
@@ -180,6 +297,7 @@ export default function CourseManagement() {
       course_code: '',
       course_name: '',
       description: '',
+      Instractions: '',
       department: '',
       credits: '',
       level: '',
@@ -192,6 +310,100 @@ export default function CourseManagement() {
     resetForm()
     setIsModalOpen(true)
   }
+
+  // Modify the handleMarkdownFormat function for color
+  const handleMarkdownFormat = (format: string, colorValue?: string) => {
+    const textarea = instructionsTextareaRef.current;
+    if (!textarea) return;
+    
+    let formatOptions = {
+      newText: "",
+      selectionStart: 0,
+      selectionEnd: 0
+    };
+    
+    switch (format) {
+      case 'h1':
+        formatOptions = insertMarkdown(textarea, "# ", "", "Heading 1");
+        break;
+      case 'h2':
+        formatOptions = insertMarkdown(textarea, "## ", "", "Heading 2");
+        break;
+      case 'h3':
+        formatOptions = insertMarkdown(textarea, "### ", "", "Heading 3");
+        break;
+      case 'bold':
+        formatOptions = insertMarkdown(textarea, "**", "**", "Bold text");
+        break;
+      case 'italic':
+        formatOptions = insertMarkdown(textarea, "_", "_", "Italic text");
+        break;
+      case 'ul':
+        formatOptions = insertMarkdown(textarea, "- ", "", "List item");
+        break;
+      case 'ol':
+        formatOptions = insertMarkdown(textarea, "1. ", "", "List item");
+        break;
+      case 'link':
+        formatOptions = insertMarkdown(textarea, "[", "](url)", "Link text");
+        break;
+      case 'code':
+        formatOptions = insertMarkdown(textarea, "```\n", "\n```", "Code block");
+        break;
+      case 'color':
+        if (colorValue) {
+          // Use a simpler HTML format that ReactMarkdown can handle better
+          formatOptions = insertMarkdown(
+            textarea, 
+            `<font color="${colorValue}">`, 
+            "</font>", 
+            "Colored text"
+          );
+        }
+        break;
+      case 'hr':
+        formatOptions = insertMarkdown(textarea, "\n---\n", "", "");
+        break;
+      case 'quote':
+        formatOptions = insertMarkdown(textarea, "> ", "", "Blockquote");
+        break;
+      case 'highlight':
+        formatOptions = insertMarkdown(textarea, '<mark>', '</mark>', 'Highlighted text');
+        break;
+    }
+    
+    setFormData(prev => ({
+      ...prev,
+      Instractions: formatOptions.newText
+    }));
+    
+    // Set the cursor position after the update
+    setTimeout(() => {
+      if (textarea) {
+        textarea.focus();
+        textarea.setSelectionRange(
+          formatOptions.selectionStart,
+          formatOptions.selectionEnd
+        );
+      }
+    }, 0);
+  };
+
+  // Toggle preview mode
+  const togglePreviewMode = () => {
+    setPreviewMode(!previewMode);
+  };
+
+  // Toggle color picker
+  const toggleColorPicker = () => {
+    setShowColorPicker(!showColorPicker);
+  };
+
+  // Apply color to text
+  const applyColor = (colorValue: string) => {
+    handleMarkdownFormat('color', colorValue);
+    setShowColorPicker(false);
+  };
 
   if (loading) {
     return (
@@ -373,10 +585,203 @@ export default function CourseManagement() {
                     name="description"
                     value={formData.description}
                     onChange={handleInputChange}
-                    rows={3}
-                    className="w-full dark:bg-gray-800/70 bg-gray-100/70 backdrop-blur-sm dark:border-gray-700 border-gray-300 rounded-lg px-3 py-2 dark:text-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                    placeholder="Course description..."
+                    rows={4}
+                    className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-sm shadow-sm placeholder-gray-400
+                             focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                    placeholder="Detailed description of the course"
                   />
+                </div>
+                
+                {/* Instractions Input */}
+                <div> 
+                  <label htmlFor="Instractions" className="block text-sm font-medium dark:text-gray-400 text-gray-600 mb-1">Instractions</label>
+                  
+                  {/* Enhanced Toolbar */}
+                  <div className="flex flex-wrap items-center gap-1 mb-2 p-1 bg-gray-800/50 rounded-md border border-gray-700">
+                    <div className="flex gap-1 mr-2">
+                      <button 
+                        type="button" 
+                        onClick={() => handleMarkdownFormat('h1')}
+                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 hover:dark:bg-gray-600 text-gray-300"
+                        title="Heading 1"
+                      >
+                        H1
+                      </button>
+                      <button 
+                        type="button" 
+                        onClick={() => handleMarkdownFormat('h2')}
+                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 hover:dark:bg-gray-600 text-gray-300"
+                        title="Heading 2"
+                      >
+                        H2
+                      </button>
+                      <button 
+                        type="button" 
+                        onClick={() => handleMarkdownFormat('h3')}
+                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 hover:dark:bg-gray-600 text-gray-300"
+                        title="Heading 3"
+                      >
+                        H3
+                      </button>
+                    </div>
+                    
+                    <div className="flex gap-1 mr-2">
+                      <button 
+                        type="button" 
+                        onClick={() => handleMarkdownFormat('bold')}
+                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 hover:dark:bg-gray-600 text-gray-300 font-bold"
+                        title="Bold"
+                      >
+                        B
+                      </button>
+                      <button 
+                        type="button" 
+                        onClick={() => handleMarkdownFormat('italic')}
+                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 hover:dark:bg-gray-600 text-gray-300 italic"
+                        title="Italic"
+                      >
+                        I
+                      </button>
+                      <button 
+                        type="button" 
+                        onClick={() => handleMarkdownFormat('highlight')}
+                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 hover:dark:bg-gray-600 text-gray-300"
+                        title="Highlight"
+                      >
+                        <span className="bg-yellow-300 text-black px-1">H</span>
+                      </button>
+                    </div>
+                    
+                    <div className="flex gap-1 mr-2">
+                      <button 
+                        type="button" 
+                        onClick={() => handleMarkdownFormat('ul')}
+                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 hover:dark:bg-gray-600 text-gray-300"
+                        title="Bulleted List"
+                      >
+                        • List
+                      </button>
+                      <button 
+                        type="button" 
+                        onClick={() => handleMarkdownFormat('ol')}
+                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 hover:dark:bg-gray-600 text-gray-300"
+                        title="Numbered List"
+                      >
+                        1. List
+                      </button>
+                    </div>
+                    
+                    <div className="flex gap-1 mr-2">
+                      <button 
+                        type="button" 
+                        onClick={() => handleMarkdownFormat('link')}
+                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 hover:dark:bg-gray-600 text-gray-300"
+                        title="Link"
+                      >
+                        🔗 Link
+                      </button>
+                      <button 
+                        type="button" 
+                        onClick={() => handleMarkdownFormat('code')}
+                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 hover:dark:bg-gray-600 text-gray-300 font-mono"
+                        title="Code Block"
+                      >
+                        {`<>`} Code
+                      </button>
+                      <button 
+                        type="button" 
+                        onClick={() => handleMarkdownFormat('quote')}
+                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 hover:dark:bg-gray-600 text-gray-300"
+                        title="Block Quote"
+                      >
+                        &quot; Quote
+                      </button>
+                      <button 
+                        type="button" 
+                        onClick={() => handleMarkdownFormat('hr')}
+                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 hover:dark:bg-gray-600 text-gray-300"
+                        title="Horizontal Rule"
+                      >
+                        — HR
+                      </button>
+                    </div>
+                    
+                    <div className="relative flex gap-1 mr-2">
+                      <button 
+                        type="button" 
+                        onClick={toggleColorPicker}
+                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 hover:dark:bg-gray-600 text-gray-300 flex items-center"
+                        title="Text Color"
+                      >
+                        <span className="flex items-center">
+                          <span className="w-3 h-3 rounded-full bg-gradient-to-r from-red-500 via-green-500 to-blue-500 mr-1"></span>
+                          Color
+                        </span>
+                      </button>
+                      
+                      {showColorPicker && (
+                        <div className="absolute z-10 top-full left-0 mt-1 p-2 bg-gray-800 rounded-md border border-gray-700 shadow-lg">
+                          <div className="grid grid-cols-3 gap-1">
+                            {colorOptions.map(color => (
+                              <button
+                                key={color.value}
+                                onClick={() => applyColor(color.value)}
+                                className="w-6 h-6 rounded-full border border-gray-600 hover:border-white transition-colors"
+                                style={{ backgroundColor: color.value }}
+                                title={color.name}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="ml-auto">
+                      <button 
+                        type="button" 
+                        onClick={togglePreviewMode}
+                        className={`px-3 py-1 text-xs rounded transition-colors ${
+                          previewMode 
+                            ? 'bg-emerald-600 hover:bg-emerald-700 text-white' 
+                            : 'dark:bg-gray-700 hover:dark:bg-gray-600 text-gray-300'
+                        }`}
+                        title="Toggle Preview"
+                      >
+                        {previewMode ? "Edit" : "Preview"}
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {/* Editor / Preview Toggle */}
+                  <div className="min-h-[200px] relative">
+                    {!previewMode ? (
+                      <textarea
+                        id="Instractions"
+                        name="Instractions"
+                        ref={instructionsTextareaRef}
+                        value={formData.Instractions}
+                        onChange={handleInputChange}
+                        rows={8}
+                        className="w-full dark:bg-gray-800/70 bg-gray-100/70 backdrop-blur-sm dark:border-gray-700 border-gray-300 rounded-lg px-3 py-2 dark:text-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono text-sm"
+                        placeholder="Enter course instructions (Markdown and HTML supported)"
+                      />
+                    ) : (
+                      <div className="w-full min-h-[200px] max-h-[400px] overflow-y-auto dark:bg-gray-800/70 bg-gray-100/70 backdrop-blur-sm dark:border-gray-700 border-gray-300 rounded-lg px-3 py-2 dark:text-white text-gray-800">
+                        <div className="prose prose-sm dark:prose-invert max-w-none prose-headings:my-2 prose-p:my-1 prose-li:my-0.5 prose-hr:my-4">
+                          <ReactMarkdown 
+                            rehypePlugins={[rehypeRaw]}
+                            components={MarkdownComponents}
+                          >
+                            {formData.Instractions}
+                          </ReactMarkdown>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <p className="mt-1 text-xs text-gray-500">
+                    Markdown and basic HTML formatting are supported. Toggle preview to see how your content will appear.
+                  </p>
                 </div>
                 
                 <div>

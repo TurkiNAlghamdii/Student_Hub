@@ -12,6 +12,7 @@ interface CourseDetails {
   course_code: string
   course_name: string
   course_description: string
+  Instractions: string | null
   faculty: {
     name: string
   }
@@ -65,6 +66,7 @@ export default async function CoursePage({ params }: { params: { courseCode: str
         course_code: data.course_code,
         course_name: data.course_name,
         course_description: data.course_description || 'No description available',
+        Instractions: data.Instractions || null,
         faculty: {
           name: getFacultyName(data.faculty)
         }

@@ -68,8 +68,12 @@ export async function POST(request: Request) {
 
     // Add default faculity_id since it's required by the database
     const dataToInsert = {
-      ...courseData,
-      faculity_id: 1 // Default faculty ID (update this to a valid ID in your database)
+      course_code: courseData.course_code,
+      course_name: courseData.course_name,
+      course_description: courseData.description || courseData.course_description || null,
+      Instractions: courseData.Instractions || null,
+      section: courseData.section,
+      faculity_id: 1 // Default faculty ID
     }
     
     console.log('Inserting course with data:', dataToInsert)

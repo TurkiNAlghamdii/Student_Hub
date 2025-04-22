@@ -24,6 +24,7 @@ export default function ChatInterface({
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const hasInitializedRef = useRef(false);
   const isStreamingRef = useRef(false);
+  const [showSuggestions, setShowSuggestions] = useState(true);
 
   // Debug log
   useEffect(() => {
@@ -64,9 +65,7 @@ export default function ChatInterface({
       // Prepare context information
       let context = '';
       if (contextType === 'course' && courseName) {
-        context = `User is asking about the course: ${courseName}`;
-      } else if (contextType === 'exam') {
-        context = `User is preparing for exams and needs help with test preparation`;
+        context = courseName;
       }
       
       // Convert messages to format expected by API
@@ -85,6 +84,7 @@ export default function ChatInterface({
         body: JSON.stringify({
           messages: apiMessages,
           context,
+          contextType
         }),
       });
       
@@ -167,7 +167,11 @@ export default function ChatInterface({
             // Create a user message with the course description
             const userMessage: Message = {
               role: 'user',
-              content: `Please explain this course in detail and help me understand what I'll learn: ${courseDescription}`
+              content: `Here is the description for this course: "${courseDescription}". Based on this description, could you:
+1. Summarize the key topics I'll learn
+2. Explain what skills I should develop
+3. Suggest how to approach studying this material
+4. Mention any prerequisites I should be familiar with`
             };
             
             // Add the user message and trigger the AI response
@@ -179,7 +183,11 @@ export default function ChatInterface({
           setTimeout(() => {
             const userMessage: Message = {
               role: 'user',
-              content: `What can you tell me about ${courseName}? What topics are typically covered in this course?`
+              content: `I'm taking ${courseName}. Could you help me understand:
+1. What main topics are typically covered in this course?
+2. What key concepts should I focus on mastering?
+3. What learning resources might be helpful?
+4. How this course connects to other subjects in the field?`
             };
             
             setMessages(prev => [...prev, userMessage]);
@@ -230,11 +238,34 @@ export default function ChatInterface({
   function getWelcomeMessage(type: string, name?: string): string {
     switch (type) {
       case 'course':
-        return `👋 Hi! I can help you understand concepts, summarize materials, or create practice questions for ${name || 'this course'}. What would you like to know?`;
+        return `👋 Welcome to the ${name || 'course'} AI assistant! I can help you:
+• Understand key concepts and theories
+• Create practice questions specific to this course
+• Summarize lecture materials and readings
+• Develop study guides for upcoming exams
+• Clarify assignments and requirements
+
+What specific aspect of ${name || 'this course'} would you like help with today?`;
+      
       case 'exam':
-        return `📝 Hi there! I can help you prepare for exams with practice questions, study guides, and explanations. How can I assist with your exam preparation?`;
+        return `📝 Exam Preparation Assistant at your service! I can help you:
+• Create custom practice questions based on your study topics
+• Develop comprehensive study guides and summaries
+• Explain complex concepts you need to master
+• Provide memory techniques for difficult material
+• Suggest effective study strategies and schedules
+
+What specific exam or subject are you preparing for?`;
+      
       default:
-        return "👋 Hello! I'm your academic assistant. I can help with course materials, create practice questions, summarize content, and more. What can I help you with today?";
+        return `👋 Welcome to your Academic AI Assistant! I'm here to support your learning journey with:
+• Course-specific help and explanations
+• Practice questions and study materials
+• Research assistance and resource recommendations
+• Time management and study strategies
+• Writing and project planning support
+
+How can I assist with your academic needs today?`;
     }
   }
 
@@ -300,6 +331,13 @@ export default function ChatInterface({
     }
   }, [handleAIResponse, isLoading]);
 
+  // Add helper function for suggestions
+  const handleSuggestionClick = (suggestion: string) => {
+    setUserInput(suggestion);
+    // Hide suggestions after clicking one
+    setShowSuggestions(false);
+  };
+
   return (
     <div className="chat-container">
       <div 
@@ -339,6 +377,37 @@ export default function ChatInterface({
       </div>
       
       <div className="chat-footer">
+        {showSuggestions && messages.length < 3 && (
+          <div className="quick-suggestions">
+            <p className="suggestions-title">Try asking about:</p>
+            <div className="suggestions-buttons">
+              <button 
+                onClick={() => handleSuggestionClick("Can you create 5 practice questions about the main topics in this course?")}
+                className="suggestion-button"
+              >
+                Practice Questions
+              </button>
+              <button 
+                onClick={() => handleSuggestionClick("What study strategies would you recommend for mastering this material?")}
+                className="suggestion-button"
+              >
+                Study Strategies
+              </button>
+              <button 
+                onClick={() => handleSuggestionClick("Please create a concept map showing how the key topics in this subject are related.")}
+                className="suggestion-button"
+              >
+                Concept Map
+              </button>
+              <button 
+                onClick={() => handleSuggestionClick("Can you summarize the most important concepts I should focus on?")}
+                className="suggestion-button"
+              >
+                Key Concepts
+              </button>
+            </div>
+          </div>
+        )}
         <form onSubmit={(e) => {
           e.preventDefault();
           handleSendMessage();

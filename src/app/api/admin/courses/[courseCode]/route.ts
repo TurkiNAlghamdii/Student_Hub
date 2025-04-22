@@ -110,9 +110,12 @@ export async function PUT(
     // Create a sanitized update object
     const updateData = {
       course_name: courseData.course_name,
-      course_description: courseData.course_description || null,
+      course_description: courseData.description || courseData.course_description || existingCourse.course_description,
+      Instractions: courseData.Instractions !== undefined ? courseData.Instractions : existingCourse.Instractions,
       section: courseData.section,
-      faculity_id: 1 // Default faculty ID (update this to a valid ID in your database)
+      // Keep other fields
+      faculity_id: existingCourse.faculity_id || 1,
+      created_at: existingCourse.created_at
     }
     
     console.log('Sending update to Supabase with data:', updateData)
