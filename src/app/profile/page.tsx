@@ -22,7 +22,7 @@ interface StudentProfile {
   // auth_id removed since it doesn't exist in the database
   export default function Profile() {
     const router = useRouter()
-    const { user, loading: authLoading } = useAuth()
+    const { user, loading: authLoading, signOut } = useAuth()
     const [studentProfile, setStudentProfile] = useState<StudentProfile | null>(null)
     const [loading, setLoading] = useState(true)
     const [isEditing, setIsEditing] = useState(false)
@@ -31,6 +31,10 @@ interface StudentProfile {
     const [uploading, setUploading] = useState(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const [error, setError] = useState<string | null>(null)
+    // Add new state variables for delete confirmation
+    const [showDeleteModal, setShowDeleteModal] = useState(false)
+    const [isDeleting, setIsDeleting] = useState(false)
+    const [password, setPassword] = useState('')
     
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name, value } = e.target
@@ -207,6 +211,70 @@ interface StudentProfile {
     
     // --- If we get here, !authLoading, !loading, and user exists --- 
 
+    // Add new function to handle account deletion
+    const handleDeleteAccount = async () => {
+      if (!password.trim()) {
+        setError('Please enter your password to confirm')
+        return
+      }
+      
+      if (!user) {
+        setError('You must be logged in to delete your account')
+        return
+      }
+      
+      try {
+        setIsDeleting(true)
+        setError(null)
+        
+        console.log('Starting account deletion process');
+        
+        // First verify the password is correct
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: user.email || '',
+          password: password
+        });
+        
+        if (signInError) {
+          console.error('Password verification failed:', signInError);
+          throw new Error('Incorrect password. Please try again.');
+        }
+        
+        // Call the API to delete the account - simplified to only use the user ID
+        const response = await fetch('/api/user/account', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-user-id': user.id
+          },
+          body: JSON.stringify({
+            password: password
+          })
+        })
+        
+        // Handle the response
+        const responseData = await response.json();
+        
+        if (!response.ok) {
+          console.error('Account deletion failed:', response.status, responseData);
+          throw new Error(responseData.error || `Failed to delete account (${response.status})`)
+        }
+        
+        console.log('Account deletion successful:', responseData);
+        
+        // Sign out the user locally
+        await signOut()
+        
+        // Redirect to the home page
+        router.push('/?message=Account deleted successfully')
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred'
+        console.error('Delete account error:', error)
+        setError(errorMessage)
+        setIsDeleting(false)
+      }
+    }
+
     return (
       <div className="profile-container">
         <Navbar />
@@ -218,6 +286,13 @@ interface StudentProfile {
               {updateMessage && (
                 <div className={`update-message ${updateMessage.includes('Failed') ? 'error' : 'success'}`}>
                   {updateMessage}
+                </div>
+              )}
+  
+              {/* Only show error message here if delete modal is not open */}
+              {error && !showDeleteModal && (
+                <div className="error-message mb-4">
+                  {error}
                 </div>
               )}
   
@@ -360,10 +435,89 @@ interface StudentProfile {
                       )}
                     </div>
                   </div>
+                  
+                  {/* Add the Delete Account button */}
+                  <div className="mt-8 border-t border-gray-700 pt-6">
+                    <div className="flex flex-col gap-2">
+                      <h3 className="text-lg font-semibold text-red-500">Danger Zone</h3>
+                      <p className="text-sm text-gray-400">
+                        Once you delete your account, there is no going back. Please be certain.
+                      </p>
+                      <button
+                        onClick={() => setShowDeleteModal(true)}
+                        className="delete-account-button"
+                        type="button"
+                      >
+                        Delete Account
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
           </div>
         </main>
+        
+        {/* Delete Account Confirmation Modal */}
+        {showDeleteModal && (
+          <div className="modal-overlay">
+            <div className="delete-modal">
+              <h3 className="text-xl font-bold text-red-500 mb-4">Delete Account</h3>
+              
+              {error && (
+                <div className="error-message mb-4">
+                  {error}
+                </div>
+              )}
+              
+              <p className="mb-6 text-gray-300">
+                This action <span className="font-bold">cannot be undone</span>. This will permanently delete your account and all your data.
+              </p>
+              
+              <p className="mb-4 text-gray-300">
+                To confirm, please enter your password:
+              </p>
+              
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                className="delete-confirmation-input"
+              />
+              
+              <div className="flex mt-6 gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowDeleteModal(false)
+                    setPassword('')
+                    setError(null)
+                  }}
+                  className="cancel-delete-button"
+                  disabled={isDeleting}
+                >
+                  Cancel
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={handleDeleteAccount}
+                  className="confirm-delete-button"
+                  disabled={isDeleting || !password.trim()}
+                >
+                  {isDeleting ? (
+                    <span className="flex items-center justify-center">
+                      <LoadingSpinner size="small" />
+                      <span className="ml-2">Deleting...</span>
+                    </span>
+                  ) : (
+                    'Delete Account'
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     )  }
