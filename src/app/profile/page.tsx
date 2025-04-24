@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import Navbar from '@/components/Navbar/Navbar'
@@ -22,10 +22,13 @@ interface StudentProfile {
   // auth_id removed since it doesn't exist in the database
   export default function Profile() {
     const router = useRouter()
+    const searchParams = useSearchParams()
+    const viewStudentId = searchParams.get('studentId')
     const { user, loading: authLoading, signOut } = useAuth()
     const [studentProfile, setStudentProfile] = useState<StudentProfile | null>(null)
     const [loading, setLoading] = useState(true)
     const [isEditing, setIsEditing] = useState(false)
+    const [isViewMode, setIsViewMode] = useState(false)
     const [updateMessage, setUpdateMessage] = useState('')
     const [formData, setFormData] = useState<Partial<StudentProfile>>({})
     const [uploading, setUploading] = useState(false)
@@ -35,6 +38,15 @@ interface StudentProfile {
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [isDeleting, setIsDeleting] = useState(false)
     const [password, setPassword] = useState('')
+    // Add state for password change
+    const [showPasswordModal, setShowPasswordModal] = useState(false)
+    const [passwordData, setPasswordData] = useState({
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+    })
+    const [isChangingPassword, setIsChangingPassword] = useState(false)
+    const [passwordError, setPasswordError] = useState<string | null>(null)
     
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name, value } = e.target
@@ -156,45 +168,75 @@ interface StudentProfile {
     }
     useEffect(() => {
       const fetchStudentProfile = async () => {
-        if (!user) return
-  
-        // Fetch the student profile using the id from auth
-        const { data, error } = await supabase
-          .from('students')
-          .select('*')
-          .eq('id', user.id)
-          .single()
-  
-        if (error) {
-          console.error('Failed to fetch student profile:', error)
-        }
-  
-        if (data) {
-          setStudentProfile({
-            ...data,
-            // Use only the database avatar
-            avatar_url: data.avatar_url
-          })
+        if (!user && !viewStudentId) return
+
+        // If viewStudentId is provided, we're in view mode
+        if (viewStudentId) {
+          setIsViewMode(true)
           
-          setFormData({
-            full_name: data.full_name,
-            student_id: data.student_id,
-            faculty: data.faculty
-          })
-        } else {
-          console.error('No student profile found for this user')
+          // Fetch the student profile using the studentId from URL
+          const { data, error } = await supabase
+            .from('students')
+            .select('*')
+            .eq('student_id', viewStudentId)
+            .single()
+
+          if (error) {
+            console.error('Failed to fetch student profile:', error)
+            setError('Student profile not found')
+          }
+
+          if (data) {
+            setStudentProfile(data)
+          } else {
+            setError('Student profile not found')
+          }
+          
+          setLoading(false)
+          return
         }
+
+        // Regular profile fetch for the logged-in user
+        if (user) {
+          // Fetch the student profile using the id from auth
+          const { data, error } = await supabase
+            .from('students')
+            .select('*')
+            .eq('id', user.id)
+            .single()
+
+          if (error) {
+            console.error('Failed to fetch student profile:', error)
+          }
+
+          if (data) {
+            setStudentProfile({
+              ...data,
+              // Use only the database avatar
+              avatar_url: data.avatar_url
+            })
+            
+            setFormData({
+              full_name: data.full_name,
+              student_id: data.student_id,
+              faculty: data.faculty
+            })
+          } else {
+            console.error('No student profile found for this user')
+          }
+        }
+        
         setLoading(false)
       }
       
       if (!authLoading) {
-        if (!user) {
+        if (!user && !viewStudentId) {
           router.push('/login')
         } else {
           fetchStudentProfile()
         }
       }
-    }, [user, authLoading, router])
+    }, [user, authLoading, router, viewStudentId])
 
     // Show centered spinner if auth or profile data is loading
     if (authLoading || loading) {
@@ -275,177 +317,334 @@ interface StudentProfile {
       }
     }
 
+    // Add password change handling function
+    const handlePasswordChange = async (e: React.FormEvent) => {
+      e.preventDefault()
+      
+      if (!user) {
+        setPasswordError('You must be logged in to change your password')
+        return
+      }
+      
+      // Validate inputs
+      if (!passwordData.currentPassword.trim()) {
+        setPasswordError('Please enter your current password')
+        return
+      }
+      
+      if (passwordData.newPassword.length < 6) {
+        setPasswordError('New password must be at least 6 characters long')
+        return
+      }
+      
+      if (passwordData.newPassword !== passwordData.confirmPassword) {
+        setPasswordError('New passwords do not match')
+        return
+      }
+      
+      try {
+        setIsChangingPassword(true)
+        setPasswordError(null)
+        
+        // First verify the current password is correct
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: user.email || '',
+          password: passwordData.currentPassword
+        })
+        
+        if (signInError) {
+          throw new Error('Current password is incorrect')
+        }
+        
+        // Update the password
+        const { error: updateError } = await supabase.auth.updateUser({
+          password: passwordData.newPassword
+        })
+        
+        if (updateError) {
+          throw new Error(updateError.message)
+        }
+        
+        // Reset the form
+        setPasswordData({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: '',
+        })
+        
+        // Close the modal
+        setShowPasswordModal(false)
+        
+        // Show success message
+        setUpdateMessage('Password updated successfully!')
+        
+        setTimeout(() => {
+          setUpdateMessage('')
+        }, 3000)
+        
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred'
+        setPasswordError(errorMessage)
+      } finally {
+        setIsChangingPassword(false)
+      }
+    }
+    
+    const handlePasswordInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target
+      setPasswordData(prev => ({ ...prev, [name]: value }))
+    }
+
     return (
-      <div className="profile-container">
+      <div className="profile-container min-h-screen bg-gradient-to-b from-background to-background/70">
         <Navbar />
-        <main className="flex justify-center p-6 pt-32">
-          <div className="max-w-2xl w-full">
-            <div className="profile-card">
-              <h2 className="profile-title">My Information</h2>
-              
-              {updateMessage && (
-                <div className={`update-message ${updateMessage.includes('Failed') ? 'error' : 'success'}`}>
-                  {updateMessage}
-                </div>
-              )}
-  
-              {/* Only show error message here if delete modal is not open */}
-              {error && !showDeleteModal && (
-                <div className="error-message mb-4">
-                  {error}
-                </div>
-              )}
-  
-              {isEditing ? (
-                <form className="edit-form" onSubmit={handleSubmit}>
-                  <div className="profile-avatar">
-                    <div className="avatar-upload" onClick={handleAvatarClick}>
-                      {uploading ? (
-                        <div className="uploading-indicator">Uploading...</div>
-                      ) : studentProfile?.avatar_url ? (
-                        <div className="avatar-container">
-                          <Image 
-                            src={studentProfile.avatar_url} 
-                            alt="Profile" 
-                            width={128} 
-                            height={128} 
-                            className="avatar-image"
-                          />
-                          <div className="avatar-overlay">
-                            <span>Change</span>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="avatar-circle">
-                          {studentProfile?.full_name?.charAt(0) || user?.email?.charAt(0) || '?'}
-                          <div className="avatar-overlay">
-                            <span>Upload</span>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      onChange={uploadAvatar}
-                      accept="image/*"
-                      style={{ display: 'none' }}
-                    />
-                  </div>
-  
-                  <div className="form-group">
-                    <label htmlFor="full_name">Name</label>
-                    <input
-                      type="text"
-                      id="full_name"
-                      name="full_name"
-                      value={formData.full_name || ''}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-  
-                  <div className="form-group">
-                    <label htmlFor="student_id">Student ID <span className="field-note">(Cannot be changed)</span></label>
-                    <input
-                      type="text"
-                      id="student_id"
-                      name="student_id"
-                      value={formData.student_id || ''}
-                      readOnly
-                      disabled
-                      className="disabled-input"
-                      title="Student ID cannot be changed after registration"
-                    />
-                  </div>
-  
-                  <div className="form-group">
-                    <label htmlFor="faculty">Faculty</label>
-                    <select
-                      id="faculty"
-                      name="faculty"
-                      value={formData.faculty || ''}
-                      onChange={handleChange}
-                      required
+        <main className="flex justify-center p-4 pt-28 sm:p-6 sm:pt-32">
+          <div className="max-w-5xl w-full">
+            <div className="profile-header-card mb-8">
+              <h1 className="profile-main-title">
+                {isViewMode ? 'Student Profile' : 'My Profile'}
+              </h1>
+              <p className="profile-subtitle">
+                {isViewMode 
+                  ? `Viewing ${studentProfile?.full_name || 'Student'}'s profile information`
+                  : 'Manage your personal information and account settings'
+                }
+              </p>
+            </div>
+            
+            {/* Updated to ensure Personal Information card is centered */}
+            <div className="grid grid-cols-1 gap-6">
+              {/* Profile Info Card - Centered with max-width constraint */}
+              <div className="profile-card md:max-w-3xl w-full shadow-md dark:shadow-gray-800/10 mx-auto">
+                <div className="relative mb-6">
+                  <h2 className="profile-title">Personal Information</h2>
+                  {!isEditing && !isViewMode && (
+                    <button 
+                      className="edit-profile-button-corner absolute top-0 right-0"
+                      onClick={() => setIsEditing(!isEditing)}
                     >
-                      <option value="">Select Faculty</option>
-                      <option value="Faculty of Computing">Faculty of Computing</option>
-                      <option value="Faculty of Engineering">Faculty of Engineering</option>
-                      <option value="Faculty of Science">Faculty of Science</option>
-                      <option value="Faculty of Business">Faculty of Business</option>
-                      <option value="Faculty of Medicine">Faculty of Medicine</option>
-                    </select>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3Z"/>
+                      </svg>
+                    </button>
+                  )}
+                </div>
+                
+                {updateMessage && !isViewMode && (
+                  <div className={`update-message ${updateMessage.includes('Failed') ? 'error' : 'success'} mb-4`}>
+                    {updateMessage}
                   </div>
-  
-                  <button type="submit" className="save-button">Save Changes</button>
-                </form>
-              ) : (
-                <div className="profile-content">
-                  <div className="profile-avatar flex-col">
-                    {studentProfile?.avatar_url ? (
-                      <div className="avatar-container">
-                        <Image 
-                          src={studentProfile.avatar_url} 
-                          alt="Profile" 
-                          width={128} 
-                          height={128} 
-                          className="avatar-image"
+                )}
+
+                {/* Only show error message here if delete modal is not open */}
+                {error && !showDeleteModal && (
+                  <div className="error-message mb-4">
+                    {error}
+                  </div>
+                )}
+
+                {isEditing && !isViewMode ? (
+                  <form className="edit-form" onSubmit={handleSubmit}>
+                    <div className="profile-avatar mb-6 flex flex-col items-start md:self-center">
+                      <div className="flex justify-start">
+                        <div className="avatar-upload cursor-pointer group relative" onClick={handleAvatarClick}>
+                          {uploading ? (
+                            <div className="uploading-indicator flex items-center justify-center h-32 w-32 bg-gray-200 dark:bg-gray-800 rounded-full">
+                              <LoadingSpinner size="small" />
+                            </div>
+                          ) : studentProfile?.avatar_url ? (
+                            <div className="avatar-container relative">
+                              <Image 
+                                src={studentProfile.avatar_url} 
+                                alt="Profile" 
+                                width={128} 
+                                height={128} 
+                                className="avatar-image rounded-full object-cover h-32 w-32 border-4 border-primary/20"
+                              />
+                              <div className="avatar-overlay absolute inset-0 bg-black/60 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity duration-200">
+                                <span>Change</span>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="avatar-circle h-32 w-32 rounded-full bg-primary text-white flex items-center justify-center text-4xl font-bold border-4 border-primary/20 relative">
+                              {studentProfile?.full_name?.charAt(0) || user?.email?.charAt(0) || '?'}
+                              <div className="avatar-overlay absolute inset-0 bg-black/60 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity duration-200">
+                                <span>Upload</span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        <input
+                          type="file"
+                          ref={fileInputRef}
+                          onChange={uploadAvatar}
+                          accept="image/*"
+                          style={{ display: 'none' }}
                         />
                       </div>
-                    ) : (
-                      <div className="avatar-circle">
-                        {studentProfile?.full_name?.charAt(0) || user?.email?.charAt(0) || '?'}
-                      </div>
-                    )}
-                    
-                    <div className="mt-2 text-center">
-                      <span 
-                        className="text-emerald-400 cursor-pointer hover:text-emerald-300"
-                        onClick={() => setIsEditing(!isEditing)}
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="full_name" className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1 block">Name</label>
+                      <input
+                        type="text"
+                        id="full_name"
+                        name="full_name"
+                        value={formData.full_name || ''}
+                        onChange={handleChange}
+                        required
+                        className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 focus:ring-primary focus:border-primary transition duration-200"
+                      />
+                    </div>
+
+                    <div className="form-group mt-4">
+                      <label htmlFor="student_id" className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1 block">
+                        Student ID <span className="field-note text-xs text-gray-500 dark:text-gray-400">(Cannot be changed)</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="student_id"
+                        name="student_id"
+                        value={formData.student_id || ''}
+                        readOnly
+                        disabled
+                        className="disabled-input w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-900 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                        title="Student ID cannot be changed after registration"
+                      />
+                    </div>
+
+                    <div className="form-group mt-4">
+                      <label htmlFor="faculty" className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1 block">Faculty</label>
+                      <select
+                        id="faculty"
+                        name="faculty"
+                        value={formData.faculty || ''}
+                        onChange={handleChange}
+                        required
+                        className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 focus:ring-primary focus:border-primary transition duration-200"
                       >
-                        Edit Profile
-                      </span>
+                        <option value="">Select Faculty</option>
+                        <option value="Faculty of Computing">Faculty of Computing</option>
+                        <option value="Faculty of Engineering">Faculty of Engineering</option>
+                        <option value="Faculty of Science">Faculty of Science</option>
+                        <option value="Faculty of Business">Faculty of Business</option>
+                        <option value="Faculty of Medicine">Faculty of Medicine</option>
+                      </select>
+                    </div>
+
+                    <div className="flex gap-3 mt-6">
+                      <button 
+                        type="button" 
+                        onClick={() => setIsEditing(false)} 
+                        className="cancel-edit-button"
+                      >
+                        Cancel
+                      </button>
+                      <button 
+                        type="submit" 
+                        className="save-button bg-primary hover:bg-primary/90 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 transform hover:-translate-y-0.5"
+                      >
+                        Save Changes
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="profile-content">
+                    <div className="flex flex-col md:flex-row md:items-center gap-8">
+                      <div className="profile-avatar md:self-center">
+                        <div className="flex justify-start">
+                          {studentProfile?.avatar_url ? (
+                            <div className={`avatar-container mb-4 md:mb-0 ${!isViewMode ? 'cursor-pointer' : ''}`} onClick={!isViewMode ? handleAvatarClick : undefined}>
+                              <Image 
+                                src={studentProfile.avatar_url} 
+                                alt="Profile" 
+                                width={128} 
+                                height={128} 
+                                className="avatar-image rounded-full object-cover h-32 w-32 border-4 border-primary/20 hover:border-primary/40 transition-all duration-200"
+                              />
+                              {!isViewMode && (
+                                <div className="avatar-overlay absolute inset-0 bg-black/60 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity duration-200">
+                                  <span>Change</span>
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <div 
+                              className={`avatar-circle h-32 w-32 rounded-full bg-primary text-white flex items-center justify-center text-4xl font-bold border-4 border-primary/20 hover:border-primary/40 transition-all duration-200 ${!isViewMode ? 'cursor-pointer' : ''}`}
+                              onClick={!isViewMode ? handleAvatarClick : undefined}
+                            >
+                              {studentProfile?.full_name?.charAt(0) || (user?.email?.charAt(0) || '?')}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="profile-details flex-1">
+                        <div className="info-grid grid gap-6 md:grid-cols-2">
+                          {studentProfile && (
+                            <>
+                              <div className="info-item">
+                                <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Name</label>
+                                <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">{studentProfile.full_name}</p>
+                              </div>
+
+                              <div className="info-item">
+                                <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Student ID</label>
+                                <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">{studentProfile.student_id}</p>
+                              </div>
+
+                              <div className="info-item">
+                                <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Faculty</label>
+                                <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">{studentProfile.faculty}</p>
+                              </div>
+
+                              <div className="info-item email-container">
+                                <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Email</label>
+                                <p className="text-lg font-semibold text-gray-800 dark:text-gray-100 email-display" title={studentProfile.email || ''}>
+                                  {studentProfile.email}
+                                </p>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
-  
-                  <div className="profile-details">
-                    <div className="info-grid">
-                      {studentProfile && (
-                        <>
-                          <div className="info-item">
-                            <label>Name</label>
-                            <p>{studentProfile.full_name}</p>
-                          </div>
-  
-                          <div className="info-item">
-                            <label>Student ID</label>
-                            <p>{studentProfile.student_id}</p>
-                          </div>
-  
-                          <div className="info-item">
-                            <label>Faculty</label>
-                            <p>{studentProfile.faculty}</p>
-                          </div>
-  
-                          <div className="info-item">
-                            <label>Email</label>
-                            <p className="email-display">{user.email}</p>
-                          </div>
-                        </>
-                      )}
-                    </div>
+                )}
+              </div>
+            </div>
+            
+            {/* Only show account management for own profile */}
+            {!isViewMode && (
+              <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mt-6">
+                {/* Account Management Card */}
+                <div className="profile-card account-panel shadow-md dark:shadow-gray-800/10 md:col-span-1 md:max-w-3xl w-full mx-auto">
+                  <div className="relative mb-6">
+                    <h2 className="profile-title">Account Management</h2>
                   </div>
                   
-                  {/* Add the Delete Account button */}
-                  <div className="mt-8 border-t border-gray-700 pt-6">
-                    <div className="flex flex-col gap-2">
-                      <h3 className="text-lg font-semibold text-red-500">Danger Zone</h3>
-                      <p className="text-sm text-gray-400">
-                        Once you delete your account, there is no going back. Please be certain.
+                  <div className="account-options">
+                    <div className="account-option">
+                      <h3 className="option-title">Security Settings</h3>
+                      <p className="option-description">
+                        Manage your account password and security preferences
+                      </p>
+                      <button 
+                        className="option-button"
+                        onClick={() => setShowPasswordModal(true)}
+                      >
+                        Change Password
+                      </button>
+                    </div>
+                    
+                    <div className="account-option danger">
+                      <h3 className="option-title text-red-500">Danger Zone</h3>
+                      <p className="option-description">
+                        Permanently delete your account and all associated data
                       </p>
                       <button
                         onClick={() => setShowDeleteModal(true)}
-                        className="delete-account-button"
+                        className="delete-account-button bg-red-500/10 hover:bg-red-500/20 text-red-500 font-medium py-2 px-4 rounded-lg border border-red-500/20 transition-all duration-200 w-full"
                         type="button"
                       >
                         Delete Account
@@ -453,19 +652,124 @@ interface StudentProfile {
                     </div>
                   </div>
                 </div>
-              )}
+              </div>
+            )}
+            
+            {/* Privacy Notes */}
+            <div className="privacy-notes mt-8">
+              <p className="text-sm">
+                We respect your privacy. Your personal information is securely stored and will never be shared with third parties.
+              </p>
             </div>
           </div>
         </main>
         
+        {/* Change Password Modal - only for own profile */}
+        {/* Change Password Modal */}
+        {showPasswordModal && (
+          <div className="modal-overlay fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="password-modal bg-gray-900 border border-gray-800 rounded-xl p-6 max-w-md w-full shadow-xl">
+              <h3 className="text-xl font-bold text-primary mb-4">Change Password</h3>
+              
+              {passwordError && (
+                <div className="error-message p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 mb-4">
+                  {passwordError}
+                </div>
+              )}
+              
+              <form onSubmit={handlePasswordChange}>
+                <div className="form-group mb-4">
+                  <label htmlFor="currentPassword" className="text-sm font-medium text-gray-300 mb-1 block">
+                    Current Password
+                  </label>
+                  <input
+                    type="password"
+                    id="currentPassword"
+                    name="currentPassword"
+                    value={passwordData.currentPassword}
+                    onChange={handlePasswordInputChange}
+                    className="w-full p-3 border border-gray-700 rounded-lg bg-gray-800 text-white focus:ring-primary focus:border-primary transition duration-200"
+                    required
+                  />
+                </div>
+                
+                <div className="form-group mb-4">
+                  <label htmlFor="newPassword" className="text-sm font-medium text-gray-300 mb-1 block">
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    id="newPassword"
+                    name="newPassword"
+                    value={passwordData.newPassword}
+                    onChange={handlePasswordInputChange}
+                    className="w-full p-3 border border-gray-700 rounded-lg bg-gray-800 text-white focus:ring-primary focus:border-primary transition duration-200"
+                    required
+                    minLength={6}
+                  />
+                </div>
+                
+                <div className="form-group mb-6">
+                  <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-300 mb-1 block">
+                    Confirm New Password
+                  </label>
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    value={passwordData.confirmPassword}
+                    onChange={handlePasswordInputChange}
+                    className="w-full p-3 border border-gray-700 rounded-lg bg-gray-800 text-white focus:ring-primary focus:border-primary transition duration-200"
+                    required
+                  />
+                </div>
+                
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowPasswordModal(false)
+                      setPasswordData({
+                        currentPassword: '',
+                        newPassword: '',
+                        confirmPassword: '',
+                      })
+                      setPasswordError(null)
+                    }}
+                    className="cancel-button bg-gray-800 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-lg border border-gray-700 transition-all duration-200 flex-1"
+                    disabled={isChangingPassword}
+                  >
+                    Cancel
+                  </button>
+                  
+                  <button
+                    type="submit"
+                    className="submit-button bg-primary hover:bg-primary/90 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={isChangingPassword}
+                  >
+                    {isChangingPassword ? (
+                      <span className="flex items-center justify-center">
+                        <LoadingSpinner size="small" />
+                        <span className="ml-2">Updating...</span>
+                      </span>
+                    ) : (
+                      'Update Password'
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+        
         {/* Delete Account Confirmation Modal */}
         {showDeleteModal && (
-          <div className="modal-overlay">
-            <div className="delete-modal">
+          <div className="modal-overlay fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="delete-modal bg-gray-900 border border-gray-800 rounded-xl p-6 max-w-md w-full shadow-xl">
               <h3 className="text-xl font-bold text-red-500 mb-4">Delete Account</h3>
               
               {error && (
-                <div className="error-message mb-4">
+                <div className="error-message p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 mb-4">
                   {error}
                 </div>
               )}
@@ -483,7 +787,7 @@ interface StudentProfile {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
-                className="delete-confirmation-input"
+                className="delete-confirmation-input w-full p-3 border border-gray-700 rounded-lg bg-gray-800 text-white focus:ring-red-500 focus:border-red-500 transition duration-200"
               />
               
               <div className="flex mt-6 gap-3">
@@ -494,7 +798,7 @@ interface StudentProfile {
                     setPassword('')
                     setError(null)
                   }}
-                  className="cancel-delete-button"
+                  className="cancel-delete-button bg-gray-800 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-lg border border-gray-700 transition-all duration-200 flex-1"
                   disabled={isDeleting}
                 >
                   Cancel
@@ -503,7 +807,7 @@ interface StudentProfile {
                 <button
                   type="button"
                   onClick={handleDeleteAccount}
-                  className="confirm-delete-button"
+                  className="confirm-delete-button bg-red-500/80 hover:bg-red-500 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={isDeleting || !password.trim()}
                 >
                   {isDeleting ? (

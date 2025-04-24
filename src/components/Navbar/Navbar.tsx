@@ -19,7 +19,8 @@ import {
   ShieldCheckIcon,
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
-  ClockIcon
+  ClockIcon,
+  UserGroupIcon
 } from '@heroicons/react/24/outline'
 import ThemeToggle from '@/components/ThemeToggle/ThemeToggle'
 import Link from 'next/link'
@@ -307,37 +308,38 @@ export default function Navbar({ showBack = false }: NavbarProps) {
     { 
       category: 'dashboard',
       label: 'Home', 
-      icon: <HomeIcon className="sidebar-icon" />, 
+      icon: <HomeIcon className="sidebar-icon animated-home-icon" />, 
       href: '/' 
     },
     {
       category: 'dashboard',
       label: 'Pomodoro Timer',
-      icon: <ClockIcon className="sidebar-icon" />,
+      icon: <ClockIcon className="sidebar-icon animated-icon animated-icon-rotate" />,
       href: '/pomodoro'
     },
     // Academic
-    { label: 'Courses', href: '/courses', icon: <AcademicCapIcon className="sidebar-icon" />, category: 'academic' },
-    { label: 'GPA Calculator', href: '/gpa-calculator', icon: <CalculatorIcon className="sidebar-icon" />, category: 'academic' },
-    { label: 'Academic Calendar', href: '/academic-calendar', icon: <CalendarIcon className="sidebar-icon" />, category: 'academic' },
+    { label: 'Courses', href: '/courses', icon: <AcademicCapIcon className="sidebar-icon animated-icon animated-icon-bounce" />, category: 'academic' },
+    { label: 'GPA Calculator', href: '/gpa-calculator', icon: <CalculatorIcon className="sidebar-icon animated-icon animated-icon-shake" />, category: 'academic' },
+    { label: 'Academic Calendar', href: '/academic-calendar', icon: <CalendarIcon className="sidebar-icon animated-icon animated-icon-rotate" />, category: 'academic' },
     
     // Communication
-    { label: 'Notifications', href: '/notifications', icon: <BellIcon className="sidebar-icon" />, category: 'communication' },
-    { label: 'AI Chat', href: '/chat', icon: <ChatBubbleLeftRightIcon className="sidebar-icon" />, category: 'communication' },
+    { label: 'Notifications', href: '/notifications', icon: <BellIcon className="sidebar-icon animated-notification-icon" />, category: 'communication' },
+    { label: 'AI Chat', href: '/chat', icon: <ChatBubbleLeftRightIcon className="sidebar-icon animated-chat-icon" />, category: 'communication' },
+    { label: 'Students', href: '/students', icon: <UserGroupIcon className="sidebar-icon animated-students-icon" />, category: 'communication' },
     
     // Career
-    { label: 'Faculty', href: '/faculty', icon: <BuildingOfficeIcon className="sidebar-icon" />, category: 'career' },
-    { label: 'Summer Training', href: '/summer-training', icon: <BriefcaseIcon className="sidebar-icon" />, category: 'career' },
-    { label: 'Events', href: '/events', icon: <CalendarIcon className="sidebar-icon" />, category: 'career' },
+    { label: 'Faculty', href: '/faculty', icon: <BuildingOfficeIcon className="sidebar-icon animated-icon animated-icon-pulse" />, category: 'career' },
+    { label: 'Summer Training', href: '/summer-training', icon: <BriefcaseIcon className="sidebar-icon animated-icon animated-icon-float" />, category: 'career' },
+    { label: 'Events', href: '/events', icon: <CalendarIcon className="sidebar-icon animated-icon animated-icon-rotate" />, category: 'career' },
     
     // Profile
-    { label: 'Profile', href: '/profile', icon: <UserCircleIcon className="sidebar-icon" />, category: 'profile' },
+    { label: 'Profile', href: '/profile', icon: <UserCircleIcon className="sidebar-icon animated-profile-icon" />, category: 'profile' },
     
     // Admin (conditional)
-    ...(isAdmin ? [{ label: 'Admin', href: '/admin', icon: <ShieldCheckIcon className="sidebar-icon" />, category: 'admin' }] : []),
+    ...(isAdmin ? [{ label: 'Admin', href: '/admin', icon: <ShieldCheckIcon className="sidebar-icon animated-admin-icon" />, category: 'admin' }] : []),
     
     // Logout
-    { label: 'Logout', action: handleLogout, icon: <ArrowRightOnRectangleIcon className="sidebar-icon" />, category: 'logout' }
+    { label: 'Logout', action: handleLogout, icon: <ArrowRightOnRectangleIcon className="sidebar-icon animated-logout-icon" />, category: 'logout' }
   ]
 
   // Add a useEffect to close sidebar when links are clicked
@@ -364,6 +366,199 @@ export default function Navbar({ showBack = false }: NavbarProps) {
 
   return (
     <nav className="navbar">
+      <style jsx global>{`
+        @keyframes pulse {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.1); }
+          100% { transform: scale(1); }
+        }
+        
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-6px); }
+        }
+        
+        @keyframes glow {
+          0%, 100% { filter: drop-shadow(0 0 2px #10b981); }
+          50% { filter: drop-shadow(0 0 8px #10b981); }
+        }
+
+        @keyframes rotate {
+          0% { transform: rotate(0deg); }
+          50% { transform: rotate(180deg); }
+          100% { transform: rotate(360deg); }
+        }
+
+        @keyframes shake {
+          0%, 100% { transform: rotate(0deg); }
+          25% { transform: rotate(-5deg); }
+          75% { transform: rotate(5deg); }
+        }
+
+        @keyframes float {
+          0% { transform: translateY(0) translateX(0); }
+          50% { transform: translateY(-3px) translateX(1px); }
+          100% { transform: translateY(0) translateX(0); }
+        }
+
+        @keyframes fadeInOut {
+          0% { opacity: 0.7; }
+          50% { opacity: 1; }
+          100% { opacity: 0.7; }
+        }
+
+        @keyframes wobble {
+          0%, 100% { transform: translateX(0) rotate(0); }
+          15% { transform: translateX(-5px) rotate(-5deg); }
+          30% { transform: translateX(4px) rotate(3deg); }
+          45% { transform: translateX(-3px) rotate(-3deg); }
+          60% { transform: translateX(2px) rotate(2deg); }
+          75% { transform: translateX(-1px) rotate(-1deg); }
+        }
+
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.6; }
+        }
+
+        @keyframes slideBg {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        
+        .animated-icon {
+          transition: all 0.3s ease;
+        }
+        
+        .animated-icon-pulse:hover {
+          animation: pulse 1s infinite;
+        }
+        
+        .animated-icon-bounce:hover {
+          animation: bounce 1s infinite;
+        }
+        
+        .animated-icon-glow {
+          animation: glow 2s infinite;
+        }
+
+        .animated-icon-rotate:hover {
+          animation: rotate 2s infinite linear;
+        }
+
+        .animated-icon-shake:hover {
+          animation: shake 0.5s infinite;
+        }
+
+        .animated-icon-float:hover {
+          animation: float 2s infinite ease-in-out;
+        }
+
+        .animated-icon-fade:hover {
+          animation: fadeInOut 1.5s infinite ease-in-out;
+        }
+
+        .animated-icon-wobble:hover {
+          animation: wobble 1.5s infinite ease-in-out;
+        }
+
+        .animated-icon-blink:hover {
+          animation: blink 1.5s infinite ease-in-out;
+        }
+        
+        .animated-students-icon {
+          animation: bounce 2s infinite ease-in-out;
+          filter: drop-shadow(0 0 2px #10b981);
+        }
+
+        .animated-chat-icon {
+          animation: chatPulse 1.5s infinite ease-in-out;
+        }
+
+        .animated-home-icon {
+          animation: float 3s infinite ease-in-out;
+        }
+
+        .animated-notification-icon {
+          animation: shake 5s infinite ease-in-out;
+        }
+
+        .animated-logout-icon:hover {
+          animation: shake 0.3s infinite;
+          color: #ef4444;
+        }
+
+        .animated-profile-icon {
+          animation: glow 3s infinite;
+        }
+
+        .animated-admin-icon {
+          animation: glow 4s infinite;
+        }
+
+        .animated-dashboard-icon {
+          animation: float 4s infinite ease-in-out;
+        }
+
+        .animated-calendar-icon {
+          animation: pulse 4s infinite ease-in-out;
+        }
+
+        .animated-academic-icon {
+          animation: glow 3s infinite ease-in-out;
+        }
+
+        .animated-faculty-icon {
+          animation: fadeInOut 3s infinite ease-in-out;
+        }
+
+        .animated-training-icon {
+          animation: pulse 3.5s infinite ease-in-out;
+        }
+
+        .animated-events-icon {
+          animation: float 3s infinite ease-in-out;
+        }
+
+        .animated-toggle-icon:hover {
+          animation: spin 1s forwards;
+          transform-origin: center;
+        }
+
+        .animated-search-icon {
+          animation: pulse 2s infinite ease-in-out;
+        }
+
+        .category-label {
+          position: relative;
+          overflow: hidden;
+        }
+
+        .category-label::after {
+          content: '';
+          position: absolute;
+          bottom: -2px;
+          left: 0;
+          width: 100%;
+          height: 1px;
+          background: linear-gradient(90deg, rgba(16,185,129,0.2), rgba(16,185,129,0.8), rgba(16,185,129,0.2));
+          background-size: 200% 100%;
+          animation: slideBg 2s infinite;
+        }
+
+        @keyframes chatPulse {
+          0% { transform: scale(1); opacity: 0.8; }
+          50% { transform: scale(1.15); opacity: 1; filter: drop-shadow(0 0 5px #10b981); }
+          100% { transform: scale(1); opacity: 0.8; }
+        }
+
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
+      
       <div className="nav-content">
         {/* Title on the left */}
         <div className="nav-left">
@@ -405,7 +600,7 @@ export default function Navbar({ showBack = false }: NavbarProps) {
                   <div className="search-loading"></div>
                 ) : (
                   <button type="submit" className="search-button">
-                    <MagnifyingGlassIcon className="h-5 w-5" />
+                    <MagnifyingGlassIcon className="h-5 w-5 animated-search-icon" />
                   </button>
                 )}
               </div>
@@ -439,7 +634,7 @@ export default function Navbar({ showBack = false }: NavbarProps) {
                 }
               }}
             >
-              <ArrowRightOnRectangleIcon className="h-5 w-5" />
+              <ArrowRightOnRectangleIcon className="h-5 w-5 animated-logout-icon" />
             </button>
             {studentProfile?.avatar_url ? (
               <div 
@@ -459,7 +654,7 @@ export default function Navbar({ showBack = false }: NavbarProps) {
                   alt={`${studentProfile.full_name || 'User'}'s profile`}
                   width={40} 
                   height={40}
-                  className="profile-avatar-image" 
+                  className="profile-avatar-image animated-profile-icon" 
                   priority
                 />
               </div>
@@ -476,7 +671,7 @@ export default function Navbar({ showBack = false }: NavbarProps) {
                   }
                 }}
               >
-                <UserCircleIcon className="h-6 w-6" />
+                <UserCircleIcon className="h-6 w-6 animated-profile-icon" />
               </div>
             )}
             <button
@@ -484,7 +679,7 @@ export default function Navbar({ showBack = false }: NavbarProps) {
               className="sidebar-toggle-button"
               aria-label="Open menu"
             >
-              <Bars3Icon className="h-6 w-6" />
+              <Bars3Icon className="h-6 w-6 animated-toggle-icon" />
             </button>
           </div>
         </div>
@@ -866,47 +1061,6 @@ export default function Navbar({ showBack = false }: NavbarProps) {
                 </ul>
               </div>
             )}
-
-            {/* Logout */}
-            <div className="menu-category mt-auto">
-              <ul className="sidebar-menu">
-                {menuItems
-                  .filter(item => item.category === 'logout')
-                  .map((item) => (
-                    <li 
-                      key={item.label} 
-                      className={`menu-item ${isSidebarMounted && !isSidebarClosing ? 'menu-item-visible' : ''}`}
-                    >
-                      {item.href ? (
-                        <a 
-                          href={item.href}
-                          className={`menu-link menu-link-logout w-full text-left ${isCompactMode ? 'menu-link-compact' : ''}`}
-                          title={isCompactMode ? item.label : undefined}
-                          style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
-                          onClick={() => closeSidebar()}
-                        >
-                          {item.icon}
-                          <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
-                        </a>
-                      ) : (
-                        <button
-                          onClick={(e) => { 
-                            e.stopPropagation(); // Prevent event bubbling
-                            closeSidebar(); 
-                            if (item.action) item.action(); 
-                          }}
-                          className={`menu-link menu-link-logout ${isCompactMode ? 'menu-link-compact' : ''}`}
-                          title={isCompactMode ? item.label : undefined}
-                          style={{ cursor: 'pointer' }}
-                        >
-                          {item.icon}
-                          <span className={`menu-label ${isCompactMode ? 'menu-label-hidden' : ''}`}>{item.label}</span>
-                        </button>
-                      )}
-                    </li>
-                  ))}
-              </ul>
-            </div>
           </div>
         </div>
       )}
