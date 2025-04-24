@@ -219,7 +219,8 @@ interface StudentProfile {
             setFormData({
               full_name: data.full_name,
               student_id: data.student_id,
-              faculty: data.faculty
+              faculty: data.faculty,
+              email: data.email
             })
           } else {
             console.error('No student profile found for this user')
@@ -412,80 +413,76 @@ interface StudentProfile {
               </p>
             </div>
             
-            {/* Updated to ensure Personal Information card is centered */}
-            <div className="grid grid-cols-1 gap-6">
-              {/* Profile Info Card - Centered with max-width constraint */}
-              <div className="profile-card md:max-w-3xl w-full shadow-md dark:shadow-gray-800/10 mx-auto">
-                <div className="relative mb-6">
-                  <h2 className="profile-title">Personal Information</h2>
-                  {!isEditing && !isViewMode && (
-                    <button 
-                      className="edit-profile-button-corner absolute top-0 right-0"
-                      onClick={() => setIsEditing(!isEditing)}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3Z"/>
-                      </svg>
-                    </button>
-                  )}
+            {/* Profile Card with centered layout */}
+            <div className="profile-card md:max-w-3xl w-full shadow-md dark:shadow-gray-800/10 mx-auto">
+              <div className="relative mb-6">
+                <h2 className="profile-title">Personal Information</h2>
+                {!isEditing && !isViewMode && (
+                  <button 
+                    className="edit-profile-button-corner absolute top-0 right-0"
+                    onClick={() => setIsEditing(!isEditing)}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3Z"/>
+                    </svg>
+                  </button>
+                )}
+              </div>
+              
+              {updateMessage && !isViewMode && (
+                <div className={`update-message ${updateMessage.includes('Failed') ? 'error' : 'success'} mb-4`}>
+                  {updateMessage}
                 </div>
-                
-                {updateMessage && !isViewMode && (
-                  <div className={`update-message ${updateMessage.includes('Failed') ? 'error' : 'success'} mb-4`}>
-                    {updateMessage}
-                  </div>
-                )}
+              )}
 
-                {/* Only show error message here if delete modal is not open */}
-                {error && !showDeleteModal && (
-                  <div className="error-message mb-4">
-                    {error}
-                  </div>
-                )}
+              {error && !showDeleteModal && (
+                <div className="error-message mb-4">
+                  {error}
+                </div>
+              )}
 
-                {isEditing && !isViewMode ? (
-                  <form className="edit-form" onSubmit={handleSubmit}>
-                    <div className="profile-avatar mb-6 flex flex-col items-start md:self-center">
-                      <div className="flex justify-start">
-                        <div className="avatar-upload cursor-pointer group relative" onClick={handleAvatarClick}>
-                          {uploading ? (
-                            <div className="uploading-indicator flex items-center justify-center h-32 w-32 bg-gray-200 dark:bg-gray-800 rounded-full">
-                              <LoadingSpinner size="small" />
-                            </div>
-                          ) : studentProfile?.avatar_url ? (
-                            <div className="avatar-container relative">
-                              <Image 
-                                src={studentProfile.avatar_url} 
-                                alt="Profile" 
-                                width={128} 
-                                height={128} 
-                                className="avatar-image rounded-full object-cover h-32 w-32 border-4 border-primary/20"
-                              />
-                              <div className="avatar-overlay absolute inset-0 bg-black/60 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity duration-200">
-                                <span>Change</span>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="avatar-circle h-32 w-32 rounded-full bg-primary text-white flex items-center justify-center text-4xl font-bold border-4 border-primary/20 relative">
-                              {studentProfile?.full_name?.charAt(0) || user?.email?.charAt(0) || '?'}
-                              <div className="avatar-overlay absolute inset-0 bg-black/60 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity duration-200">
-                                <span>Upload</span>
-                              </div>
-                            </div>
-                          )}
+              {isEditing ? (
+                <form className="edit-form" onSubmit={handleSubmit}>
+                  {/* Centered Profile Picture */}
+                  <div className="flex justify-center mb-8">
+                    <div className="avatar-upload cursor-pointer group relative" onClick={handleAvatarClick}>
+                      {uploading ? (
+                        <div className="uploading-indicator flex items-center justify-center h-32 w-32 bg-gray-200 dark:bg-gray-800 rounded-full">
+                          <LoadingSpinner size="small" />
                         </div>
-                        <input
-                          type="file"
-                          ref={fileInputRef}
-                          onChange={uploadAvatar}
-                          accept="image/*"
-                          style={{ display: 'none' }}
-                        />
-                      </div>
+                      ) : studentProfile?.avatar_url ? (
+                        <div className="avatar-container relative">
+                          <Image 
+                            src={studentProfile.avatar_url} 
+                            alt="Profile" 
+                            width={128} 
+                            height={128} 
+                            className="avatar-image rounded-full object-cover h-32 w-32"
+                          />
+                          <div className="avatar-overlay absolute inset-0 bg-black/60 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity duration-200">
+                            <span>Change</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="avatar-circle">
+                          {studentProfile?.full_name ? studentProfile.full_name.charAt(0).toUpperCase() : 'S'}
+                        </div>
+                      )}
                     </div>
+                    <input
+                      type="file"
+                      id="avatar"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={uploadAvatar}
+                      ref={fileInputRef}
+                    />
+                  </div>
 
-                    <div className="form-group">
-                      <label htmlFor="full_name" className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1 block">Name</label>
+                  {/* Grid Layout for Form Fields */}
+                  <div className="info-grid">
+                    <div className="info-item">
+                      <label htmlFor="full_name">Name</label>
                       <input
                         type="text"
                         id="full_name"
@@ -493,35 +490,32 @@ interface StudentProfile {
                         value={formData.full_name || ''}
                         onChange={handleChange}
                         required
-                        className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 focus:ring-primary focus:border-primary transition duration-200"
+                        className="w-full p-2"
                       />
                     </div>
 
-                    <div className="form-group mt-4">
-                      <label htmlFor="student_id" className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1 block">
-                        Student ID <span className="field-note text-xs text-gray-500 dark:text-gray-400">(Cannot be changed)</span>
-                      </label>
+                    <div className="info-item">
+                      <label htmlFor="student_id">Student ID</label>
                       <input
                         type="text"
                         id="student_id"
                         name="student_id"
                         value={formData.student_id || ''}
-                        readOnly
-                        disabled
-                        className="disabled-input w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-900 text-gray-500 dark:text-gray-400 cursor-not-allowed"
-                        title="Student ID cannot be changed after registration"
+                        onChange={handleChange}
+                        required
+                        className="w-full p-2"
                       />
                     </div>
 
-                    <div className="form-group mt-4">
-                      <label htmlFor="faculty" className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1 block">Faculty</label>
+                    <div className="info-item">
+                      <label htmlFor="faculty">Faculty</label>
                       <select
                         id="faculty"
                         name="faculty"
                         value={formData.faculty || ''}
                         onChange={handleChange}
                         required
-                        className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 focus:ring-primary focus:border-primary transition duration-200"
+                        className="w-full p-2"
                       >
                         <option value="">Select Faculty</option>
                         <option value="Faculty of Computing">Faculty of Computing</option>
@@ -532,119 +526,114 @@ interface StudentProfile {
                       </select>
                     </div>
 
-                    <div className="flex gap-3 mt-6">
-                      <button 
-                        type="button" 
-                        onClick={() => setIsEditing(false)} 
-                        className="cancel-edit-button"
-                      >
-                        Cancel
-                      </button>
-                      <button 
-                        type="submit" 
-                        className="save-button bg-primary hover:bg-primary/90 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 transform hover:-translate-y-0.5"
-                      >
-                        Save Changes
-                      </button>
-                    </div>
-                  </form>
-                ) : (
-                  <div className="profile-content">
-                    <div className="flex flex-col md:flex-row md:items-center gap-8">
-                      <div className="profile-avatar md:self-center">
-                        <div className="flex justify-start">
-                          {studentProfile?.avatar_url ? (
-                            <div className={`avatar-container mb-4 md:mb-0 ${!isViewMode ? 'cursor-pointer' : ''}`} onClick={!isViewMode ? handleAvatarClick : undefined}>
-                              <Image 
-                                src={studentProfile.avatar_url} 
-                                alt="Profile" 
-                                width={128} 
-                                height={128} 
-                                className="avatar-image rounded-full object-cover h-32 w-32 border-4 border-primary/20 hover:border-primary/40 transition-all duration-200"
-                              />
-                              {!isViewMode && (
-                                <div className="avatar-overlay absolute inset-0 bg-black/60 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity duration-200">
-                                  <span>Change</span>
-                                </div>
-                              )}
-                            </div>
-                          ) : (
-                            <div 
-                              className={`avatar-circle h-32 w-32 rounded-full bg-primary text-white flex items-center justify-center text-4xl font-bold border-4 border-primary/20 hover:border-primary/40 transition-all duration-200 ${!isViewMode ? 'cursor-pointer' : ''}`}
-                              onClick={!isViewMode ? handleAvatarClick : undefined}
-                            >
-                              {studentProfile?.full_name?.charAt(0) || (user?.email?.charAt(0) || '?')}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="profile-details flex-1">
-                        <div className="info-grid grid gap-6 md:grid-cols-2">
-                          {studentProfile && (
-                            <>
-                              <div className="info-item">
-                                <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Name</label>
-                                <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">{studentProfile.full_name}</p>
-                              </div>
-
-                              <div className="info-item">
-                                <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Student ID</label>
-                                <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">{studentProfile.student_id}</p>
-                              </div>
-
-                              <div className="info-item">
-                                <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Faculty</label>
-                                <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">{studentProfile.faculty}</p>
-                              </div>
-
-                              <div className="info-item email-container">
-                                <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Email</label>
-                                <p className="text-lg font-semibold text-gray-800 dark:text-gray-100 email-display" title={studentProfile.email || ''}>
-                                  {studentProfile.email}
-                                </p>
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      </div>
+                    <div className="info-item email-container">
+                      <label htmlFor="email">Email</label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={studentProfile?.email || ''}
+                        disabled
+                        className="w-full p-2"
+                      />
                     </div>
                   </div>
-                )}
-              </div>
+
+                  <div className="flex gap-3 mt-6">
+                    <button 
+                      type="button" 
+                      onClick={() => setIsEditing(false)} 
+                      className="cancel-edit-button flex-1 py-2 px-4 rounded-lg"
+                    >
+                      Cancel
+                    </button>
+                    <button 
+                      type="submit" 
+                      className="save-button flex-1 bg-primary hover:bg-primary/90 text-white py-2 px-4 rounded-lg transition-all duration-200"
+                    >
+                      Save Changes
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <div className="profile-details">
+                  {/* Centered Profile Avatar */}
+                  <div className="flex justify-center mb-8">
+                    {studentProfile?.avatar_url ? (
+                      <div className="avatar-container">
+                        <Image 
+                          src={studentProfile.avatar_url} 
+                          alt="Profile" 
+                          width={128} 
+                          height={128} 
+                          className="avatar-image rounded-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="avatar-circle">
+                        {studentProfile?.full_name ? studentProfile.full_name.charAt(0).toUpperCase() : 'S'}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Profile Information Grid */}
+                  <div className="info-grid">
+                    <div className="info-item">
+                      <label>Name</label>
+                      <p>{studentProfile?.full_name || 'Not provided'}</p>
+                    </div>
+
+                    <div className="info-item">
+                      <label>Student ID</label>
+                      <p>{studentProfile?.student_id || 'Not provided'}</p>
+                    </div>
+
+                    <div className="info-item">
+                      <label>Faculty</label>
+                      <p>{studentProfile?.faculty || 'Not provided'}</p>
+                    </div>
+
+                    <div className="info-item email-container">
+                      <label>Email</label>
+                      <p>{studentProfile?.email || 'Not provided'}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
             
-            {/* Only show account management for own profile */}
+            {/* Account Management Section */}
             {!isViewMode && (
-              <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mt-6">
-                {/* Account Management Card */}
-                <div className="profile-card account-panel shadow-md dark:shadow-gray-800/10 md:col-span-1 md:max-w-3xl w-full mx-auto">
+              <div className="mt-6">
+                <div className="profile-card md:max-w-3xl w-full shadow-md dark:shadow-gray-800/10 mx-auto">
                   <div className="relative mb-6">
                     <h2 className="profile-title">Account Management</h2>
                   </div>
                   
-                  <div className="account-options">
-                    <div className="account-option">
-                      <h3 className="option-title">Security Settings</h3>
-                      <p className="option-description">
+                  <div className="account-management-grid">
+                    {/* Security Settings Box */}
+                    <div className="account-box">
+                      <h3 className="account-box-title">Security Settings</h3>
+                      <p className="account-box-description">
                         Manage your account password and security preferences
                       </p>
                       <button 
-                        className="option-button"
+                        className="change-password-button"
                         onClick={() => setShowPasswordModal(true)}
                       >
                         Change Password
                       </button>
                     </div>
                     
-                    <div className="account-option danger">
-                      <h3 className="option-title text-red-500">Danger Zone</h3>
-                      <p className="option-description">
+                    {/* Danger Zone Box */}
+                    <div className="account-box danger">
+                      <h3 className="account-box-title danger-title">Danger Zone</h3>
+                      <p className="account-box-description">
                         Permanently delete your account and all associated data
                       </p>
                       <button
                         onClick={() => setShowDeleteModal(true)}
-                        className="delete-account-button bg-red-500/10 hover:bg-red-500/20 text-red-500 font-medium py-2 px-4 rounded-lg border border-red-500/20 transition-all duration-200 w-full"
+                        className="delete-account-button"
                         type="button"
                       >
                         Delete Account
@@ -655,7 +644,6 @@ interface StudentProfile {
               </div>
             )}
             
-            {/* Privacy Notes */}
             <div className="privacy-notes mt-8">
               <p className="text-sm">
                 We respect your privacy. Your personal information is securely stored and will never be shared with third parties.
@@ -664,8 +652,7 @@ interface StudentProfile {
           </div>
         </main>
         
-        {/* Change Password Modal - only for own profile */}
-        {/* Change Password Modal */}
+        {/* Modals */}
         {showPasswordModal && (
           <div className="modal-overlay fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className="password-modal bg-gray-900 border border-gray-800 rounded-xl p-6 max-w-md w-full shadow-xl">
@@ -762,7 +749,6 @@ interface StudentProfile {
           </div>
         )}
         
-        {/* Delete Account Confirmation Modal */}
         {showDeleteModal && (
           <div className="modal-overlay fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className="delete-modal bg-gray-900 border border-gray-800 rounded-xl p-6 max-w-md w-full shadow-xl">

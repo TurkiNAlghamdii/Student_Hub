@@ -468,66 +468,66 @@ export default function Navbar({ showBack = false }: NavbarProps) {
         }
         
         .animated-students-icon {
-          animation: bounce 2s infinite ease-in-out;
-          filter: drop-shadow(0 0 2px #10b981);
+          animation: none;
+          filter: none;
         }
 
         .animated-chat-icon {
-          animation: chatPulse 1.5s infinite ease-in-out;
+          animation: none;
         }
 
         .animated-home-icon {
-          animation: float 3s infinite ease-in-out;
+          animation: none;
         }
 
         .animated-notification-icon {
-          animation: shake 5s infinite ease-in-out;
+          animation: none;
         }
 
         .animated-logout-icon:hover {
-          animation: shake 0.3s infinite;
+          animation: none;
           color: #ef4444;
         }
 
         .animated-profile-icon {
-          animation: glow 3s infinite;
+          animation: none;
         }
 
         .animated-admin-icon {
-          animation: glow 4s infinite;
+          animation: none;
         }
 
         .animated-dashboard-icon {
-          animation: float 4s infinite ease-in-out;
+          animation: none;
         }
 
         .animated-calendar-icon {
-          animation: pulse 4s infinite ease-in-out;
+          animation: none;
         }
 
         .animated-academic-icon {
-          animation: glow 3s infinite ease-in-out;
+          animation: none;
         }
 
         .animated-faculty-icon {
-          animation: fadeInOut 3s infinite ease-in-out;
+          animation: none;
         }
 
         .animated-training-icon {
-          animation: pulse 3.5s infinite ease-in-out;
+          animation: none;
         }
 
         .animated-events-icon {
-          animation: float 3s infinite ease-in-out;
+          animation: none;
         }
 
         .animated-toggle-icon:hover {
-          animation: spin 1s forwards;
+          animation: none;
           transform-origin: center;
         }
 
         .animated-search-icon {
-          animation: pulse 2s infinite ease-in-out;
+          animation: none;
         }
 
         .category-label {
