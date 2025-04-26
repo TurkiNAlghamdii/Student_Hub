@@ -1,3 +1,24 @@
+/**
+ * File Management Component
+ * 
+ * This client-side component provides an administrative interface for managing
+ * files uploaded to the Student Hub application. It allows administrators to view,
+ * search, filter, preview, download, and delete files, as well as view storage
+ * statistics and metrics.
+ * 
+ * Key features:
+ * - Comprehensive file listing with search and filter capabilities
+ * - File preview and download functionality
+ * - Storage usage statistics by course and file type
+ * - Batch file deletion for efficient management
+ * - Responsive design for various screen sizes
+ * 
+ * The component integrates with the application's theme system through consistent
+ * styling that adapts to both light and dark modes, ensuring a cohesive visual
+ * experience across the admin dashboard while maintaining readability and usability
+ * in both theme contexts.
+ */
+
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -15,6 +36,24 @@ import {
   DocumentTextIcon
 } from '@heroicons/react/24/outline'
 
+/**
+ * File Data Interface
+ * 
+ * Defines the structure of a file object retrieved from the database.
+ * This interface ensures type safety when working with file data throughout
+ * the management interface.
+ * 
+ * @property id - Unique identifier for the file
+ * @property file_name - Original name of the uploaded file
+ * @property file_size - Size of the file in bytes
+ * @property file_type - MIME type of the file (e.g., 'application/pdf')
+ * @property file_url - URL to access the file from storage
+ * @property description - Optional description of the file
+ * @property uploaded_at - Timestamp when the file was uploaded
+ * @property course_code - Course code the file is associated with
+ * @property user_id - ID of the user who uploaded the file
+ * @property student_id - Optional student ID of the uploader
+ */
 interface FileData {
   id: string
   file_name: string
@@ -28,6 +67,18 @@ interface FileData {
   student_id?: string | number
 }
 
+/**
+ * Storage Summary Interface
+ * 
+ * Defines the structure of the storage usage summary data.
+ * This interface is used to track and display storage metrics
+ * for administrative purposes.
+ * 
+ * @property totalFiles - Total number of files in the system
+ * @property totalSize - Total storage used in bytes
+ * @property byCourse - Breakdown of storage usage by course code
+ * @property byType - Breakdown of storage usage by file type
+ */
 interface StorageSummary {
   totalFiles: number
   totalSize: number
@@ -35,15 +86,33 @@ interface StorageSummary {
   byType: Record<string, { files: number, size: number }>
 }
 
+/**
+ * File Management Component
+ * 
+ * Main component for the file management interface in the admin dashboard.
+ * This component handles fetching, displaying, filtering, and managing files
+ * stored in the application's storage system.
+ * 
+ * @returns React component for file management interface
+ */
 export default function FileManagement() {
+  // State for storing all files and filtered files based on search/filters
   const [files, setFiles] = useState<FileData[]>([])
   const [filteredFiles, setFilteredFiles] = useState<FileData[]>([])
+  
+  // State for search functionality
   const [searchQuery, setSearchQuery] = useState('')
+  
+  // State for loading and error handling
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  
+  // State for file operations
   const [deletingFile, setDeletingFile] = useState<string | null>(null)
   const [selectedFile, setSelectedFile] = useState<FileData | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  
+  // State for storage usage statistics
   const [storageSummary, setStorageSummary] = useState<StorageSummary>({
     totalFiles: 0,
     totalSize: 0,

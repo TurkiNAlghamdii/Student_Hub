@@ -1,3 +1,17 @@
+/**
+ * Search Results CSS
+ *
+ * This stylesheet defines the visual appearance of the Search Results component,
+ * including dropdown positioning, theme-specific styling, and interactive elements.
+ * The stylesheet follows the application's theme system by using :root.dark and
+ * :root:not(.dark) selectors to apply appropriate styling based on the current theme.
+ *
+ * This approach prevents theme flashing during navigation and ensures consistent
+ * visual appearance across the application.
+ */
+
+/* Container for the search results dropdown
+ * Positioned absolutely below the search input */
 .search-results-container {
   position: absolute;
   top: 100%;
@@ -7,6 +21,9 @@
   margin-top: 0.5rem;
 }
 
+/* Main results container with frosted glass effect
+ * Uses backdrop-filter for a modern, semi-transparent appearance
+ * Limited height with scrolling for many results */
 .search-results {
   backdrop-filter: blur(8px);
   border-radius: 0.75rem;
@@ -15,7 +32,10 @@
   scrollbar-width: thin;
 }
 
-/* Dark theme styles */
+/* Dark theme styles for the results container
+ * Uses the :root.dark selector to apply dark theme styles
+ * This approach ensures proper theme application without flashing during page load
+ * Features dark background with subtle border and shadow */
 :root.dark .search-results {
   background-color: rgba(17, 24, 39, 0.95);
   border: 1px solid rgba(75, 85, 99, 0.3);
@@ -23,7 +43,10 @@
   scrollbar-color: rgba(16, 185, 129, 0.5) rgba(31, 41, 55, 0.5);
 }
 
-/* Light theme styles */
+/* Light theme styles for the results container
+ * Uses the :root:not(.dark) selector to apply light theme styles
+ * This approach ensures proper theme application without flashing during page load
+ * Features light background with subtle border and shadow */
 :root:not(.dark) .search-results {
   background-color: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(209, 213, 219, 0.5);
@@ -31,27 +54,40 @@
   scrollbar-color: rgba(16, 185, 129, 0.5) rgba(229, 231, 235, 0.5);
 }
 
+/* Custom scrollbar width for WebKit browsers (Chrome, Safari, Edge)
+ * Thin scrollbar for a modern, unobtrusive appearance */
 .search-results::-webkit-scrollbar {
   width: 6px;
 }
 
-/* Dark theme scrollbar track */
+/* Dark theme scrollbar track for WebKit browsers
+ * Uses a dark background that matches the dark theme palette
+ * Rounded corners for a modern appearance */
 :root.dark .search-results::-webkit-scrollbar-track {
   background: rgba(31, 41, 55, 0.5);
   border-radius: 3px;
 }
 
-/* Light theme scrollbar track */
+/* Light theme scrollbar track for WebKit browsers
+ * Uses a light gray background that matches the light theme palette
+ * Rounded corners for a modern appearance */
 :root:not(.dark) .search-results::-webkit-scrollbar-track {
   background: rgba(229, 231, 235, 0.5);
   border-radius: 3px;
 }
 
+/* Scrollbar thumb (the draggable part) for WebKit browsers
+ * Uses the brand green color with transparency for both themes
+ * Rounded corners to match the track style */
 .search-results::-webkit-scrollbar-thumb {
   background-color: rgba(16, 185, 129, 0.5);
   border-radius: 3px;
 }
 
+/* Individual search result item
+ * Uses flexbox for horizontal layout of code and details
+ * Includes padding for spacing and transition for hover effects
+ * Cursor pointer indicates clickability */
 .search-result-item {
   display: flex;
   align-items: center;
@@ -60,30 +96,44 @@
   transition: all 0.2s ease;
 }
 
-/* Dark theme border */
+/* Dark theme border for result items
+ * Subtle separator between items with low opacity
+ * Uses a color that complements the dark background */
 :root.dark .search-result-item {
   border-bottom: 1px solid rgba(75, 85, 99, 0.2);
 }
 
-/* Light theme border */
+/* Light theme border for result items
+ * Subtle separator between items with low opacity
+ * Uses a color that complements the light background */
 :root:not(.dark) .search-result-item {
   border-bottom: 1px solid rgba(209, 213, 219, 0.3);
 }
 
+/* Remove bottom border from the last item
+ * Prevents double borders at the bottom of the container */
 .search-result-item:last-child {
   border-bottom: none;
 }
 
-/* Dark theme hover */
+/* Dark theme hover effect for result items
+ * Slightly darker background on hover for visual feedback
+ * Maintains semi-transparency for the frosted glass effect */
 :root.dark .search-result-item:hover {
   background-color: rgba(31, 41, 55, 0.7);
 }
 
-/* Light theme hover */
+/* Light theme hover effect for result items
+ * Slightly darker background on hover for visual feedback
+ * Maintains semi-transparency for the frosted glass effect */
 :root:not(.dark) .search-result-item:hover {
   background-color: rgba(243, 244, 246, 0.7);
 }
 
+/* Course code badge
+ * Uses a monospace font for code-like appearance
+ * Green background with transparency works in both themes
+ * Fixed minimum width ensures consistent alignment */
 .search-result-code {
   background-color: rgba(16, 185, 129, 0.2);
   padding: 0.25rem 0.5rem;
@@ -95,51 +145,76 @@
   text-align: center;
 }
 
-/* Dark theme code color */
+/* Dark theme text color for course code
+ * Bright green for good contrast against dark background
+ * Uses the brand green color for consistency */
 :root.dark .search-result-code {
   color: rgb(16, 185, 129);
 }
 
-/* Light theme code color */
+/* Light theme text color for course code
+ * Darker green for good contrast against light background
+ * Uses a darker shade of the brand green color */
 :root:not(.dark) .search-result-code {
   color: rgb(5, 150, 105);
 }
 
+/* Container for course name and faculty
+ * Uses flex grow to take up remaining space
+ * Allows the course code to maintain fixed width */
 .search-result-details {
   flex: 1;
 }
 
+/* Course name styling
+ * Medium font weight for emphasis without being too bold
+ * Small bottom margin for spacing from faculty info */
 .search-result-name {
   font-weight: 500;
   margin-bottom: 0.25rem;
 }
 
-/* Dark theme name color */
+/* Dark theme text color for course name
+ * Light gray for good contrast against dark background
+ * Not pure white to reduce eye strain */
 :root.dark .search-result-name {
   color: rgb(229, 231, 235);
 }
 
-/* Light theme name color */
+/* Light theme text color for course name
+ * Dark gray for good contrast against light background
+ * Not pure black to reduce eye strain */
 :root:not(.dark) .search-result-name {
   color: rgb(31, 41, 55);
 }
 
+/* Faculty information container
+ * Uses flexbox to align icon and text
+ * Smaller font size for secondary information */
 .search-result-faculty {
   display: flex;
   align-items: center;
   font-size: 0.7rem;
 }
 
-/* Dark theme faculty color */
+/* Dark theme text color for faculty information
+ * Medium gray for secondary information
+ * Less contrast than the course name for visual hierarchy */
 :root.dark .search-result-faculty {
   color: rgb(156, 163, 175);
 }
 
-/* Light theme faculty color */
+/* Light theme text color for faculty information
+ * Medium gray for secondary information
+ * Less contrast than the course name for visual hierarchy */
 :root:not(.dark) .search-result-faculty {
   color: rgb(107, 114, 128);
 }
 
+/* Faculty badge styling
+ * Creates a pill-shaped badge with subtle green background
+ * Small size and padding for compact appearance
+ * Green border and background work in both themes */
 .search-result-faculty {
   font-size: 0.75rem;
   display: inline-flex;
@@ -152,22 +227,33 @@
   width: fit-content;
 }
 
+/* No results message container
+ * Centered text with padding
+ * Slightly smaller font size than normal content */
 .search-result.no-results {
   padding: 1rem;
   text-align: center;
   font-size: 0.875rem;
 }
 
-/* Dark theme no results color */
+/* Dark theme text color for no results message
+ * Medium gray that's visible but not too prominent
+ * Matches the style of other secondary text in dark mode */
 :root.dark .no-results {
   color: rgb(156, 163, 175);
 }
 
-/* Light theme no results color */
+/* Light theme text color for no results message
+ * Medium gray that's visible but not too prominent
+ * Matches the style of other secondary text in light mode */
 :root:not(.dark) .no-results {
   color: rgb(107, 114, 128);
 }
 
+/* Empty state message styling
+ * Centered, italic text with padding
+ * Gray color works in both themes but will be slightly
+ * less visible in light mode (still accessible) */
 .search-result-empty {
   padding: 1rem;
   text-align: center;

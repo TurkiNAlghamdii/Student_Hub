@@ -1,3 +1,25 @@
+/**
+ * Material Reports Table Component
+ * 
+ * This component provides an administrative interface for managing reported
+ * course materials in the Student Hub application. It allows administrators to
+ * review, approve, or delete materials that have been flagged by users for
+ * various reasons such as copyright violations, inappropriate content, or
+ * other policy violations.
+ * 
+ * Key features:
+ * - Comprehensive list of reported materials with detailed information
+ * - Material preview functionality
+ * - Ability to approve or remove reported materials
+ * - Status tracking for report resolution
+ * - Animation effects for smooth user experience
+ * 
+ * The component integrates with the application's theme system through consistent
+ * styling that adapts to both light and dark modes, ensuring a cohesive visual
+ * experience across the admin dashboard while maintaining readability and usability
+ * in both theme contexts.
+ */
+
 import React, { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { format } from 'date-fns'
@@ -13,6 +35,24 @@ import {
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
 
+/**
+ * Reported Material Interface
+ * 
+ * Defines the structure of a reported material object retrieved from the database.
+ * This interface ensures type safety when working with reported material data
+ * throughout the management interface.
+ * 
+ * @property id - Unique identifier for the report
+ * @property material_id - Identifier for the reported material
+ * @property reason - Category of the report (e.g., 'copyright', 'inappropriate')
+ * @property details - Optional additional details provided by the reporter
+ * @property status - Current status of the report (e.g., 'pending', 'resolved')
+ * @property created_at - Timestamp when the report was created
+ * @property updated_at - Timestamp when the report was last updated
+ * @property reporter_id - Identifier of the user who submitted the report
+ * @property reporter - Object containing information about the reporter
+ * @property material - Object containing information about the reported material
+ */
 interface ReportedMaterial {
   id: string // report id
   material_id: string
@@ -44,10 +84,28 @@ interface ReportedMaterial {
   }
 }
 
+/**
+ * Material Reports Table Component
+ * 
+ * Main component for managing reported course materials in the admin dashboard.
+ * This component handles fetching, displaying, and processing reports of
+ * potentially problematic course materials uploaded by users.
+ * 
+ * The component implements theme-aware styling that adapts to the application's
+ * light or dark theme, ensuring consistent visual appearance and readability
+ * across theme changes.
+ * 
+ * @returns React component for material reports management interface
+ */
 export default function MaterialReportsTable() {
+  // State for storing and managing reported materials
   const [reports, setReports] = useState<ReportedMaterial[]>([])
+  
+  // State for loading and error handling
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  
+  // State for tracking which report is currently being processed
   const [processingReportId, setProcessingReportId] = useState<string | null>(null)
   const [selectedReport, setSelectedReport] = useState<ReportedMaterial | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)

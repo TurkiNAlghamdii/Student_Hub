@@ -120,6 +120,8 @@
 
 .widget-content {
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .widget-description {
@@ -127,6 +129,73 @@
   font-size: 0.925rem;
   margin-bottom: 1.5rem;
 }
+
+/* Prompt Suggestions Styling */
+.prompt-suggestions-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.prompt-suggestions-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted-foreground);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.suggestion-icon {
+  width: 18px;
+  height: 18px;
+  color: #10b981;
+}
+
+.prompt-suggestions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.prompt-suggestion-button {
+  @apply rounded-lg text-sm transition-all duration-200 ease-in-out;
+  padding: 0.75rem;
+  text-align: left;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Light mode styling */
+:root:not(.dark) .prompt-suggestion-button {
+  background-color: rgba(16, 185, 129, 0.05);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+:root:not(.dark) .prompt-suggestion-button:hover {
+  background-color: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+/* Dark mode styling */
+.dark .prompt-suggestion-button {
+  background-color: rgba(26, 26, 26, 0.5); /* Slightly transparent to blend with container */
+  border: 1px solid var(--card-border);
+  box-shadow: none;
+}
+
+.dark .prompt-suggestion-button:hover {
+  @apply transform scale-[1.02];
+  background-color: rgba(31, 41, 55, 0.5); /* Slightly transparent secondary */
+  border: 1px solid var(--card-border);
+}
+
+/* No more category-specific colored borders */
 
 /* For smaller screens, make it responsive */
 @media (max-width: 768px) {

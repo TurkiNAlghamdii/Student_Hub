@@ -1,82 +1,69 @@
-# Student Hub
+# Student Hub 🎓
 
-A modern web application for university students to access course information, chat with peers, view events, and manage their academic profiles.
+Hey there! Welcome to Student Hub - a one-stop platform I built to make student life easier. This app helps students keep track of courses, chat with classmates, calculate GPA, and stay on top of university events and notifications.
 
-## Features
+## What can you do with Student Hub?
 
-- **Course Search**: Search for courses by code or name
-- **Course Details**: View detailed information about each course
-- **User Authentication**: Secure login and registration system
-- **Profile Management**: Update and manage student profiles
-- **Responsive Design**: Works on desktop and mobile devices
+- 📚 **Browse and search courses** - Find what you need without digging through university websites
+- 💬 **Chat** - Discussions about the courses
+- 📊 **Calculate your GPA** - Keep track of your academic progress
+- 📅 **Check academic calendar** - Never miss important university dates
+- 🔔 **Get notifications** - Stay updated with announcements and events
+- 🌓 **Switch between light/dark modes** - Easy on the eyes, day or night
 
-## Tech Stack
+## Tech we used
 
-- **Frontend**: Next.js, React, TailwindCSS
-- **Backend**: Next.js API Routes
-- **Database**: Supabase
-- **Authentication**: Supabase Auth
-- **Styling**: TailwindCSS with custom CSS
+Built this with some cool modern tech:
 
-## Getting Started
+- **Next.js & React** - For a fast, responsive frontend
+- **Supabase** - Handles our database and authentication
+- **TailwindCSS** - Makes everything look good without tons of custom CSS
+- **TypeScript** - Keeps the code clean and maintainable
 
-### Prerequisites
+## About this app
 
-- Node.js 18+ and npm
-- Supabase account and project
+This is a private application developed for internal use. It's not intended for public distribution or installation.
 
-### Environment Setup
+## Project structure
 
-Create a `.env.local` file in the root directory with the following variables:
-
-```
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-```
-
-### Installation
-
-1. Clone the repository
-   ```
-   git clone https://github.com/yourusername/student-hub.git
-   cd student-hub
-   ```
-
-2. Install dependencies
-   ```
-   npm install
-   ```
-
-3. Run the development server
-   ```
-   npm run dev
-   ```
-
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
+- `/src/components` - Reusable UI components
+- `/src/contexts` - React context providers for state management
+- `/src/lib` - Utility functions and API clients
+- `/src/pages` - Application routes and API endpoints
+- `/src/styles` - Global styles and theme configuration
 
 ## Database Schema
 
-The application uses the following main tables in Supabase:
+The app uses these main tables in Supabase:
 
-- **courses**: Stores course information
-- **students**: Stores student profiles
-- **events**: Stores university events
-- **notifications**: Stores user notifications
+- **courses** - Course information and details
+- **students** - Student profiles and preferences
+- **events** - University events and deadlines
+- **notifications** - User notifications and alerts
 
-## Deployment
+## Theme System
 
-This project can be deployed on Vercel:
+The app features a robust theme system with both light and dark modes:
 
-1. Push your code to GitHub
-2. Import the project in Vercel
-3. Set up the environment variables
-4. Deploy
+- Automatically detects user's system preference on first visit
+- Persists theme preference in localStorage
+- Prevents flash of incorrect theme during page navigation
+- Seamlessly transitions between themes with smooth animations
+- All components are theme-aware with consistent styling
 
-## Contributing
+## Development Notes
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+This is an internal project with comprehensive documentation in the codebase:
+
+- All components have detailed JSDoc comments
+- Context providers include usage examples
+- Utility functions are well-documented
+- CSS includes explanatory comments for theming
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is open source and available under the MIT License.
+
+---
+
+Built with ❤️ for students, by students

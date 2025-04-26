@@ -1,3 +1,26 @@
+/**
+ * Files List Component
+ * 
+ * This client-side component displays a list of uploaded files for a specific course,
+ * with advanced filtering, sorting, and management capabilities.
+ * 
+ * Key features:
+ * - File listing with metadata (name, size, type, uploader, date)
+ * - Search functionality to filter files by name
+ * - Sorting options (newest, oldest, name, size, type)
+ * - File type filtering (documents, spreadsheets, presentations, etc.)
+ * - Favoriting/starring files for quick access
+ * - Download functionality
+ * - File deletion (for admins and file owners)
+ * - File reporting for inappropriate content
+ * - Responsive grid and list view modes
+ * 
+ * The component integrates with the application's theme system through CSS classes
+ * in the filesList.css file that adapt to both light and dark modes based on the
+ * root element's theme class. This prevents theme flashing during navigation by using
+ * CSS variables and theme-aware selectors rather than hardcoded color values in the JSX.
+ */
+
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
@@ -28,12 +51,35 @@ import './filesList.css';
 import ReportMaterialDialog from './ReportMaterialDialog';
 import { toast } from 'react-hot-toast';
 
-
+/**
+ * User Information Interface
+ * 
+ * Defines the structure of user information associated with a file upload.
+ * 
+ * @property full_name - The full name of the user who uploaded the file
+ * @property avatar_url - Optional URL to the user's avatar image
+ */
 interface UserInfo {
   full_name: string;
   avatar_url?: string;
 }
 
+/**
+ * Course File Interface
+ * 
+ * Defines the structure of a file object retrieved from the database.
+ * This interface ensures type safety when working with file data.
+ * 
+ * @property id - Unique identifier for the file
+ * @property file_name - Name of the uploaded file
+ * @property file_size - Size of the file in bytes
+ * @property file_type - MIME type or extension of the file
+ * @property file_url - URL to access/download the file
+ * @property description - Optional description provided by the uploader
+ * @property uploaded_at - Timestamp when the file was uploaded
+ * @property user_id - ID of the user who uploaded the file
+ * @property user_info - Additional information about the uploader
+ */
 interface CourseFile {
   id: string;
   file_name: string;
@@ -46,17 +92,75 @@ interface CourseFile {
   user_info: UserInfo;
 }
 
+/**
+ * Files List Props Interface
+ * 
+ * Configuration options for the FilesList component.
+ * 
+ * @property courseCode - The course code to fetch files for
+ * @property refreshTrigger - A number that changes to trigger a refresh of the file list
+ */
 interface FilesListProps {
   courseCode: string;
   refreshTrigger: number;
 }
 
+/**
+ * Sort Option Type
+ * 
+ * Defines the available sorting options for the file list.
+ * - newest: Most recently uploaded files first
+ * - oldest: Oldest uploaded files first
+ * - name: Alphabetical sorting by file name
+ * - size: Sort by file size (smallest to largest)
+ * - type: Sort by file type/extension
+ */
 type SortOption = 'newest' | 'oldest' | 'name' | 'size' | 'type';
+
+/**
+ * View Mode Type
+ * 
+ * Defines the available view modes for displaying files.
+ * - list: Compact list view with detailed information
+ * - grid: Visual grid view with file thumbnails
+ */
 type ViewMode = 'list' | 'grid';
+
+/**
+ * Filter Type
+ * 
+ * Defines the available filter categories for the file list.
+ * - all: Show all file types
+ * - document: Show only document files (PDF, DOC, DOCX, TXT)
+ * - spreadsheet: Show only spreadsheet files (XLS, XLSX, CSV)
+ * - presentation: Show only presentation files (PPT, PPTX)
+ * - image: Show only image files (JPG, PNG, GIF)
+ * - archive: Show only archive files (ZIP, RAR)
+ * - starred: Show only files marked as favorites
+ */
 type FilterType = 'all' | 'document' | 'spreadsheet' | 'presentation' | 'image' | 'archive' | 'starred';
 
+/**
+ * Files List Component
+ * 
+ * Displays a comprehensive list of files uploaded to a specific course with
+ * advanced filtering, sorting, and management capabilities. This component handles
+ * fetching files, user interactions, and various display modes.
+ * 
+ * The component uses CSS classes defined in filesList.css that adapt to the
+ * application's theme system through :root.dark and :root:not(.dark) selectors,
+ * ensuring consistent visual appearance across theme changes and preventing
+ * theme flashing during navigation.
+ * 
+ * @param courseCode - The course code to fetch files for
+ * @param refreshTrigger - A number that changes to trigger a refresh of the file list
+ * @returns React component for displaying and managing course files
+ */
 const FilesList: React.FC<FilesListProps> = ({ courseCode, refreshTrigger }) => {
+  // Get current user from authentication context
   const { user } = useAuth();
+  
+  // State for files data and UI management
   const [files, setFiles] = useState<CourseFile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -70,6 +174,8 @@ const FilesList: React.FC<FilesListProps> = ({ courseCode, refreshTrigger }) => 
   const [showSkeletons, setShowSkeletons] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(true);
+  
+  // State for tracking async operations on specific files
   const [isTogglingFavorite, setIsTogglingFavorite] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [isDownloading, setIsDownloading] = useState<string | null>(null);

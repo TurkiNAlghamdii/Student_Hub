@@ -1,9 +1,38 @@
+/**
+ * NotificationsContext Module
+ *
+ * This context provides notification management throughout the application.
+ * It handles fetching, caching, and updating notification data from Supabase,
+ * as well as tracking read/unread status and providing notification counts.
+ *
+ * Key features:
+ * - Fetches and caches user notifications
+ * - Tracks unread notification count
+ * - Provides functions to mark notifications as read
+ * - Implements optimistic updates for better UX
+ * - Handles loading and error states
+ * - Integrates with the auth system
+ * - Implements smart caching to reduce API calls
+ */
+
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
 import { supabase } from '@/lib/supabase';
 
+/**
+ * Interface representing a notification object from the database
+ * 
+ * @property id - Unique identifier for the notification
+ * @property type - Type of notification (e.g., 'announcement', 'event')
+ * @property title - Title/heading of the notification
+ * @property message - Main content of the notification
+ * @property link - Optional URL to navigate to when clicking the notification
+ * @property is_read - Boolean indicating if the notification has been read
+ * @property created_at - ISO date string when the notification was created
+ * @property user_id - ID of the user this notification belongs to
+ */
 export interface Notification {
   id: string;
   type: string;
@@ -15,6 +44,18 @@ export interface Notification {
   user_id: string;
 }
 
+/**
+ * Interface defining the shape of the notifications context
+ * 
+ * @property notifications - Array of notification objects
+ * @property unreadCount - Number of unread notifications
+ * @property loading - Boolean indicating if notifications are being fetched
+ * @property error - Error message if notification fetching failed, or null
+ * @property fetchNotifications - Function to fetch notifications with optional limit
+ * @property markAsRead - Function to mark a single notification as read
+ * @property markAllAsRead - Function to mark all notifications as read
+ * @property lastFetched - Timestamp of when notifications were last fetched, or null
+ */
 interface NotificationsContextType {
   notifications: Notification[];
   unreadCount: number;
@@ -26,6 +67,10 @@ interface NotificationsContextType {
   lastFetched: number | null;
 }
 
+/**
+ * Create the notifications context with default values
+ * These defaults are used before the provider is initialized
+ */
 const NotificationsContext = createContext<NotificationsContextType>({
   notifications: [],
   unreadCount: 0,
@@ -37,17 +82,46 @@ const NotificationsContext = createContext<NotificationsContextType>({
   lastFetched: null
 });
 
-// Cache expiration time in milliseconds (5 minutes)
+/**
+ * Cache expiration time in milliseconds (5 minutes)
+ * This determines how long to use cached notifications before fetching fresh data
+ */
 const CACHE_EXPIRATION = 5 * 60 * 1000;
 
+/**
+ * NotificationsProvider component that wraps the application and provides notifications context
+ * 
+ * This provider handles:
+ * - Fetching notifications from Supabase
+ * - Caching notifications to reduce API calls
+ * - Tracking read/unread status
+ * - Updating notification state
+ * 
+ * @param props - Component props
+ * @param props.children - Child components to be wrapped with the notifications context
+ * @returns React component that provides notifications context to its children
+ */
 export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // State for the list of notifications
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  // State for the count of unread notifications
   const [unreadCount, setUnreadCount] = useState(0);
+  // Loading state while notifications are being fetched
   const [loading, setLoading] = useState(false);
+  // Error state if notification fetching fails
   const [error, setError] = useState<string | null>(null);
+  // Timestamp of when notifications were last fetched
   const [lastFetched, setLastFetched] = useState<number | null>(null);
+  // Get current user from auth context
   const { user } = useAuth();
 
+  /**
+   * Fetches notifications from Supabase for the current user
+   * Implements caching to reduce API calls
+   * 
+   * @param limit - Maximum number of notifications to fetch (default: 50)
+   * @returns Promise that resolves when notifications are fetched
+   */
   const fetchNotifications = useCallback(async (limit = 50) => {
     if (!user) return;
 
@@ -63,6 +137,7 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       console.log(`Fetching notifications for user: ${user.id}`);
 
+      // Query Supabase for notifications
       const { data, error } = await supabase
         .from('notifications')
         .select('*')
@@ -79,6 +154,7 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
       
       console.log(`Found ${data?.length || 0} notifications, ${unreadNotifications.length} unread`);
       
+      // Update state with fetched data
       setNotifications(data || []);
       setUnreadCount(unreadNotifications.length);
       setLastFetched(Date.now());
@@ -93,21 +169,29 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     } finally {
       setLoading(false);
     }
-  }, [user?.id]);
+  }, [user?.id, notifications.length, lastFetched]);
 
+  /**
+   * Marks a single notification as read
+   * Uses optimistic updates for better UX
+   * 
+   * @param id - ID of the notification to mark as read
+   * @returns Promise that resolves when the notification is marked as read
+   */
   const markAsRead = useCallback(async (id: string) => {
     if (!user) return;
 
     try {
-      // Optimistic update
+      // Optimistic update - update UI immediately before API call completes
       setNotifications(prev => 
         prev.map(notification => 
           notification.id === id ? { ...notification, is_read: true } : notification
         )
       );
+      // Decrement unread count
       setUnreadCount(prev => Math.max(0, prev - 1));
 
-      // Make API request
+      // Make API request to update in database
       const { error } = await supabase
         .from('notifications')
         .update({ is_read: true })
@@ -130,15 +214,21 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [user?.id]);
 
+  /**
+   * Marks all notifications as read for the current user
+   * Uses optimistic updates for better UX
+   * 
+   * @returns Promise that resolves when all notifications are marked as read
+   */
   const markAllAsRead = useCallback(async () => {
     if (!user) return;
 
     try {
-      // Optimistic update
+      // Optimistic update - update UI immediately before API call completes
       setNotifications(prev => prev.map(notification => ({ ...notification, is_read: true })));
       setUnreadCount(0);
 
-      // Make API request
+      // Make API request to update in database
       const { error } = await supabase
         .from('notifications')
         .update({ is_read: true })
@@ -161,7 +251,13 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [user?.id]);
 
-  // Setup real-time subscription for new notifications
+  /**
+   * Effect for real-time notification subscription (currently disabled)
+   * 
+   * This would set up a real-time subscription to notification changes,
+   * but is currently disabled to prevent excessive requests to Supabase.
+   * Instead, we rely on manual refresh and polling.
+   */
   useEffect(() => {
     // DISABLED - Causing too many requests
     console.log('Real-time notifications subscription is DISABLED to prevent excessive requests');
@@ -234,7 +330,11 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     */
   }, []);
 
-  // Initial fetch of notifications
+  /**
+   * Effect for initial fetch of notifications
+   * Only runs once when the component mounts and the user is available
+   * Uses a slight delay to avoid race conditions during app startup
+   */
   useEffect(() => {
     // Only fetch once when the component mounts and the user is available
     const alreadyFetched = !!lastFetched;
@@ -250,10 +350,12 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       }, 1000);
       
+      // Clean up timeout on unmount
       return () => clearTimeout(timeoutId);
     }
   }, [user?.id, lastFetched, fetchNotifications]);
 
+  // Create the context value object with current state and functions
   const contextValue = {
     notifications,
     unreadCount,
@@ -265,6 +367,7 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     lastFetched
   };
 
+  // Provide notifications context to children components
   return (
     <NotificationsContext.Provider value={contextValue}>
       {children}
@@ -272,4 +375,10 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
+/**
+ * Custom hook to access the notifications context throughout the application
+ * Provides a convenient way to access notification state and functions
+ * 
+ * @returns The current notifications context value
+ */
 export const useNotifications = () => useContext(NotificationsContext); 

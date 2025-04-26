@@ -1,3 +1,21 @@
+/**
+ * Course Client Component
+ * 
+ * This client-side component provides a comprehensive course detail page that allows students to:
+ * - View course information (code, name, description, faculty)
+ * - Enroll in courses
+ * - Access course materials (view and upload)
+ * - Participate in course discussions
+ * - Access AI chat assistance for course-specific questions
+ * 
+ * The component includes authentication checks, enrollment management,
+ * file handling, and navigation features. It uses Supabase for data storage
+ * and retrieval through API endpoints.
+ * 
+ * The component respects the application's theme system by using CSS classes
+ * that work with both light and dark modes via the root element class.
+ */
+
 'use client'
 
 import React, { useState, useEffect } from 'react'
@@ -20,6 +38,17 @@ import {
 import './course.css'
 import ReactMarkdown from 'react-markdown'
 
+/**
+ * Course Details Interface
+ * 
+ * Defines the structure of course data received from the API.
+ * 
+ * @property course_code - Unique identifier for the course (e.g., 'CS101')
+ * @property course_name - Full name of the course
+ * @property course_description - Detailed description of the course content
+ * @property Instractions - Optional markdown-formatted instructions for the course
+ * @property faculty - Information about the faculty teaching the course
+ */
 interface CourseDetails {
   course_code: string
   course_name: string
@@ -30,12 +59,41 @@ interface CourseDetails {
   }
 }
 
+/**
+ * Course Client Props Interface
+ * 
+ * Defines the props passed to the CourseClient component from the parent page component.
+ * 
+ * @property course - Course details object or null if course data is not available
+ * @property error - Error message or null if no error occurred during data fetching
+ */
 interface CourseClientProps {
   course: CourseDetails | null
   error: string | null
 }
 
+/**
+ * CourseClient Component
+ * 
+ * Main component for displaying course details and providing course-related functionality.
+ * Handles user enrollment, file management, and navigation to course resources.
+ * 
+ * @param props - Component props containing course data and error information
+ * @returns Rendered course detail page with appropriate states for loading, error, or course content
+ */
 export default function CourseClient({ course, error }: CourseClientProps) {
+  /**
+   * Component State
+   * 
+   * - router: Next.js router for navigation
+   * - user/authLoading: Authentication state from AuthContext
+   * - isAdding: Loading state during course enrollment
+   * - isAlreadyAdded: Tracks if user is already enrolled in the course
+   * - addStatus: Feedback message after enrollment attempt
+   * - checkingStatus: Loading state during enrollment status check
+   * - refreshFilesList: Trigger to refresh the files list after upload
+   * - showUploadSection: Controls visibility of file upload section
+   */
   const router = useRouter()
   const { user, loading: authLoading } = useAuth()
   const [isAdding, setIsAdding] = useState(false)
@@ -45,14 +103,29 @@ export default function CourseClient({ course, error }: CourseClientProps) {
   const [refreshFilesList, setRefreshFilesList] = useState(0)
   const [showUploadSection, setShowUploadSection] = useState(false)
 
-  // Check authentication and redirect if not logged in
+  /**
+   * Authentication Check Effect
+   * 
+   * Redirects unauthenticated users to the login page.
+   * This ensures that only authenticated users can access course details.
+   * The check runs whenever authentication state changes.
+   */
   useEffect(() => {
     if (!authLoading && !user) {
       router.push('/login')
     }
   }, [user, authLoading, router])
 
-  // Check if course is already added
+  /**
+   * Course Enrollment Check Effect
+   * 
+   * Checks if the current user is already enrolled in this course by fetching
+   * the user's enrolled courses from the API and comparing course codes.
+   * 
+   * This determines whether to show the "Add to My Courses" button or
+   * the "Already Enrolled" indicator. The check runs whenever the user,
+   * course data, or authentication state changes.
+   */
   useEffect(() => {
     const checkIfCourseIsAdded = async () => {
       if (authLoading || !user || !course) {
@@ -87,7 +160,19 @@ export default function CourseClient({ course, error }: CourseClientProps) {
     checkIfCourseIsAdded()
   }, [user, course, authLoading])
 
-  // Handle adding a course to user's selection
+  /**
+   * Course Enrollment Handler
+   * 
+   * Handles the process of enrolling a user in the current course.
+   * The function includes several checks and validations:
+   * 1. Verifies user is authenticated (redirects to login if not)
+   * 2. Checks if user is already enrolled (prevents duplicate enrollments)
+   * 3. Makes API request to add the course to user's enrolled courses
+   * 4. Provides appropriate feedback based on the result
+   * 
+   * The function manages loading states and error handling to ensure
+   * a smooth user experience during the enrollment process.
+   */
   const handleAddCourse = async () => {
     if (!user) {
       router.push('/login')
@@ -140,16 +225,39 @@ export default function CourseClient({ course, error }: CourseClientProps) {
     }
   }
 
+  /**
+   * File Upload Success Handler
+   * 
+   * Called when a file is successfully uploaded to the course.
+   * Hides the upload section and triggers a refresh of the files list
+   * to show the newly uploaded file.
+   */
   const handleFileUploadSuccess = () => {
     setShowUploadSection(false)
     setRefreshFilesList(prev => prev + 1)
   }
 
+  /**
+   * Upload Section Toggle Handler
+   * 
+   * Toggles the visibility of the file upload section.
+   * This allows users to show/hide the upload form as needed.
+   */
   const toggleUploadSection = () => {
     setShowUploadSection(prev => !prev)
   }
 
-  // Function to navigate to chat with course description
+  /**
+   * Chat Navigation Handler
+   * 
+   * Prepares for and navigates to the course-specific AI chat assistant.
+   * Stores the course description and name in session storage so the chat
+   * component can provide context-aware assistance related to this specific course.
+   * 
+   * This enables the AI to understand what course the user is asking about
+   * and provide more relevant responses without requiring the user to explain
+   * the course context in their first message.
+   */
   const handleNavigateToChat = () => {
     if (course) {
       // Save course description and name to session storage
@@ -160,6 +268,19 @@ export default function CourseClient({ course, error }: CourseClientProps) {
     }
   }
 
+  /**
+   * Conditional Rendering Logic
+   * 
+   * The component has several possible render states based on loading and data availability:
+   * 1. Authentication loading - Shows a loading spinner while checking auth state
+   * 2. Unauthenticated - Returns null (will redirect to login via useEffect)
+   * 3. Course data loading - Shows a loading spinner while fetching course data
+   * 4. Error state - Shows error message with back button (rendered below)
+   * 5. Normal state - Shows full course details (rendered below)
+   * 
+   * This progressive rendering approach ensures users always see appropriate feedback
+   * while data is being loaded or when errors occur.
+   */
   if (authLoading) {
     return (
       <div className="loading-container">
@@ -181,6 +302,15 @@ export default function CourseClient({ course, error }: CourseClientProps) {
     )
   }
 
+  /**
+   * Error State Rendering
+   * 
+   * Displays an error message when course data couldn't be fetched or another error occurred.
+   * Provides a back button to return to the courses list page.
+   * 
+   * The error UI maintains the same layout structure as the main page for consistency
+   * and uses theme-compatible styling that works in both light and dark modes.
+   */
   if (error) {
     return (
       <div className="course-container">
@@ -206,6 +336,19 @@ export default function CourseClient({ course, error }: CourseClientProps) {
     )
   }
 
+  /**
+   * Main Component Render
+   * 
+   * Renders the complete course detail page with multiple sections:
+   * - Course header with metadata and enrollment actions
+   * - Course description section
+   * - Course instructions section (if available)
+   * - Course materials section with file list and upload functionality
+   * - Discussion section for course-related comments
+   * 
+   * The UI is designed to be responsive and uses theme-compatible styling
+   * that works in both light and dark modes through CSS classes.
+   */
   return (
     <div className="course-container">
       <Navbar />

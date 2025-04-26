@@ -1,3 +1,24 @@
+/**
+ * Navbar Component
+ * 
+ * This client-side component provides the main navigation interface for the Student Hub
+ * application. It includes a responsive top navigation bar and a collapsible sidebar
+ * with links to all major sections of the application.
+ * 
+ * Key features:
+ * - Responsive design that adapts to different screen sizes
+ * - Collapsible sidebar with compact/expanded modes
+ * - Search functionality for courses
+ * - User profile display and authentication controls
+ * - Role-based navigation (admin vs. student views)
+ * - Theme toggle integration
+ * 
+ * The component integrates with the application's theme system through CSS classes
+ * defined in Navbar.css that adapt to both light and dark modes based on the root
+ * element's theme class. This prevents theme flashing during navigation by using
+ * theme-aware selectors rather than hardcoded color values in the JSX.
+ */
+
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
@@ -31,10 +52,25 @@ import '../SearchResults/SearchResults.css'
 import Image from 'next/image'
 import { supabase } from '@/lib/supabase'
 
+/**
+ * Navbar Props Interface
+ * 
+ * @property showBack - Optional boolean to show a back button in the navbar
+ *                      (used for nested pages where navigation context is helpful)
+ */
 interface NavbarProps {
   showBack?: boolean
 }
 
+/**
+ * Course Interface
+ * 
+ * Defines the structure of course data used in search results.
+ * 
+ * @property course_code - Unique identifier for the course (e.g., 'CS101')
+ * @property course_name - Full name of the course
+ * @property faculty - Object containing faculty information
+ */
 interface Course {
   course_code: string
   course_name: string
@@ -43,6 +79,15 @@ interface Course {
   }
 }
 
+/**
+ * Student Profile Interface
+ * 
+ * Defines the structure of student profile data retrieved from Supabase.
+ * 
+ * @property id - Unique identifier for the student
+ * @property full_name - Optional full name of the student
+ * @property avatar_url - Optional URL to the student's avatar image
+ */
 interface StudentProfile {
   id: string
   full_name?: string
@@ -50,19 +95,44 @@ interface StudentProfile {
   // Other profile fields can be added as needed
 }
 
+/**
+ * Navbar Component
+ * 
+ * The main navigation component for the Student Hub application, providing access
+ * to all major sections and features. It includes a responsive top bar, collapsible
+ * sidebar, search functionality, and user profile management.
+ * 
+ * The component uses CSS classes defined in Navbar.css that adapt to the application's
+ * theme system, supporting both light and dark modes through the root element's theme
+ * class. This ensures consistent visual appearance across theme changes and prevents
+ * theme flashing during navigation.
+ * 
+ * @param showBack - Whether to show a back button in the navbar (default: false)
+ * @returns React component for the application navigation
+ */
 export default function Navbar({ showBack = false }: NavbarProps) {
   const router = useRouter()
   const { user, signOut } = useAuth()
+  
+  // Search state
   const [searchQuery, setSearchQuery] = useState('')
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [isSidebarClosing, setIsSidebarClosing] = useState(false)
-  const [isSidebarMounted, setIsSidebarMounted] = useState(false)
-  const [isBackdropActive, setIsBackdropActive] = useState(false)
   const [searchResults, setSearchResults] = useState<Course[]>([])
   const [showResults, setShowResults] = useState(false)
   const [isSearching, setIsSearching] = useState(false)
+  
+  // Sidebar animation states
+  // These work together to create smooth open/close transitions
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)      // Controls if sidebar is in the DOM
+  const [isSidebarClosing, setIsSidebarClosing] = useState(false) // Tracks if sidebar is in closing animation
+  const [isSidebarMounted, setIsSidebarMounted] = useState(false) // Controls when animations should start
+  const [isBackdropActive, setIsBackdropActive] = useState(false) // Controls backdrop visibility
+  
+  // User profile and role state
   const [studentProfile, setStudentProfile] = useState<StudentProfile | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
+  
+  // State for sidebar compact mode with localStorage persistence
+  // This lets users keep their preferred sidebar width between sessions
   const [isCompactMode, setIsCompactMode] = useState(() => {
     // Check localStorage for saved preference, default to false
     if (typeof window !== 'undefined') {
@@ -71,11 +141,14 @@ export default function Navbar({ showBack = false }: NavbarProps) {
     }
     return false
   })
+  
+  // Refs for managing search and sidebar functionality
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const searchContainerRef = useRef<HTMLDivElement>(null)
   const sidebarRef = useRef<HTMLDivElement>(null)
 
-  // Save compact mode preference
+  // Save compact mode preference whenever it changes
+  // This ensures user preference persists between sessions
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('sidebarCompact', isCompactMode.toString())
@@ -284,25 +357,34 @@ export default function Navbar({ showBack = false }: NavbarProps) {
     setIsCompactMode(prev => !prev)
   }
 
+  // Open sidebar with smooth animation sequence
+  // This function handles the entire opening animation flow
   const openSidebar = () => {
-    setIsSidebarOpen(true)
-    setIsSidebarClosing(false)
+    setIsSidebarOpen(true)      // First add sidebar to DOM
+    setIsSidebarClosing(false)  // Ensure we're not in closing state
     // Ensure DOM has time to mount the sidebar before animating
+    // Double requestAnimationFrame ensures browser has fully rendered the sidebar
+    // This prevents animation glitches and ensures smooth transitions
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        setIsSidebarMounted(true)
-        setIsBackdropActive(true)
+        setIsSidebarMounted(true)   // This triggers the entrance animations
+        setIsBackdropActive(true)   // Fade in the backdrop
       })
     })
   }
 
+  // Close sidebar with exit animations
+  // This triggers the closing animations before the sidebar is removed from DOM
+  // The actual removal happens in the transitionend event handler
   const closeSidebar = () => {
-    setIsSidebarClosing(true)
-    setIsSidebarMounted(false)
-    setIsBackdropActive(false)
+    setIsSidebarClosing(true)    // Start closing animation
+    setIsSidebarMounted(false)   // Stop showing menu items
+    setIsBackdropActive(false)   // Fade out backdrop
   }
 
-  // Setup menu items
+  // Define all sidebar navigation menu items
+  // Each item has category, label, icon and destination
+  // Categories are used to group items in the sidebar
   const menuItems = [
     // Dashboard category
     { 
@@ -698,6 +780,11 @@ export default function Navbar({ showBack = false }: NavbarProps) {
       {(isSidebarOpen || isSidebarClosing) && (
         <div 
           ref={sidebarRef}
+          // Apply different classes based on sidebar state for animations
+          // sidebar-enter: Initial position (off-screen)
+          // sidebar-enter-active: Animated entrance
+          // sidebar-closing: Exit animation
+          // sidebar-compact: Narrow width mode
           className={`sidebar ${!isSidebarMounted ? 'sidebar-enter' : 'sidebar-enter-active'} ${isSidebarClosing ? 'sidebar-closing' : ''} ${isCompactMode ? 'sidebar-compact' : ''}`}
         >
           <div className="sidebar-header">

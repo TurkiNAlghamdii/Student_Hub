@@ -1,3 +1,22 @@
+/**
+ * Course Management Component
+ * 
+ * This client-side component provides an administrative interface for managing
+ * courses in the Student Hub application. It allows administrators to create,
+ * edit, and delete courses, as well as add rich text descriptions using Markdown.
+ * 
+ * Key features:
+ * - Course listing with search functionality
+ * - Create and edit courses with rich text formatting
+ * - Markdown editor with formatting toolbar
+ * - Color selection for course styling
+ * - Responsive design for various screen sizes
+ * 
+ * The component integrates with the application's theme system through consistent
+ * styling that adapts to the dark theme used in the admin interface, ensuring
+ * a cohesive visual experience across the admin dashboard.
+ */
+
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
@@ -12,6 +31,20 @@ import {
 import ReactMarkdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 
+/**
+ * Course Interface
+ * 
+ * Defines the structure of a course object retrieved from the database.
+ * This interface ensures type safety when working with course data throughout
+ * the management interface.
+ * 
+ * @property course_code - Unique identifier for the course (e.g., 'CS101')
+ * @property course_name - Full name of the course
+ * @property description - Optional Markdown-formatted description of the course
+ * @property Instractions - Optional instructions for the course (note: typo in property name is preserved for database compatibility)
+ * @property section - Optional section identifier for the course
+ * @property created_at - Timestamp when the course was created
+ */
 interface Course {
   course_code: string
   course_name: string
@@ -21,13 +54,32 @@ interface Course {
   created_at: string
 }
 
-// Add a new Color interface
+/**
+ * Color Option Interface
+ * 
+ * Defines the structure of a color option for course styling.
+ * This interface is used to create a consistent set of color choices
+ * for administrators to select from when creating or editing courses.
+ * 
+ * @property name - Human-readable name of the color (e.g., 'Red')
+ * @property value - CSS hex color value (e.g., '#ef4444')
+ */
 interface ColorOption {
   name: string;
   value: string;
 }
 
-// Add color options
+/**
+ * Color Options Array
+ * 
+ * Predefined set of color options for course styling.
+ * These colors are used in the color picker when creating or editing courses,
+ * providing a consistent color palette that works well with the application's
+ * theme system in both light and dark modes.
+ * 
+ * The colors are based on the Tailwind CSS color palette for consistency
+ * with the rest of the application's styling.
+ */
 const colorOptions: ColorOption[] = [
   { name: 'Red', value: '#ef4444' },
   { name: 'Blue', value: '#3b82f6' },
@@ -40,7 +92,26 @@ const colorOptions: ColorOption[] = [
   { name: 'White', value: '#ffffff' },
 ];
 
-// Helper functions for text formatting
+/**
+ * Markdown Text Formatting Utilities
+ * 
+ * These helper functions provide rich text formatting capabilities for the
+ * Markdown editor, allowing administrators to easily add formatting to course
+ * descriptions without needing to know Markdown syntax.
+ */
+
+/**
+ * Insert Markdown Formatting
+ * 
+ * Inserts Markdown formatting tags around selected text in a textarea,
+ * or inserts default text if no text is selected. This function handles
+ * the cursor position and selection state to provide a seamless editing experience.
+ * 
+ * @param textArea - The textarea element to modify
+ * @param beforeText - Text to insert before the selection (e.g., '**' for bold)
+ * @param afterText - Text to insert after the selection (e.g., '**' for bold)
+ * @param defaultText - Default text to insert if no text is selected
+ */
 const insertMarkdown = (
   textArea: HTMLTextAreaElement,
   beforeText: string,

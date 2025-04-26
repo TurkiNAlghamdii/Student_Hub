@@ -1,3 +1,21 @@
+/**
+ * Footer Component
+ * 
+ * This client-side component provides a consistent footer across the application with
+ * copyright information, links to important pages, and a contact support modal.
+ * 
+ * Key features:
+ * - Responsive design that adapts to different screen sizes
+ * - Contact support form with validation
+ * - Animated modal dialog
+ * - Form submission with success/error handling
+ * 
+ * The component integrates with the application's theme system through CSS classes
+ * defined in Footer.css that adapt to both light and dark modes based on the root
+ * element's theme class. This prevents theme flashing during navigation by using
+ * theme-aware selectors rather than hardcoded color values in the JSX.
+ */
+
 'use client';
 
 import { useState, useEffect, memo } from 'react';
@@ -5,12 +23,32 @@ import { createPortal } from 'react-dom';
 import { HeartIcon, XMarkIcon, QuestionMarkCircleIcon, PaperAirplaneIcon } from '@heroicons/react/24/solid';
 import './Footer.css';
 
+/**
+ * Support Form Data Interface
+ * 
+ * Defines the structure of the contact support form data.
+ * 
+ * @property email - User's email address for contact
+ * @property issue - Category of the issue being reported
+ * @property description - Detailed description of the issue
+ */
 interface SupportFormData {
   email: string;
   issue: string;
   description: string;
 }
 
+/**
+ * Form Errors Interface
+ * 
+ * Defines the structure for validation errors in the contact form.
+ * Each property corresponds to a field in the form that might have an error.
+ * 
+ * @property email - Error message for the email field
+ * @property issue - Error message for the issue type field
+ * @property description - Error message for the description field
+ * @property general - General form error message not tied to a specific field
+ */
 interface FormErrors {
   email?: string;
   issue?: string;
@@ -18,7 +56,26 @@ interface FormErrors {
   general?: string;
 }
 
-// Separate the Contact Modal into its own component
+/**
+ * Contact Modal Component
+ * 
+ * A memoized modal dialog component that displays a contact form for users to submit
+ * support requests. The component handles form display, validation, submission feedback,
+ * and success/error states.
+ * 
+ * The component uses CSS classes defined in Footer.css that adapt to the application's
+ * theme system, supporting both light and dark modes through the root element's theme class.
+ * This ensures consistent visual appearance across theme changes.
+ * 
+ * @param closeContactModal - Function to close the modal
+ * @param submitMessage - Message to display after form submission (success or error)
+ * @param submitStatus - Status of the form submission ('success', 'error', or null)
+ * @param formData - Current values of the form fields
+ * @param formErrors - Validation errors for the form fields
+ * @param handleInputChange - Function to handle input changes
+ * @param handleSubmit - Function to handle form submission
+ * @param isSubmitting - Whether the form is currently being submitted
+ */
 const ContactModal = memo(function ContactModal({
   closeContactModal,
   submitMessage,
@@ -159,8 +216,29 @@ const ContactModal = memo(function ContactModal({
   );
 });
 
+/**
+ * Footer Component
+ * 
+ * The main footer component that appears at the bottom of every page in the application.
+ * It displays copyright information, links to important pages, and provides access to
+ * a contact support form through a modal dialog.
+ * 
+ * The component manages the state of the contact form, including validation, submission,
+ * and feedback to the user. It also handles client-side rendering with the mounted state
+ * to prevent hydration errors.
+ * 
+ * The component uses CSS classes defined in Footer.css that adapt to the application's
+ * theme system, supporting both light and dark modes through the root element's theme class.
+ * This ensures consistent visual appearance across theme changes and prevents theme
+ * flashing during navigation.
+ * 
+ * @returns React component for the application footer
+ */
 export default function Footer() {
+  // State for managing the contact modal visibility
   const [isContactOpen, setIsContactOpen] = useState(false);
+  
+  // State for the contact form data and validation
   const [formData, setFormData] = useState<SupportFormData>({
     email: '',
     issue: '',
@@ -170,6 +248,8 @@ export default function Footer() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
   const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null);
+  
+  // State to track if component is mounted (for client-side rendering)
   const [mounted, setMounted] = useState(false);
 
   // Set mounted state

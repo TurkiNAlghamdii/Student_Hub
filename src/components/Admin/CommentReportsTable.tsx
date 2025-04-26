@@ -1,3 +1,20 @@
+/**
+ * Comment Reports Table Component
+ * 
+ * This component provides an administrative interface for managing reported comments
+ * in the Student Hub application. It allows administrators to review, approve, or
+ * delete comments that have been flagged by users for inappropriate content.
+ * 
+ * Key features:
+ * - Tabbed interface for viewing pending, reviewed, or all reports
+ * - Detailed view of reported comments with context
+ * - Actions to approve or delete reported comments
+ * - Animated transitions for improved user experience
+ * 
+ * The component integrates with the application's theme system through consistent
+ * styling that adapts to the dark theme used in the admin interface.
+ */
+
 import React, { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { format } from 'date-fns'
@@ -12,6 +29,24 @@ import {
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
 
+/**
+ * Reported Comment Interface
+ * 
+ * Defines the structure of a reported comment object retrieved from the database.
+ * This interface ensures type safety when working with reported comments and includes
+ * nested objects for the reporter, comment, and comment author information.
+ * 
+ * @property id - Unique identifier for the report
+ * @property comment_id - ID of the reported comment
+ * @property reason - Category of the report (e.g., 'spam', 'harassment')
+ * @property details - Optional additional details provided by the reporter
+ * @property status - Current status of the report ('pending', 'approved', 'rejected')
+ * @property created_at - Timestamp when the report was created
+ * @property updated_at - Timestamp when the report was last updated
+ * @property reporter_id - ID of the user who reported the comment
+ * @property reporter - Object containing information about the reporter
+ * @property comment - Object containing the reported comment and its metadata
+ */
 interface ReportedComment {
   id: string // report id
   comment_id: string
@@ -37,15 +72,32 @@ interface ReportedComment {
   }
 }
 
+/**
+ * Comment Reports Table Component
+ * 
+ * This component provides an administrative interface for managing reported comments.
+ * It allows administrators to view, approve, or delete comments that have been
+ * flagged by users as inappropriate or violating community guidelines.
+ * 
+ * @returns The rendered comment reports management interface
+ */
 export default function CommentReportsTable() {
-  const [reports, setReports] = useState<ReportedComment[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [processingReportId, setProcessingReportId] = useState<string | null>(null)
-  const [selectedReport, setSelectedReport] = useState<ReportedComment | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState<'pending' | 'reviewed' | 'all'>('pending')
+  // State Management
+  const [reports, setReports] = useState<ReportedComment[]>([])                   // List of reports to display
+  const [loading, setLoading] = useState(true)                                   // Loading state for reports
+  const [error, setError] = useState<string | null>(null)                        // Error state
+  const [processingReportId, setProcessingReportId] = useState<string | null>(null) // ID of report being processed
+  const [selectedReport, setSelectedReport] = useState<ReportedComment | null>(null) // Report selected for detailed view
+  const [isModalOpen, setIsModalOpen] = useState(false)                          // Modal visibility state
+  const [activeTab, setActiveTab] = useState<'pending' | 'reviewed' | 'all'>('pending') // Current active tab
 
+  /**
+   * Report Fetching Effect
+   * 
+   * Fetches reported comments from the database when the component mounts
+   * or when the active tab changes. This ensures the displayed reports
+   * always match the selected filter criteria.
+   */
   useEffect(() => {
     fetchReports()
   }, [activeTab])

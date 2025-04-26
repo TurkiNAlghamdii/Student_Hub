@@ -1,3 +1,23 @@
+/**
+ * File Upload Section Component
+ * 
+ * This client-side component provides a complete file upload interface for course materials,
+ * allowing users to upload files with descriptions for sharing with classmates.
+ * 
+ * Key features:
+ * - Drag and drop file upload with visual feedback
+ * - File type and size validation
+ * - Upload progress indication
+ * - Description field for context
+ * - Success and error state handling
+ * 
+ * The component integrates with the application's theme system through CSS classes
+ * in the fileUpload.css file that adapt to both light and dark modes based on the
+ * root element's theme class. This prevents theme flashing during navigation by using
+ * CSS variables and theme-aware selectors (:root.dark and :root:not(.dark)) rather
+ * than hardcoded color values in the JSX.
+ */
+
 'use client';
 
 import React, { useState, useCallback, useEffect } from 'react';
@@ -12,16 +32,44 @@ import {
 } from '@heroicons/react/24/outline';
 import './fileUpload.css';
 
+/**
+ * File Upload Section Props
+ * 
+ * Configuration options for the FileUploadSection component.
+ * 
+ * @property courseCode - The course code to associate with the uploaded file
+ * @property onUploadSuccess - Callback function to execute after successful upload
+ *                           (typically used to refresh the file list)
+ */
 interface FileUploadSectionProps {
   courseCode: string;
   onUploadSuccess: () => void;
 }
 
+/**
+ * File Upload Section Component
+ * 
+ * Provides an interface for uploading files to a specific course.
+ * This component handles the entire upload process including file selection,
+ * validation, description input, and submission to the server.
+ * 
+ * The component uses CSS classes defined in fileUpload.css that adapt to the
+ * application's theme system through :root.dark and :root:not(.dark) selectors,
+ * ensuring consistent visual appearance across theme changes and preventing
+ * theme flashing during navigation.
+ * 
+ * @param courseCode - The course code to associate with the uploaded file
+ * @param onUploadSuccess - Function to call after successful upload
+ * @returns React component for file uploading
+ */
 const FileUploadSection: React.FC<FileUploadSectionProps> = ({ 
   courseCode, 
   onUploadSuccess 
 }) => {
+  // Get current user from authentication context
   const { user } = useAuth();
+  
+  // State for file upload and UI management
   const [file, setFile] = useState<File | null>(null);
   const [description, setDescription] = useState('');
   const [isUploading, setIsUploading] = useState(false);
@@ -31,7 +79,16 @@ const FileUploadSection: React.FC<FileUploadSectionProps> = ({
     isError: boolean;
   } | null>(null);
 
-  // Simulate upload progress
+  /**
+   * Upload Progress Simulation
+   * 
+   * Simulates a gradual upload progress to provide visual feedback to the user
+   * during the upload process. The progress is capped at 90% until the actual
+   * server response confirms completion, at which point it jumps to 100%.
+   * 
+   * This creates a more responsive feel for the user while the actual upload
+   * is happening in the background.
+   */
   useEffect(() => {
     if (isUploading) {
       const interval = setInterval(() => {

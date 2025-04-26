@@ -1,9 +1,42 @@
+/**
+ * Pomodoro Timer Component
+ * 
+ * This client-side component implements a Pomodoro technique timer to help users
+ * manage their study sessions with focused work periods and regular breaks.
+ * 
+ * Key features:
+ * - Configurable work and break durations
+ * - Visual progress tracking with circular progress indicator
+ * - Audio notifications when timers complete
+ * - Browser notifications (with permission)
+ * - Session counter to track completed cycles
+ * - Mobile-responsive design with device detection
+ * 
+ * The component integrates with the application's theme system through CSS classes
+ * defined in PomodoroTimer.css that adapt to both light and dark modes based on the
+ * root element's theme class. This prevents theme flashing during navigation by using
+ * theme-aware selectors rather than hardcoded color values in the JSX.
+ */
+
 'use client'
 
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { PlayIcon, PauseIcon, ArrowPathIcon, Cog6ToothIcon, XMarkIcon } from '@heroicons/react/24/solid'
 import './PomodoroTimer.css'
 
+/**
+ * Timer State Interface
+ * 
+ * Defines the structure of the timer's state object, managing all aspects of
+ * the Pomodoro timer functionality.
+ * 
+ * @property mode - Current timer mode ('work' or 'break')
+ * @property timeLeft - Remaining time in seconds for the current mode
+ * @property isActive - Whether the timer is currently running
+ * @property workDuration - Configured duration for work periods in seconds
+ * @property breakDuration - Configured duration for break periods in seconds
+ * @property completedCycles - Number of completed work-break cycles
+ */
 interface TimerState {
   mode: 'work' | 'break'
   timeLeft: number
@@ -13,7 +46,22 @@ interface TimerState {
   completedCycles: number
 }
 
+/**
+ * Pomodoro Timer Component
+ * 
+ * A productivity timer implementing the Pomodoro technique with customizable
+ * work and break durations. The component provides visual feedback, audio alerts,
+ * and browser notifications to help users maintain focus and take regular breaks.
+ * 
+ * The component uses CSS classes defined in PomodoroTimer.css that adapt to the
+ * application's theme system, supporting both light and dark modes through the root
+ * element's theme class. This ensures consistent visual appearance across theme changes
+ * and prevents theme flashing during navigation.
+ * 
+ * @returns React component for the Pomodoro timer
+ */
 export default function PomodoroTimer() {
+  // Main timer state managing mode, durations, and active status
   const [timerState, setTimerState] = useState<TimerState>({
     mode: 'work',
     timeLeft: 25 * 60, // 25 minutes in seconds
@@ -22,16 +70,33 @@ export default function PomodoroTimer() {
     breakDuration: 5 * 60,
     completedCycles: 0
   })
+
+  // UI state for settings panel
   const [showSettings, setShowSettings] = useState(false)
   const [workInput, setWorkInput] = useState('25')
   const [breakInput, setBreakInput] = useState('5')
+
+  // Audio notification state and refs
   const audioContextRef = useRef<AudioContext | null>(null)
   const [audioInitialized, setAudioInitialized] = useState(false)
+
+  // Browser notification state
   const [notificationsEnabled, setNotificationsEnabled] = useState<boolean>(false)
-  const [isMobile, setIsMobile] = useState<boolean>(false)
   const [notificationsAvailable, setNotificationsAvailable] = useState<boolean>(false)
 
-  // Initialize Web Audio API on first user interaction
+  // Device detection for responsive behavior
+  const [isMobile, setIsMobile] = useState<boolean>(false)
+
+  /**
+   * Initialize Web Audio API
+   * 
+   * Creates an AudioContext for playing notification sounds when timers complete.
+   * The initialization is deferred until the first user interaction to comply with
+   * browser autoplay policies that prevent audio from playing without user gesture.
+   * 
+   * The function handles cross-browser compatibility with proper TypeScript typing
+   * for WebKit implementations and includes error handling for unsupported browsers.
+   */
   const initAudio = useCallback(() => {
     if (!audioInitialized) {
       try {
@@ -39,11 +104,11 @@ export default function PomodoroTimer() {
         type WebkitWindow = Window & {
           webkitAudioContext: typeof AudioContext;
         };
-        
+
         // First check if Web Audio API is supported
-        if (typeof window !== 'undefined' && 
-           (window.AudioContext || (window as unknown as WebkitWindow).webkitAudioContext)) {
-          audioContextRef.current = new (window.AudioContext || 
+        if (typeof window !== 'undefined' &&
+          (window.AudioContext || (window as unknown as WebkitWindow).webkitAudioContext)) {
+          audioContextRef.current = new (window.AudioContext ||
             (window as unknown as WebkitWindow).webkitAudioContext)();
           setAudioInitialized(true);
         } else {
@@ -55,7 +120,13 @@ export default function PomodoroTimer() {
     }
   }, [audioInitialized]);
 
-  // Cleanup audio context on unmount
+  /**
+   * Cleanup Audio Context
+   * 
+   * Properly closes the AudioContext when the component unmounts to prevent
+   * memory leaks and resource consumption. This is important for maintaining
+   * application performance, especially on mobile devices with limited resources.
+   */
   useEffect(() => {
     return () => {
       if (audioContextRef.current) {
@@ -64,7 +135,17 @@ export default function PomodoroTimer() {
     }
   }, [])
 
-  // Check for Notification support on component mount
+  /**
+   * Initialize Device Detection and Notification Support
+   * 
+   * Performs two important initialization tasks on component mount:
+   * 1. Detects if the user is on a mobile device to adjust timer behavior
+   *    for better performance on mobile browsers
+   * 2. Checks if browser notifications are supported and already permitted
+   * 
+   * The mobile detection is also updated on window resize to handle orientation
+   * changes and device switching in responsive layouts.
+   */
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
@@ -79,33 +160,45 @@ export default function PomodoroTimer() {
     } else {
       setNotificationsAvailable(false)
     }
-    
+
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
-  // Play notification sound with error handling
+  /**
+   * Play Notification Sound
+   * 
+   * Generates and plays a simple beep sound when timers complete using the Web Audio API.
+   * The function includes several important features:
+   * - Error handling to prevent crashes if audio fails
+   * - Resuming suspended audio contexts (common on mobile browsers)
+   * - Creating a simple oscillator tone with appropriate volume
+   * - Automatically stopping the sound after a short duration
+   * 
+   * The sound is designed to be noticeable but not jarring, with a medium-high
+   * frequency (800Hz) and moderate volume (0.5 gain).
+   */
   const playSound = useCallback(() => {
     try {
       const audioContext = audioContextRef.current;
       if (!audioContext) return;
-      
+
       // Resume audio context for mobile browsers that require user interaction
       if (audioContext.state === 'suspended') {
         audioContext.resume();
       }
-      
+
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
-      
+
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
-      
+
       oscillator.frequency.value = 800;
       gainNode.gain.value = 0.5;
-      
+
       oscillator.start();
-      
+
       setTimeout(() => {
         oscillator.stop();
       }, 500);
@@ -117,6 +210,7 @@ export default function PomodoroTimer() {
   // Request notification permission with better mobile handling
   const requestNotificationPermission = useCallback(async () => {
     if (!notificationsAvailable) return
+
     
     const permission = await Notification.requestPermission()
     if (permission === 'granted') {

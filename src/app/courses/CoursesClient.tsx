@@ -1,3 +1,19 @@
+/**
+ * Courses Client Component
+ * 
+ * This is a client-side component that displays courses in two view modes:
+ * 1. "My Courses" - Shows courses the user has enrolled in
+ * 2. "All Courses" - Shows all available courses
+ * 
+ * The component also provides functionality to:
+ * - Toggle between view modes
+ * - Add/remove courses from the user's selection
+ * - Navigate to individual course pages
+ * - View courses by program (IT, CS, IS)
+ * 
+ * It handles authentication, data fetching, and user interactions.
+ */
+
 'use client'
 
 import React, { useState, useEffect } from 'react'
@@ -9,7 +25,18 @@ import './courses.css'
 import { AcademicCapIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { supabase } from '@/lib/supabase'
 
-// Define the course interface
+/**
+ * Course Interface
+ * 
+ * Defines the structure of a course object as retrieved and processed
+ * from the database. Contains essential course information including:
+ * - course_code: Unique identifier for the course (e.g., "CPIT-201")
+ * - course_name: Full name of the course
+ * - course_description: Detailed description of the course content
+ * - credits: Number of credit hours for the course
+ * - prerequisites: Optional string listing prerequisite courses
+ * - faculty: Optional object containing the faculty name
+ */
 interface Course {
   course_code: string
   course_name: string
@@ -21,7 +48,16 @@ interface Course {
   }
 }
 
-// Define semester structure
+/**
+ * Semester Interface
+ * 
+ * Defines the structure of a semester object used to organize courses
+ * in the academic program view. Contains:
+ * - id: Unique identifier for the semester (e.g., "third", "fourth")
+ * - name: Display name of the semester (e.g., "Third Semester")
+ * - totalCredits: Sum of credit hours for all courses in the semester
+ * - courses: Array of Course objects included in this semester
+ */
 interface Semester {
   id: string
   name: string
@@ -29,12 +65,45 @@ interface Semester {
   courses: Course[]
 }
 
+/**
+ * CoursesClientProps Interface
+ * 
+ * Defines the props passed to the CoursesClient component from the server component.
+ * - courses: Array of all available courses fetched from the database
+ * - error: Error message if the server component encountered an issue fetching data
+ */
 interface CoursesClientProps {
   courses: Course[]
   error: string | null
 }
 
+/**
+ * CoursesClient Component
+ * 
+ * Main client-side component for the courses page. Responsible for:
+ * - Displaying courses in different view modes (my courses/all courses)
+ * - Handling user interactions (adding/removing courses)
+ * - Managing authentication state and redirects
+ * - Fetching the user's enrolled courses from the API
+ * - Organizing courses by program and semester
+ * 
+ * @param courses - Array of all available courses from the server component
+ * @param error - Error message from the server component, if any
+ * @returns Rendered courses page with appropriate view based on state
+ */
 export default function CoursesClient({ courses, error }: CoursesClientProps) {
+  /**
+   * Component State and Hooks
+   * 
+   * - router: Next.js router for navigation
+   * - user/authLoading: Authentication state from AuthContext
+   * - viewMode: Controls which view to display ('my' or 'all' courses)
+   * - myCourses: Stores the user's enrolled courses fetched from API
+   * - coursesLoading: Tracks loading state during API requests
+   * - fetchError: Stores error messages from API requests
+   * - initialLoadComplete: Tracks whether the initial data load has finished
+   * - activeProgram: Controls which program's courses to display ('it', 'cs', or 'is')
+   */
   const router = useRouter()
   const { user, loading: authLoading } = useAuth()
   const [viewMode, setViewMode] = useState<'all' | 'my'>('my')
@@ -1030,14 +1099,41 @@ export default function CoursesClient({ courses, error }: CoursesClientProps) {
     }
   ]
 
-  // Check authentication and redirect if not logged in
+  /**
+   * Authentication Check Effect
+   * 
+   * Redirects unauthenticated users to the login page once the auth state is confirmed.
+   * This ensures that only authenticated users can access the courses page.
+   * 
+   * Dependencies:
+   * - user: Current authenticated user (or null if not authenticated)
+   * - authLoading: Whether authentication state is still being determined
+   * - router: Next.js router for navigation
+   */
   useEffect(() => {
     if (!authLoading && !user) {
       router.push('/login')
     }
   }, [user, authLoading, router])
   
-  // Fetch user's courses when component mounts
+  /**
+   * User Courses Fetch Effect
+   * 
+   * Fetches the user's enrolled courses from the API when the component mounts
+   * or when the authentication state changes. The courses are fetched from the
+   * /api/user/courses endpoint with the user's ID in the request headers.
+   * 
+   * The effect handles various scenarios:
+   * - Skips fetching if authentication is still loading or user is not logged in
+   * - Sets appropriate loading states during the fetch process
+   * - Handles API errors and sets appropriate error messages
+   * - Updates the myCourses state with the fetched data
+   * - Marks the initial load as complete regardless of success/failure
+   * 
+   * Dependencies:
+   * - user: Current authenticated user (or null if not authenticated)
+   * - authLoading: Whether authentication state is still being determined
+   */
   useEffect(() => {
     // Skip fetching if auth is still loading or if user is not logged in
     if (authLoading || !user) return;
@@ -1084,7 +1180,23 @@ export default function CoursesClient({ courses, error }: CoursesClientProps) {
     fetchUserCourses()
   }, [user, authLoading])
 
-  // Handle removing a course from user's selection
+  /**
+   * Handle Course Removal
+   * 
+   * Removes a course from the user's enrolled courses by making a DELETE request
+   * to the API. Updates the local state to reflect the change immediately upon
+   * successful API response.
+   * 
+   * The function:
+   * - Prevents event propagation to avoid navigating to the course page
+   * - Sends a DELETE request to /api/user/courses with the course code as a query parameter
+   * - Updates the myCourses state by filtering out the removed course on success
+   * - Handles and logs errors from the API request
+   * - Manages loading state during the operation
+   * 
+   * @param courseCode - The unique identifier of the course to remove
+   * @param event - The mouse event that triggered the removal (to prevent propagation)
+   */
   const handleRemoveCourse = async (courseCode: string, event: React.MouseEvent) => {
     event.stopPropagation() // Prevent navigating to course page when removing
     

@@ -1,9 +1,41 @@
+/**
+ * Twitter X Icon Component
+ * 
+ * This component renders the Twitter/X logo as an SVG icon. It's used throughout the
+ * application for social media links and sharing functionality.
+ * 
+ * The icon uses the currentColor value for fill, which means it will inherit the text
+ * color from its parent element. This allows the icon to adapt to different color schemes
+ * and themes automatically, supporting both light and dark modes without requiring
+ * separate implementations.
+ * 
+ * The component is designed to be customizable through the className prop, allowing
+ * for different sizes, colors, and styles to be applied based on the context where
+ * it's used.
+ */
+
 import React from 'react';
 
+/**
+ * Twitter X Icon Props Interface
+ * 
+ * @property className - Optional CSS class name to apply custom styling to the icon
+ */
 interface TwitterXIconProps {
   className?: string;
 }
 
+/**
+ * Twitter X Icon Component
+ * 
+ * Renders the Twitter/X logo as an SVG icon with customizable styling.
+ * The icon inherits its color from the parent element through currentColor,
+ * making it compatible with the application's theme system for both light
+ * and dark modes.
+ * 
+ * @param className - Optional CSS class name for custom styling (default: '')
+ * @returns SVG icon component representing the Twitter/X logo
+ */
 const TwitterXIcon: React.FC<TwitterXIconProps> = ({ className = '' }) => {
   return (
     <svg 
@@ -19,4 +51,4 @@ const TwitterXIcon: React.FC<TwitterXIconProps> = ({ className = '' }) => {
   );
 };
 
-export default TwitterXIcon; 
+export default TwitterXIcon;

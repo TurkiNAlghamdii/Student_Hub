@@ -1,3 +1,23 @@
+/**
+ * Support Requests Component
+ * 
+ * This client-side component provides an administrative interface for managing
+ * user support requests in the Student Hub application. It allows administrators
+ * to view, filter, search, and update the status of support tickets submitted by users.
+ * 
+ * Key features:
+ * - Comprehensive list of support requests with detailed information
+ * - Status tracking and management (pending, in progress, resolved)
+ * - Search and filter capabilities for efficient request handling
+ * - Statistical overview of support request status distribution
+ * - Responsive design for various screen sizes
+ * 
+ * The component integrates with the application's theme system through consistent
+ * styling that adapts to both light and dark modes, ensuring a cohesive visual
+ * experience across the admin dashboard while maintaining readability and usability
+ * in both theme contexts.
+ */
+
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -14,6 +34,21 @@ import {
   ArrowPathIcon
 } from '@heroicons/react/24/outline'
 
+/**
+ * Support Request Interface
+ * 
+ * Defines the structure of a support request object retrieved from the database.
+ * This interface ensures type safety when working with support request data
+ * throughout the management interface.
+ * 
+ * @property id - Unique identifier for the support request
+ * @property email - Email address of the user who submitted the request
+ * @property issue_type - Category of the support issue (e.g., 'technical', 'account')
+ * @property description - Detailed description of the issue provided by the user
+ * @property status - Current status of the request (pending, in_progress, resolved)
+ * @property created_at - Timestamp when the request was submitted
+ * @property updated_at - Timestamp when the request was last updated, or null if not updated
+ */
 interface SupportRequest {
   id: string
   email: string
@@ -24,18 +59,46 @@ interface SupportRequest {
   updated_at: string | null
 }
 
+/**
+ * Status Filter Type
+ * 
+ * Defines the possible values for filtering support requests by status.
+ * This type ensures that only valid status filter values can be used.
+ */
 type StatusFilter = 'all' | 'pending' | 'in_progress' | 'resolved'
 
+/**
+ * Support Requests Component
+ * 
+ * Main component for managing user support requests in the admin dashboard.
+ * This component handles fetching, displaying, filtering, and updating the status
+ * of support tickets submitted by users of the Student Hub application.
+ * 
+ * The component implements theme-aware styling that adapts to the application's
+ * light or dark theme, ensuring consistent visual appearance and readability
+ * across theme changes.
+ * 
+ * @returns React component for support request management interface
+ */
 export default function SupportRequests() {
+  // State for storing all requests and filtered requests based on search/filters
   const [requests, setRequests] = useState<SupportRequest[]>([])
   const [filteredRequests, setFilteredRequests] = useState<SupportRequest[]>([])
+
+  // State for search and filtering functionality
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
+
+  // State for loading and error handling
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  // State for request operations
   const [updating, setUpdating] = useState<string | null>(null)
   const [selectedRequest, setSelectedRequest] = useState<SupportRequest | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  // State for support request statistics
   const [stats, setStats] = useState({
     total: 0,
     pending: 0,

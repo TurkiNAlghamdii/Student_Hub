@@ -392,14 +392,32 @@
   width: 80px;
 }
 
-.sidebar-enter {
-  transform: translateX(100%);
-  opacity: 0;
+/* Animation for sidebar entrance from right side of screen
+ * This creates a smooth slide-in effect combined with fade-in
+ * Added during sidebar animation enhancement to improve UX
+ */
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(100%); /* Start off-screen to the right */
+    opacity: 0;                 /* Start fully transparent */
+  }
+  100% {
+    transform: translateX(0);   /* End at natural position */
+    opacity: 1;                 /* End fully visible */
+  }
 }
 
+/* Initial state for sidebar before animation starts */
+.sidebar-enter {
+  transform: translateX(100%); /* Position off-screen initially */
+  opacity: 0;                 /* Start invisible */
+}
+
+/* Active state for sidebar during and after animation */
 .sidebar-enter-active {
-  transform: translateX(0);
-  opacity: 1;
+  transform: translateX(0);   /* Final position */
+  opacity: 1;                 /* Fully visible */
+  animation: slideInFromRight 0.4s cubic-bezier(0.22, 1, 0.36, 1); /* Custom easing for natural feel */
 }
 
 .sidebar-closing {
@@ -421,8 +439,24 @@
   backdrop-filter: blur(2px);
 }
 
+/* Simple fade-in animation for backdrop
+ * Creates a subtle entrance for the backdrop overlay
+ * Helps focus attention on the sidebar when it opens
+ */
+@keyframes fadeIn {
+  0% {
+    opacity: 0; /* Start invisible */
+  }
+  100% {
+    opacity: 1; /* End fully visible */
+  }
+}
+
+/* Active state for backdrop when sidebar is open */
+/* The backdrop helps focus attention on the sidebar */
 .sidebar-backdrop-active {
-  opacity: 1;
+  opacity: 1; /* Fully visible */
+  animation: fadeIn 0.3s ease-in-out; /* Smooth fade-in effect */
 }
 
 .sidebar-backdrop-closing {
@@ -430,6 +464,17 @@
 }
 
 /* Sidebar header */
+@keyframes slideInFromTop {
+  0% {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 .sidebar-header {
   display: flex;
   align-items: center;
@@ -438,6 +483,7 @@
   height: 4rem;
   border-bottom: 1px solid rgba(75, 85, 99, 0.3);
   background-color: #0e1119;
+  animation: slideInFromTop 0.5s ease-out;
 }
 
 .dark .sidebar-header {
@@ -563,11 +609,39 @@
 }
 
 /* Menu Category */
+/* Animation for menu categories to slide up and fade in
+ * Creates a staggered effect when combined with delays
+ * This helps organize visual hierarchy during sidebar opening
+ */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;                 /* Start invisible */
+    transform: translateY(10px); /* Start slightly below final position */
+  }
+  100% {
+    opacity: 1;                 /* End fully visible */
+    transform: translateY(0);    /* End at natural position */
+  }
+}
+
 .menu-category {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInUp 0.5s ease forwards;
   position: relative;
   z-index: 5;
 }
+
+/* Staggered delay for menu categories */
+/* Similar to menu items, but for the category sections */
+/* This creates a two-level animation hierarchy */
+/* First categories animate in, then items within each category */
+.menu-category:nth-child(1) { animation-delay: 0.05s; } /* Dashboard appears first */
+.menu-category:nth-child(2) { animation-delay: 0.1s; }  /* Academic */
+.menu-category:nth-child(3) { animation-delay: 0.15s; } /* Communication */
+.menu-category:nth-child(4) { animation-delay: 0.2s; }  /* Career */
+.menu-category:nth-child(5) { animation-delay: 0.25s; } /* Profile appears last */
 
 /* Category labels */
 .category-divider {
@@ -637,12 +711,32 @@
   width: 0;
 }
 
-/* Remove menu item animations */
+/* Menu item animations */
+/* Animation for menu items to slide in from right
+ * Used for each individual menu item in the sidebar
+ * Combined with staggered delays for cascading effect
+ * TODO: Consider reducing transform distance for subtler effect
+ */
+@keyframes fadeSlideIn {
+  0% {
+    opacity: 0;                 /* Start invisible */
+    transform: translateX(20px); /* Start to the right of final position */
+  }
+  100% {
+    opacity: 1;                 /* End fully visible */
+    transform: translateX(0);    /* End at natural position */
+  }
+}
+
+/* Base styling for menu items with initial animation state */
+/* Items start invisible and off-position until animated in */
 .menu-item {
-  opacity: 1;
-  will-change: auto;
+  opacity: 0; /* Start invisible until animated */
+  will-change: transform, opacity; /* Performance hint for browser */
   position: relative;
   overflow: hidden;
+  transform: translateX(20px); /* Start position for animation */
+  transition: transform 0.3s ease, opacity 0.3s ease; /* Smooth transitions for hover effects */
 }
 
 .menu-item::before {
@@ -654,26 +748,36 @@
   width: 3px;
   background-color: #10b981;
   transform: scaleY(0);
-  transition: none;
+  transition: transform 0.2s ease;
 }
 
 .menu-item:hover::before {
   transform: scaleY(1);
 }
 
+/* Applied when menu items should be visible */
+/* This triggers the entrance animation */
 .menu-item-visible {
-  animation: none;
+  opacity: 1; /* Fully visible */
+  transform: translateX(0); /* Final position */
+  animation: fadeSlideIn 0.5s ease forwards; /* Slide-in animation */
 }
 
-/* Remove staggered delay for menu items */
-.sidebar-menu li:nth-child(1) { animation-delay: 0s; }
-.sidebar-menu li:nth-child(2) { animation-delay: 0s; }
-.sidebar-menu li:nth-child(3) { animation-delay: 0s; }
-.sidebar-menu li:nth-child(4) { animation-delay: 0s; }
-.sidebar-menu li:nth-child(5) { animation-delay: 0s; }
+/* Staggered delay for menu items */
+/* This creates a cascading animation effect */
+/* Each item appears slightly after the previous one */
+/* NOTE: This creates a more organized, intentional feel */
+.sidebar-menu li:nth-child(1) { animation-delay: 0.05s; } /* First item appears almost immediately */
+.sidebar-menu li:nth-child(2) { animation-delay: 0.1s; }
+.sidebar-menu li:nth-child(3) { animation-delay: 0.15s; }
+.sidebar-menu li:nth-child(4) { animation-delay: 0.2s; }
+.sidebar-menu li:nth-child(5) { animation-delay: 0.25s; }
+.sidebar-menu li:nth-child(6) { animation-delay: 0.3s; }
+.sidebar-menu li:nth-child(7) { animation-delay: 0.35s; }
+.sidebar-menu li:nth-child(8) { animation-delay: 0.4s; } /* Last item has the longest delay */
 
 .sidebar-menu:hover li:hover {
-  transform: none;
+  transform: translateX(3px);
 }
 
 /* Remove menu link hover effects */

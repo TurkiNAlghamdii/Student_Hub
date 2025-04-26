@@ -1,3 +1,10 @@
+/**
+ * Academic Calendar Page
+ * 
+ * This page displays both academic calendars and exam calendars for students.
+ * It fetches calendar data from Supabase and allows users to view and download
+ * PDF calendars directly from the interface.
+ */
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -13,6 +20,10 @@ import Navbar from '@/components/Navbar/Navbar'
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
 import './academic-calendar.css'
 
+/**
+ * Interface for academic calendar data from the database
+ * Represents a single academic calendar entry with file information
+ */
 interface CalendarData {
   id: string
   file_name: string
@@ -24,6 +35,10 @@ interface CalendarData {
   active: boolean
 }
 
+/**
+ * Interface for exam calendar data from the database
+ * Represents a single exam calendar with metadata
+ */
 interface ExamCalendarData {
   id: string
   title: string
@@ -35,15 +50,26 @@ interface ExamCalendarData {
 }
 
 export default function AcademicCalendarPage() {
+  // State to track which tab is currently active (academic or exam calendars)
   const [activeTab, setActiveTab] = useState<'academic' | 'exam'>('academic')
+  // State to hold the currently displayed academic calendar
   const [activeCalendar, setActiveCalendar] = useState<CalendarData | null>(null)
+  // Collection of exam calendars to display in the exam tab
   const [examCalendars, setExamCalendars] = useState<ExamCalendarData[]>([])
+  // Loading states for the two different data sources
   const [loading, setLoading] = useState(true)
   const [loadingExams, setLoadingExams] = useState(true)
+  // Error states to handle and display fetch failures
   const [error, setError] = useState<string | null>(null)
   const [examError, setExamError] = useState<string | null>(null)
+  // Dynamic height for PDF viewer based on window size
   const [pdfHeight, setPdfHeight] = useState('calc(100vh - 300px)')
 
+  /**
+   * Initialize data and set up event listeners on component mount
+   * - Fetches both types of calendars
+   * - Sets up window resize handler for PDF viewer height
+   */
   useEffect(() => {
     fetchCalendars()
     fetchExamCalendars()
@@ -57,6 +83,11 @@ export default function AcademicCalendarPage() {
     return () => window.removeEventListener('resize', updatePdfHeight)
   }, [])
 
+  /**
+   * Fetches academic calendars from Supabase
+   * First tries to get the active calendar, then falls back to the most recent one
+   * This prioritization ensures students always see the most relevant calendar
+   */
   const fetchCalendars = async () => {
     try {
       setLoading(true)
@@ -99,6 +130,11 @@ export default function AcademicCalendarPage() {
     }
   }
 
+  /**
+   * Fetches exam calendars from Supabase
+   * Gets all exam calendars sorted by creation date (newest first)
+   * This allows students to see the most recent exam schedules at the top
+   */
   const fetchExamCalendars = async () => {
     try {
       setLoadingExams(true)
@@ -120,7 +156,11 @@ export default function AcademicCalendarPage() {
     }
   }
 
-  // Show full-page spinner if either calendar type is loading
+  /**
+   * Loading state handler
+   * Shows a full-page spinner when either calendar type is being fetched
+   * The backdrop blur creates a modern, polished loading experience
+   */
   if (loading || loadingExams) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm translate-z-0">
@@ -129,7 +169,11 @@ export default function AcademicCalendarPage() {
     )
   }
 
-  // Render page content only when both loading states are false
+  /**
+   * Main page render
+   * Only displayed after data has been fetched (or failed to fetch)
+   * Includes tab navigation and conditional content based on active tab
+   */
   return (
     <div className="home-container">
       <Navbar />

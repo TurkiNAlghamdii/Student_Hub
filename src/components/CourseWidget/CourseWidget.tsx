@@ -1,3 +1,22 @@
+/**
+ * Course Widget Component
+ * 
+ * This client-side component displays a personalized list of courses for the logged-in user.
+ * It provides quick access to enrolled courses with a visually appealing card-based interface.
+ * 
+ * Key features:
+ * - Personalized course listing based on user enrollment
+ * - Animated card appearance for enhanced UX
+ * - Local caching to improve performance and reduce API calls
+ * - Responsive design for various screen sizes
+ * - Empty and error states with appropriate messaging
+ * 
+ * The component integrates with the application's theme system through CSS classes
+ * that adapt to both light and dark modes. It uses the root element's theme class
+ * (light/dark) to style elements appropriately, preventing theme flashing during
+ * navigation by relying on theme classes rather than hardcoded color values.
+ */
+
 'use client'
 
 import React, { useState, useEffect } from 'react'
@@ -6,6 +25,18 @@ import Link from 'next/link'
 import './courseWidget.css'
 import { BookOpenIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
 
+/**
+ * Course Interface
+ * 
+ * Defines the structure of a course object retrieved from the database.
+ * This interface ensures type safety when working with course data.
+ * 
+ * @property course_code - Unique identifier for the course (e.g., 'CS101')
+ * @property course_name - Full name of the course
+ * @property course_description - Description of the course content
+ * @property faculty - Optional object containing faculty information
+ * @property instructor - Optional name of the course instructor
+ */
 interface Course {
   course_code: string
   course_name: string
@@ -16,11 +47,33 @@ interface Course {
   instructor?: string
 }
 
-// Cache expiration time in milliseconds (10 minutes)
+/**
+ * Cache Expiration Constant
+ * 
+ * Defines how long the cached course data remains valid (10 minutes).
+ * This helps reduce API calls while ensuring data doesn't become too stale.
+ */
 const CACHE_EXPIRATION = 10 * 60 * 1000;
 
+/**
+ * Course Widget Component
+ * 
+ * Displays a personalized list of courses for the logged-in user.
+ * This component handles fetching, caching, and displaying course data,
+ * with appropriate loading, empty, and error states.
+ * 
+ * The component uses CSS classes that adapt to the application's theme system,
+ * supporting both light and dark modes through the root element's theme class.
+ * This ensures consistent visual appearance across theme changes and prevents
+ * theme flashing during navigation.
+ * 
+ * @returns React component for displaying user's enrolled courses
+ */
 export default function CourseWidget() {
+  // Get current user from authentication context
   const { user } = useAuth()
+  
+  // State for courses and UI management
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

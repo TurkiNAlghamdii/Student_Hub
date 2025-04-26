@@ -1,3 +1,22 @@
+/**
+ * Content Moderation Component
+ * 
+ * This client-side component provides a comprehensive administrative interface for
+ * moderating user-generated content in the Student Hub application. It allows administrators
+ * to review, search, and manage comments, as well as handle reported content.
+ * 
+ * Key features:
+ * - Tabbed interface for different moderation tasks (comments, reported comments, reported materials)
+ * - Search functionality for filtering comments
+ * - Detailed view of comments with user information
+ * - Actions to delete inappropriate content
+ * - Integration with specialized report management components
+ * 
+ * The component integrates with the application's theme system through consistent
+ * styling that adapts to the dark theme used in the admin interface, ensuring
+ * a cohesive visual experience across the admin dashboard.
+ */
+
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -15,7 +34,21 @@ import {
 import CommentReportsTable from './CommentReportsTable'
 import MaterialReportsTable from './MaterialReportsTable'
 
-// Define interfaces for content types
+/**
+ * Comment Interface
+ * 
+ * Defines the structure of a comment object retrieved from the database.
+ * This interface ensures type safety when working with comment data throughout
+ * the moderation interface.
+ * 
+ * @property id - Unique identifier for the comment
+ * @property content - The text content of the comment
+ * @property created_at - Timestamp when the comment was created
+ * @property user_id - ID of the user who created the comment
+ * @property parent_id - ID of the parent comment (null for top-level comments)
+ * @property course_code - Code of the course the comment belongs to
+ * @property user - Optional nested object containing information about the comment author
+ */
 interface Comment {
   id: string
   content: string
@@ -31,37 +64,64 @@ interface Comment {
   }
 }
 
+/**
+ * Content Moderation Component
+ * 
+ * This component provides a comprehensive interface for administrators to
+ * moderate user-generated content across the Student Hub platform. It includes
+ * tabs for different moderation tasks and tools for searching and filtering content.
+ * 
+ * @returns The rendered content moderation interface
+ */
 export default function ContentModeration() {
-  const [comments, setComments] = useState<Comment[]>([])
-  const [filteredComments, setFilteredComments] = useState<Comment[]>([])
-  const [searchQuery, setSearchQuery] = useState('')
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [deletingComment, setDeletingComment] = useState<string | null>(null)
-  const [selectedComment, setSelectedComment] = useState<Comment | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState<'comments' | 'comment-reports' | 'material-reports'>('comments')
+  // State Management
+  const [comments, setComments] = useState<Comment[]>([])             // All comments from database
+  const [filteredComments, setFilteredComments] = useState<Comment[]>([]) // Comments filtered by search
+  const [searchQuery, setSearchQuery] = useState('')                  // Current search query
+  const [loading, setLoading] = useState(true)                        // Loading state for comments
+  const [error, setError] = useState<string | null>(null)             // Error state
+  const [deletingComment, setDeletingComment] = useState<string | null>(null) // ID of comment being deleted
+  const [selectedComment, setSelectedComment] = useState<Comment | null>(null) // Comment selected for detailed view
+  const [isModalOpen, setIsModalOpen] = useState(false)              // Modal visibility state
+  const [activeTab, setActiveTab] = useState<'comments' | 'comment-reports' | 'material-reports'>('comments') // Current active tab
 
-  // Fetch all comments 
+  /**
+   * Initial Data Fetching Effect
+   * 
+   * Fetches all comments from the database when the component mounts.
+   * This provides the baseline data for the comments moderation tab.
+   */
   useEffect(() => {
     fetchComments()
   }, [])
 
-  // Filter comments based on search query
+  /**
+   * Search Filtering Effect
+   * 
+   * Filters the comments based on the current search query whenever
+   * the query or comments list changes. The search looks for matches in:
+   * - Comment content
+   * - Author's name
+   * - Author's email
+   * - Course code
+   * 
+   * This provides real-time filtering as the user types in the search box.
+   */
   useEffect(() => {
-    if (!searchQuery.trim()) {
+    if (searchQuery.trim() === '') {
       setFilteredComments(comments)
-      return
+    } else {
+      const query = searchQuery.toLowerCase()
+      const filtered = comments.filter(comment => {
+        return (
+          comment.content.toLowerCase().includes(query) ||
+          comment.user?.full_name?.toLowerCase().includes(query) ||
+          comment.user?.email?.toLowerCase().includes(query) ||
+          comment.course_code.toLowerCase().includes(query)
+        )
+      })
+      setFilteredComments(filtered)
     }
-
-    const query = searchQuery.toLowerCase()
-    const filtered = comments.filter(comment => 
-      comment.content.toLowerCase().includes(query) || 
-      comment.user?.full_name?.toLowerCase().includes(query) ||
-      comment.user?.email?.toLowerCase().includes(query) ||
-      comment.course_code.toLowerCase().includes(query)
-    )
-    setFilteredComments(filtered)
   }, [searchQuery, comments])
 
   const fetchComments = async () => {

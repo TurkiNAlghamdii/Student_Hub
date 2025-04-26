@@ -1,3 +1,22 @@
+/**
+ * Profile Page Component
+ * 
+ * This client-side component provides a comprehensive user profile management system
+ * that allows users to view and edit their personal information, change their password,
+ * update their profile picture, and manage their account settings.
+ * 
+ * The component includes the following features:
+ * - Profile information display and editing
+ * - Profile picture upload and management
+ * - Password change functionality
+ * - Account deletion with security verification
+ * - View mode for viewing other students' profiles
+ * 
+ * The component integrates with the application's theme system through CSS classes
+ * that adapt to both light and dark modes via the root element class, ensuring
+ * consistent styling across the application.
+ */
+
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
@@ -9,7 +28,21 @@ import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner'
 import Image from 'next/image'
 import './profile.css'
 
-// Define the interface outside the component
+/**
+ * StudentProfile Interface
+ * 
+ * Defines the structure of a student profile in the application.
+ * This interface is used for type checking and ensuring data consistency
+ * when working with student profile information from the database.
+ * 
+ * @property id - Unique identifier for the student (UUID from Supabase Auth)
+ * @property created_at - Timestamp when the profile was created
+ * @property full_name - Student's full name
+ * @property student_id - Student's university ID number
+ * @property faculty - Student's faculty/department
+ * @property email - Student's email address
+ * @property avatar_url - Optional URL to the student's profile picture
+ */
 interface StudentProfile {
   id: string
   created_at: string
@@ -19,45 +52,76 @@ interface StudentProfile {
   email: string
   avatar_url?: string
 }
-  // auth_id removed since it doesn't exist in the database
+  /**
+   * Profile Component
+   * 
+   * Main component for user profile management that handles both viewing and editing
+   * of profile information, as well as account settings like password changes and
+   * account deletion.
+   * 
+   * @returns The rendered profile page with appropriate state handling
+   */
   export default function Profile() {
+    // Navigation and routing hooks
     const router = useRouter()
     const searchParams = useSearchParams()
-    const viewStudentId = searchParams.get('studentId')
+    const viewStudentId = searchParams.get('studentId')  // For viewing other students' profiles
+    
+    // Authentication context
     const { user, loading: authLoading, signOut } = useAuth()
-    const [studentProfile, setStudentProfile] = useState<StudentProfile | null>(null)
-    const [loading, setLoading] = useState(true)
-    const [isEditing, setIsEditing] = useState(false)
-    const [isViewMode, setIsViewMode] = useState(false)
-    const [updateMessage, setUpdateMessage] = useState('')
-    const [formData, setFormData] = useState<Partial<StudentProfile>>({})
-    const [uploading, setUploading] = useState(false)
-    const fileInputRef = useRef<HTMLInputElement>(null)
-    const [error, setError] = useState<string | null>(null)
-    // Add new state variables for delete confirmation
-    const [showDeleteModal, setShowDeleteModal] = useState(false)
-    const [isDeleting, setIsDeleting] = useState(false)
-    const [password, setPassword] = useState('')
-    // Add state for password change
-    const [showPasswordModal, setShowPasswordModal] = useState(false)
+    
+    // Profile data and UI state
+    const [studentProfile, setStudentProfile] = useState<StudentProfile | null>(null)  // Current profile data
+    const [loading, setLoading] = useState(true)  // Loading state for profile data
+    const [isEditing, setIsEditing] = useState(false)  // Edit mode toggle
+    const [isViewMode, setIsViewMode] = useState(false)  // View mode for other students' profiles
+    const [updateMessage, setUpdateMessage] = useState('')  // Success/error messages
+    const [formData, setFormData] = useState<Partial<StudentProfile>>({})  // Form data for editing
+    const [error, setError] = useState<string | null>(null)  // Error state
+    
+    // Avatar upload state
+    const [uploading, setUploading] = useState(false)  // Upload in progress indicator
+    const fileInputRef = useRef<HTMLInputElement>(null)  // Reference to file input element
+    
+    // Account deletion state
+    const [showDeleteModal, setShowDeleteModal] = useState(false)  // Delete confirmation modal
+    const [isDeleting, setIsDeleting] = useState(false)  // Deletion in progress indicator
+    const [password, setPassword] = useState('')  // Password for deletion confirmation
+    
+    // Password change state
+    const [showPasswordModal, setShowPasswordModal] = useState(false)  // Password change modal
     const [passwordData, setPasswordData] = useState({
       currentPassword: '',
       newPassword: '',
       confirmPassword: '',
-    })
-    const [isChangingPassword, setIsChangingPassword] = useState(false)
-    const [passwordError, setPasswordError] = useState<string | null>(null)
+    })  // Password change form data
+    const [isChangingPassword, setIsChangingPassword] = useState(false)  // Password change in progress
+    const [passwordError, setPasswordError] = useState<string | null>(null)  // Password-specific errors
     
+    /**
+     * Handles changes to form inputs when editing profile information
+     * Updates the formData state with the new values
+     * 
+     * @param e - Change event from input or select elements
+     */
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name, value } = e.target
       setFormData(prev => ({ ...prev, [name]: value }))
     }
+    /**
+     * Handles form submission when updating profile information
+     * Sends the updated data to Supabase and updates the local state
+     * 
+     * @param e - Form submission event
+     */
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault()
       
+      // Safety check to ensure profile exists
       if (!studentProfile) return
       
       try {
+        // Update the student profile in the database
         const { error } = await supabase
           .from('students')
           .update(formData)
@@ -65,17 +129,22 @@ interface StudentProfile {
         
         if (error) throw error
         
+        // Update local state with the new profile data
         setStudentProfile({
           ...studentProfile,
           ...formData as StudentProfile
         })
+        
+        // Exit edit mode and show success message
         setIsEditing(false)
         setUpdateMessage('Profile updated successfully!')
         
+        // Clear the success message after 3 seconds
         setTimeout(() => {
           setUpdateMessage('')
         }, 3000)
       } catch (error: unknown) {
+        // Handle errors and provide feedback
         if (error instanceof Error) {
           setError(error.message)
         } else {
@@ -85,26 +154,50 @@ interface StudentProfile {
       }
     }
   
-  // Add this useEffect to clean up object URLs when component unmounts
+  /**
+   * Cleanup effect for avatar object URLs
+   * 
+   * This effect ensures that any object URLs created for temporary avatar display
+   * are properly revoked when the component unmounts or when the avatar changes,
+   * preventing memory leaks in the application.
+   */
     useEffect(() => {
       return () => {
         // Clean up any object URLs to prevent memory leaks
-        if (studentProfile?.avatar_url) {
+        if (studentProfile?.avatar_url && studentProfile.avatar_url.startsWith('blob:')) {
           URL.revokeObjectURL(studentProfile.avatar_url);
         }
       };
     }, [studentProfile?.avatar_url]);
+    /**
+     * Handles avatar image upload and processing
+     * 
+     * This function manages the avatar upload process including:
+     * 1. Creating a temporary object URL for immediate display
+     * 2. Converting the image to base64 for storage in Supabase
+     * 3. Updating the database with the new avatar
+     * 4. Providing user feedback throughout the process
+     * 5. Error handling for various failure scenarios
+     * 
+     * The function uses FileReader to convert the image to base64 format,
+     * which allows for efficient storage and retrieval from the database.
+     * 
+     * @param event - Change event from the file input element
+     */
     const uploadAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
       try {
+        // Set uploading state to show loading indicator
         setUploading(true)
         
+        // Validate that files were selected
         if (!event.target.files || event.target.files.length === 0) {
           return;
         }
   
         const file = event.target.files[0]
         
-        // Create a temporary URL for immediate feedback
+        // Create a temporary URL for immediate visual feedback
+        // This allows the user to see their new avatar before the upload completes
         const objectUrl = URL.createObjectURL(file)
         
         // Update the profile with the temporary URL for immediate display
@@ -113,10 +206,12 @@ interface StudentProfile {
           avatar_url: objectUrl
         } : null)
         
-        // Convert the file to a base64 string for storage in localStorage
+        // Convert the file to a base64 string for storage in the database
+        // Base64 encoding allows the image to be stored as a string
         const reader = new FileReader()
         reader.readAsDataURL(file)
         
+        // Handle successful file reading
         reader.onload = async () => {
           if (reader.result) {
             // Get the base64 image data
@@ -139,19 +234,23 @@ interface StudentProfile {
               }
             }
             
+            // Show success message
             setUpdateMessage('Avatar updated successfully!')
             
+            // Clear success message after 3 seconds
             setTimeout(() => {
               setUpdateMessage('')
             }, 3000)
           }
         }
         
+        // Handle file reading errors
         reader.onerror = (error) => {
           console.error('Error reading file:', error)
           throw new Error('Failed to process image')
         }
       } catch (error: unknown) {
+        // Handle and display errors
         if (error instanceof Error) {
           setError(error.message)
         } else {
@@ -159,10 +258,18 @@ interface StudentProfile {
         }
         setUpdateMessage(`Error updating avatar: ${error instanceof Error ? error.message : 'Please try again later'}`)
       } finally {
+        // Reset uploading state regardless of outcome
         setUploading(false)
       }
     }
   
+    /**
+     * Handles clicks on the avatar image
+     * 
+     * Triggers the hidden file input to open the file selection dialog
+     * when the user clicks on their avatar image. This provides a more
+     * intuitive user experience than requiring users to click a separate button.
+     */
     const handleAvatarClick = () => {
       fileInputRef.current?.click()
     }

@@ -1,127 +1,202 @@
+/**
+ * RSS App Overrides CSS
+ *
+ * This stylesheet provides custom styling for the RSS widget integration in the Student Hub.
+ * It ensures the RSS feed display is consistent with the application's theme system,
+ * supporting both light and dark modes with appropriate styling for each.
+ *
+ * Key features:
+ * - Theme-aware styling (light/dark mode support)
+ * - Custom scrollbar styling
+ * - Limited display to 3 items for better UI
+ * - Hover effects and transitions
+ * - Transparent backgrounds with backdrop blur
+ * - Consistent color scheme with the rest of the application
+ */
+
+/* Import the base RSS component styles */
 @import url('../components/RssSimple/RssSimple.module.css');
 
-/* Base RSS app styles */
+/**
+ * Base RSS app styles
+ * Sets core variables and properties for the RSS widget
+ * These styles apply regardless of the current theme
+ */
 rssapp-wall,
 body rssapp-wall,
 #__next rssapp-wall {
-  --rssapp-theme-color: #10b981 !important;
-  --rssapp-background-color: transparent !important;
-  --rssapp-items-per-page: 3 !important;
-  max-height: 800px !important;
+  --rssapp-theme-color: #10b981 !important; /* Emerald theme color to match app */
+  --rssapp-background-color: transparent !important; /* Transparent background */
+  --rssapp-items-per-page: 3 !important; /* Limit to 3 items per page */
+  max-height: 800px !important; /* Constrain maximum height */
 }
 
-/* Ensure RSS app widget respects our container */
+/**
+ * Container styles for the RSS widget
+ * Ensures the widget fits properly within our layout
+ * and maintains consistent sizing
+ */
 rssapp-wall .rssapp-wall-root,
 body rssapp-wall .rssapp-wall-root {
-  background-color: transparent !important;
-  max-height: 800px !important;
-  overflow: hidden !important;
+  background-color: transparent !important; /* Transparent background */
+  max-height: 800px !important; /* Match container height */
+  overflow: hidden !important; /* Prevent overflow */
 }
 
-/* Light theme styles */
+/**
+ * Light theme specific styles
+ * Applied when the application is in light mode
+ * Uses :root:not(.dark) selector to target light theme
+ */
 :root:not(.dark) rssapp-wall,
 :root:not(.dark) body rssapp-wall,
 :root:not(.dark) #__next rssapp-wall {
-  --rssapp-text-color: #1e293b !important;
-  --rssapp-secondary-color: rgba(71, 85, 105, 0.8) !important;
-  --rssapp-border-color: rgba(203, 213, 225, 0.5) !important;
-  --rssapp-link-color: #10b981 !important;
+  --rssapp-text-color: #1e293b !important; /* Dark text for light theme */
+  --rssapp-secondary-color: rgba(71, 85, 105, 0.8) !important; /* Slate color for secondary text */
+  --rssapp-border-color: rgba(203, 213, 225, 0.5) !important; /* Light border */
+  --rssapp-link-color: #10b981 !important; /* Emerald links */
 }
 
-/* Dark theme styles */
+/**
+ * Dark theme specific styles
+ * Applied when the application is in dark mode
+ * Uses :root.dark selector to target dark theme
+ * Also includes .force-dark-rss class for manual overrides
+ */
 :root.dark rssapp-wall,
 :root.dark body rssapp-wall,
 :root.dark #__next rssapp-wall,
 .force-dark-rss rssapp-wall,
 .force-dark-rss body rssapp-wall,
 .force-dark-rss #__next rssapp-wall {
-  --rssapp-text-color: #ffffff !important;
-  --rssapp-secondary-color: rgba(203, 213, 225, 0.8) !important;
-  --rssapp-border-color: rgba(71, 85, 105, 0.3) !important;
-  --rssapp-link-color: #10b981 !important;
+  --rssapp-text-color: #ffffff !important; /* Light text for dark theme */
+  --rssapp-secondary-color: rgba(203, 213, 225, 0.8) !important; /* Light secondary text */
+  --rssapp-border-color: rgba(71, 85, 105, 0.3) !important; /* Darker border */
+  --rssapp-link-color: #10b981 !important; /* Emerald links */
 }
 
-/* Light theme card styles */
+/**
+ * Light theme card styles
+ * Styling for individual RSS items in light mode
+ * Features frosted glass effect with light background
+ */
 :root:not(.dark) rssapp-wall .rssapp-item,
 :root:not(.dark) body rssapp-wall .rssapp-item {
-  background-color: rgba(255, 255, 255, 0.7) !important;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(203, 213, 225, 0.5) !important;
-  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  background-color: rgba(255, 255, 255, 0.7) !important; /* Semi-transparent white */
+  backdrop-filter: blur(5px); /* Frosted glass effect */
+  border: 1px solid rgba(203, 213, 225, 0.5) !important; /* Light border */
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important; /* Smooth hover transition */
 }
 
-/* Dark theme card styles */
+/**
+ * Dark theme card styles
+ * Styling for individual RSS items in dark mode
+ * Features frosted glass effect with dark background
+ */
 :root.dark rssapp-wall .rssapp-item,
 :root.dark body rssapp-wall .rssapp-item,
 .force-dark-rss rssapp-wall .rssapp-item,
 .force-dark-rss body rssapp-wall .rssapp-item {
-  background-color: rgba(30, 41, 59, 0.5) !important;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(71, 85, 105, 0.3) !important;
-  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  background-color: rgba(30, 41, 59, 0.5) !important; /* Semi-transparent slate */
+  backdrop-filter: blur(5px); /* Frosted glass effect */
+  border: 1px solid rgba(71, 85, 105, 0.3) !important; /* Dark border */
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important; /* Smooth hover transition */
 }
 
-/* Hide all but the first 3 items */
+/**
+ * Item limit styles
+ * Forcefully hides all items beyond the first 3
+ * Uses multiple techniques to ensure they're completely hidden
+ */
 rssapp-wall .rssapp-wall-root .rssapp-item:nth-child(n+4),
 body rssapp-wall .rssapp-wall-root .rssapp-item:nth-child(n+4) {
-  display: none !important;
-  height: 0 !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-  position: absolute !important;
-  left: -9999px !important;
+  display: none !important; /* Remove from layout */
+  height: 0 !important; /* Zero height */
+  visibility: hidden !important; /* Hide visually */
+  opacity: 0 !important; /* Fully transparent */
+  pointer-events: none !important; /* Disable interactions */
+  position: absolute !important; /* Remove from flow */
+  left: -9999px !important; /* Move far off-screen */
 }
 
+/**
+ * Common hover effects
+ * Applied to all RSS items regardless of theme
+ * Creates a subtle lifting effect on hover
+ */
 rssapp-wall .rssapp-item:hover,
 body rssapp-wall .rssapp-item:hover {
-  transform: translateY(-3px) !important;
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2) !important;
+  transform: translateY(-3px) !important; /* Lift effect */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2) !important; /* Shadow for depth */
 }
 
-/* Light theme hover effect */
+/**
+ * Light theme specific hover effects
+ * Overrides the shadow color for light theme
+ * Uses a lighter shadow for better visual effect
+ */
 :root:not(.dark) rssapp-wall .rssapp-item:hover,
 :root:not(.dark) body rssapp-wall .rssapp-item:hover {
-  transform: translateY(-3px) !important;
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1) !important;
+  transform: translateY(-3px) !important; /* Lift effect */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1) !important; /* Lighter shadow for light theme */
 }
 
-/* Dark theme hover effect */
+/**
+ * Dark theme specific hover effects
+ * Overrides the shadow color for dark theme
+ * Uses a darker shadow for better visual effect
+ */
 :root.dark rssapp-wall .rssapp-item:hover,
 :root.dark body rssapp-wall .rssapp-item:hover,
 .force-dark-rss rssapp-wall .rssapp-item:hover,
 .force-dark-rss body rssapp-wall .rssapp-item:hover {
-  transform: translateY(-3px) !important;
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2) !important;
+  transform: translateY(-3px) !important; /* Lift effect */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2) !important; /* Darker shadow for dark theme */
 }
 
-/* Style the date to stand out - light theme */
+/**
+ * Light theme date styling
+ * Makes the date stand out with emerald color
+ * Slightly transparent for subtle effect
+ */
 :root:not(.dark) rssapp-wall .rssapp-item-date,
 :root:not(.dark) body rssapp-wall .rssapp-item-date {
-  color: #10b981 !important;
-  opacity: 0.8;
+  color: #10b981 !important; /* Emerald color */
+  opacity: 0.8; /* Slight transparency */
 }
 
-/* Style the date to stand out - dark theme */
+/**
+ * Dark theme date styling
+ * Makes the date stand out with emerald color
+ * Slightly transparent for subtle effect
+ */
 :root.dark rssapp-wall .rssapp-item-date,
 :root.dark body rssapp-wall .rssapp-item-date,
 .force-dark-rss rssapp-wall .rssapp-item-date,
 .force-dark-rss body rssapp-wall .rssapp-item-date {
-  color: #10b981 !important;
-  opacity: 0.8;
+  color: #10b981 !important; /* Emerald color */
+  opacity: 0.8; /* Slight transparency */
 }
 
-/* Light theme text colors */
+/**
+ * Light theme text colors
+ * Sets dark text colors for content in light mode
+ * Applies to all text elements within RSS items
+ */
 :root:not(.dark) rssapp-wall .rssapp-item-content,
 :root:not(.dark) rssapp-wall .rssapp-item-title,
 :root:not(.dark) rssapp-wall .rssapp-item-description,
 :root:not(.dark) body rssapp-wall .rssapp-item-content,
 :root:not(.dark) body rssapp-wall .rssapp-item-title,
 :root:not(.dark) body rssapp-wall .rssapp-item-description {
-  color: #1e293b !important;
+  color: #1e293b !important; /* Slate text color for light theme */
 }
 
-/* Dark theme text colors */
+/**
+ * Dark theme text colors
+ * Sets light text colors for content in dark mode
+ * Applies to all text elements within RSS items
+ */
 :root.dark rssapp-wall .rssapp-item-content,
 :root.dark rssapp-wall .rssapp-item-title,
 :root.dark rssapp-wall .rssapp-item-description,
@@ -134,37 +209,49 @@ body rssapp-wall .rssapp-item:hover {
 .force-dark-rss body rssapp-wall .rssapp-item-content,
 .force-dark-rss body rssapp-wall .rssapp-item-title,
 .force-dark-rss body rssapp-wall .rssapp-item-description {
-  color: #ffffff !important;
+  color: #ffffff !important; /* White text color for dark theme */
 }
 
-/* Hide the load more button */
+/**
+ * Hide load more button
+ * Completely removes the load more button from the RSS widget
+ * Uses multiple techniques to ensure it's completely hidden
+ */
 rssapp-wall .rssapp-load-more-container,
 body rssapp-wall .rssapp-load-more-container,
 rssapp-wall .rssapp-wall-root .rssapp-load-more-container,
 body rssapp-wall .rssapp-wall-root .rssapp-load-more-container {
-  display: none !important;
-  height: 0 !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
+  display: none !important; /* Remove from layout */
+  height: 0 !important; /* Zero height */
+  visibility: hidden !important; /* Hide visually */
+  opacity: 0 !important; /* Fully transparent */
+  pointer-events: none !important; /* Disable interactions */
 }
 
-/* Apply custom scrollbar */
+/**
+ * Custom scrollbar styles
+ * Applies a thin, emerald-colored scrollbar to the items container
+ * Compatible with Firefox via scrollbar-width and scrollbar-color
+ */
 .items {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(16, 185, 129, 0.5) transparent;
+  scrollbar-width: thin; /* Thin scrollbar for Firefox */
+  scrollbar-color: rgba(16, 185, 129, 0.5) transparent; /* Emerald track, transparent thumb */
 }
 
-/* Webkit scrollbar styles */
+/**
+ * Webkit-specific scrollbar styles
+ * Provides custom scrollbar styling for Chrome, Safari, and other Webkit browsers
+ * Matches the Firefox scrollbar styling above
+ */
 .items::-webkit-scrollbar {
-  width: 8px;
+  width: 8px; /* Scrollbar width */
 }
 
 .items::-webkit-scrollbar-track {
-  background: transparent;
+  background: transparent; /* Transparent track */
 }
 
 .items::-webkit-scrollbar-thumb {
-  background-color: rgba(16, 185, 129, 0.5);
-  border-radius: 20px;
-} 
+  background-color: rgba(16, 185, 129, 0.5); /* Semi-transparent emerald thumb */
+  border-radius: 20px; /* Rounded corners */
+}

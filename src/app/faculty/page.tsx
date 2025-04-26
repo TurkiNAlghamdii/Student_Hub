@@ -1,3 +1,22 @@
+/**
+ * Faculty Page Component
+ * 
+ * This client-side component provides comprehensive information about the Faculty of Computing
+ * and Information Technology at King Abdulaziz University, including:
+ * - Faculty overview and mission
+ * - Academic departments with their programs and features
+ * - Vision and mission statements for each department
+ * - Contact information and location
+ * 
+ * The component implements interactive department cards that users can click to view details,
+ * and includes accessibility features for keyboard navigation.
+ * 
+ * The component respects the application's theme system by using CSS classes
+ * that work with both light and dark modes via the root element class.
+ * All styling is defined in faculty.css which uses :root.dark and :root:not(.dark)
+ * selectors to ensure proper theming without any flash of incorrect theme.
+ */
+
 'use client';
 
 import { useState, KeyboardEvent, type ReactElement } from 'react';
@@ -6,6 +25,18 @@ import Navbar from '@/components/Navbar/Navbar';
 import './faculty.css';
 import QualityPolicy from '@/components/QualityPolicy/QualityPolicy';
 
+/**
+ * Department Interface
+ * 
+ * Defines the structure of department data displayed on the faculty page.
+ * 
+ * @property name - Name of the academic department
+ * @property description - Detailed description of the department's focus and objectives
+ * @property programs - Array of academic programs offered by the department
+ * @property features - Array of key features or facilities available in the department
+ * @property vision - The department's vision statement
+ * @property mission - The department's mission statement
+ */
 interface Department {
   name: string;
   description: string;
@@ -15,6 +46,13 @@ interface Department {
   mission: string;
 }
 
+/**
+ * Department Data
+ * 
+ * Static array of department information for the Faculty of Computing and Information Technology.
+ * Each department includes its name, description, programs offered, key features, vision, and mission.
+ * This data is used to generate the interactive department cards in the UI.
+ */
 const departments: Department[] = [
   {
     name: "Computer Science",
@@ -70,24 +108,69 @@ const departments: Department[] = [
   }
 ];
 
+/**
+ * FacultyPage Component
+ * 
+ * Main component for displaying information about the Faculty of Computing and Information Technology.
+ * Includes sections for faculty overview, departments, quality policy, and contact information.
+ * 
+ * @returns Rendered faculty page with interactive department cards and contact information
+ */
 const FacultyPage = (): ReactElement => {
+  /**
+   * Component State
+   * 
+   * - activeDepartment: Tracks which department card is currently selected/active
+   *   This is used to apply visual highlighting to the selected department card
+   */
   const [activeDepartment, setActiveDepartment] = useState<string | null>(null);
 
+  /**
+   * Department Selection Handler (Mouse Click)
+   * 
+   * Updates the active department state when a user clicks on a department card.
+   * 
+   * @param departmentName - Name of the department that was clicked
+   */
   const handleDepartmentClick = (departmentName: string): void => {
     setActiveDepartment(departmentName);
   };
 
+  /**
+   * Department Selection Handler (Keyboard)
+   * 
+   * Provides keyboard accessibility for department selection.
+   * Activates a department when the Enter key is pressed while focused on a department card.
+   * 
+   * @param e - Keyboard event object
+   * @param departmentName - Name of the department that is focused
+   */
   const handleDepartmentKeyDown = (e: KeyboardEvent<HTMLDivElement>, departmentName: string): void => {
     if (e.key === 'Enter') {
       setActiveDepartment(departmentName);
     }
   };
 
+  /**
+   * Main Component Render
+   * 
+   * Renders the complete faculty page with multiple sections:
+   * - Hero section with faculty title and link to official website
+   * - About section with faculty description
+   * - Quality policy section
+   * - Departments section with interactive department cards
+   * - Location and contact information section with embedded map
+   * 
+   * The UI is designed to be responsive and uses theme-compatible styling
+   * that works in both light and dark modes through CSS classes defined in faculty.css.
+   * The styling uses :root.dark and :root:not(.dark) selectors to ensure proper theming
+   * without any flash of incorrect theme during page load or navigation.
+   */
   return (
     <div className="faculty-page">
       <Navbar />
       <main>
-        {/* Hero Section */}
+        {/* Hero Section - Displays the faculty title and official website link */}
         <section className="faculty-hero">
           <div className="faculty-hero-content">
             <div className="text-center max-w-4xl">
@@ -109,7 +192,7 @@ const FacultyPage = (): ReactElement => {
           </div>
         </section>
 
-        {/* Overview Section */}
+        {/* Overview Section - Provides detailed information about the faculty */}
         <section className="section-container">
           <div className="max-w-6xl mx-auto">
             <h2 className="section-title">
@@ -136,19 +219,21 @@ const FacultyPage = (): ReactElement => {
           </div>
         </section>
 
-        {/* Quality Policy Section */}
+        {/* Quality Policy Section - Displays the faculty's quality policy using the QualityPolicy component */}
         <section className="quality-section">
           <QualityPolicy />
         </section>
 
-        {/* Departments Section */}
+        {/* Departments Section - Displays interactive cards for each academic department */}
         <section className="section-container section-border">
           <div className="max-w-6xl mx-auto px-4 md:px-8">
             <h2 className="section-title">
               Departments
             </h2>
             <div className="grid md:grid-cols-3 gap-8">
+              {/* Map through the departments array to create a card for each department */}
               {departments.map((dept) => (
+                /* Department card with interactive functionality and accessibility attributes */
                 <div
                   key={dept.name}
                   className={`department-card ${activeDepartment === dept.name ? 'active' : ''}`}
@@ -206,13 +291,14 @@ const FacultyPage = (): ReactElement => {
           </div>
         </section>
 
-        {/* Location Section */}
+        {/* Location Section - Displays contact information and an interactive map */}
         <section className="section-container">
           <div className="max-w-6xl mx-auto">
             <h2 className="section-title">
               Location & Contact
             </h2>
             <div className="grid md:grid-cols-2 gap-12">
+              {/* Contact information cards with icons */}
               <div className="space-y-8">
                 <div className="contact-card">
                   <MapPin className="contact-icon" aria-hidden="true" />
@@ -239,6 +325,7 @@ const FacultyPage = (): ReactElement => {
                   </div>
                 </div>
               </div>
+              {/* Interactive Google Maps embed with link to open in Google Maps */}
               <div className="map-container">
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3712.577456331789!2d39.2470429!3d21.4966826!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x15bdcf4341ab79e7%3A0x9f0d0b8c8c8c8c8c!2sKing%20Abdulaziz%20University!5e0!3m2!1sen!2ssa!4v1647681234567!5m2!1sen!2ssa&q=21.4966826,39.2470429&t=m&z=17&style=feature:all|element:all|invert_lightness:true|saturation:-100|lightness:0"
@@ -270,4 +357,8 @@ const FacultyPage = (): ReactElement => {
   );
 };
 
+/**
+ * Export the FacultyPage component as the default export
+ * This component is used in the faculty route of the application
+ */
 export default FacultyPage; 

@@ -1,23 +1,81 @@
+/**
+ * Chat Interface Component
+ * 
+ * This component provides an AI-powered chat interface that can be contextualized
+ * for different academic scenarios (general, course-specific, or exam preparation).
+ * 
+ * Features:
+ * - Contextual welcome messages based on the type of chat
+ * - Course-specific assistance when used within a course
+ * - Automatic initial questions based on context
+ * - Suggestion buttons for common queries
+ * - Error handling and fallbacks for API issues
+ * - Real-time message streaming
+ * 
+ * The component uses CSS classes that are compatible with the application's
+ * theme system, supporting both light and dark modes through the root element class.
+ */
+
 import { useState, useEffect, useRef } from 'react';
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
 import './ChatInterface.css';
 
+/**
+ * Message Type
+ * 
+ * Defines the structure of chat messages exchanged between the user and AI assistant.
+ * 
+ * @property role - Identifies whether the message is from the user or assistant
+ * @property content - The text content of the message
+ */
 type Message = {
   role: 'user' | 'assistant';
   content: string;
 };
 
+/**
+ * ChatInterface Props
+ * 
+ * Configuration options for the ChatInterface component.
+ * 
+ * @property contextType - Determines the type of assistant and welcome message
+ *                        'general' - General academic assistant
+ *                        'course' - Course-specific assistant
+ *                        'exam' - Exam preparation assistant
+ * @property courseName - Name of the course when contextType is 'course'
+ * @property initialQuestion - Optional question to start the conversation with
+ */
 type ChatInterfaceProps = {
   contextType?: 'general' | 'course' | 'exam';
   courseName?: string;
   initialQuestion?: string | null;
 };
 
+/**
+ * ChatInterface Component
+ * 
+ * Main component for AI-powered chat functionality that adapts to different academic contexts.
+ * The component manages message history, user input, API communication, and UI states.
+ * 
+ * @param props - Configuration options for the chat interface
+ * @returns Rendered chat interface with messages, input field, and suggestion buttons
+ */
 export default function ChatInterface({ 
   contextType = 'general', 
   courseName,
   initialQuestion = null
 }: ChatInterfaceProps) {
+  /**
+   * Component State
+   * 
+   * - messages: Array of chat messages between user and assistant
+   * - userInput: Current text in the input field
+   * - isLoading: Loading state during API calls
+   * - chatContainerRef: Reference to the chat container for auto-scrolling
+   * - hasInitializedRef: Prevents duplicate initialization
+   * - isStreamingRef: Tracks if a message is currently streaming
+   * - showSuggestions: Controls visibility of suggestion buttons
+   */
   const [messages, setMessages] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -26,7 +84,17 @@ export default function ChatInterface({
   const isStreamingRef = useRef(false);
   const [showSuggestions, setShowSuggestions] = useState(true);
 
-  // Debug log
+  /**
+   * Debug and CSS Verification Effect
+   * 
+   * This effect serves two purposes:
+   * 1. Logs component initialization with context information for debugging
+   * 2. Verifies that the component's CSS has been properly loaded
+   * 
+   * The CSS verification is important to ensure the chat interface renders
+   * correctly with proper styling, especially for theme compatibility.
+   * This helps diagnose styling issues during development.
+   */
   useEffect(() => {
     console.log('ChatInterface mounted with context:', contextType, 'courseName:', courseName, 'initialQuestion:', initialQuestion);
     
@@ -56,7 +124,21 @@ export default function ChatInterface({
     };
   }, [contextType, courseName, initialQuestion]);
 
-  // Function to handle AI response to a message
+  /**
+   * Handle AI Response Function
+   * 
+   * Manages communication with the chat API endpoint and processes responses.
+   * This function is responsible for:
+   * 1. Preparing the context and message history for the API
+   * 2. Making the API request with proper error handling
+   * 3. Processing the response and updating the UI
+   * 4. Providing fallback responses for common error scenarios
+   * 
+   * The function includes special handling for API key errors to provide
+   * a helpful message to users when the OpenAI API key is missing or invalid.
+   * 
+   * @param userMessage - Optional user message to send to the API
+   */
   const handleAIResponse = async (userMessage?: Message) => {
     console.log('ChatInterface: Sending message to API:', userMessage?.content);
     setIsLoading(true);
@@ -110,7 +192,15 @@ export default function ChatInterface({
         throw new Error('Invalid response format from API');
       }
     } catch (err) {
-      // Add error message or fallback response
+      /**
+       * Error Handling with User-Friendly Fallbacks
+       * 
+       * Provides specific error messages based on the type of error:
+       * - API key issues: Informs the user that the admin needs to set up an API key
+       * - Other errors: Shows a generic error message with the specific error details
+       * 
+       * This ensures users always get feedback even when the API fails.
+       */
       const errorMessage = err instanceof Error ? err.message : 'Something went wrong';
       
       if (errorMessage.includes('API key')) {
@@ -133,7 +223,19 @@ export default function ChatInterface({
     }
   };
 
-  // Initialize with a welcome message and check for course description or initial question
+  /**
+   * Chat Initialization Effect
+   * 
+   * This effect handles the initial setup of the chat interface with a welcome message
+   * and potentially an automatic first question based on the context:
+   * 
+   * - For course context: Uses course description from session storage if available,
+   *   or generates a generic course-related question
+   * - For initial questions: Processes questions passed directly to the component
+   * 
+   * The initialization only happens once per component instance to prevent duplicate
+   * welcome messages when the component re-renders.
+   */
   useEffect(() => {
     if (hasInitializedRef.current) {
       console.log('ChatInterface: Already initialized, skipping');
@@ -154,7 +256,16 @@ export default function ChatInterface({
       setMessages([welcomeMessage]);
       console.log('ChatInterface: Set welcome message');
       
-      // Handle course description check
+      /**
+       * Course-Specific Initialization
+       * 
+       * For course context, we check if there's a course description in session storage.
+       * If found, we use it to generate a detailed initial question about the course.
+       * If not, we fall back to a generic question based on the course name.
+       * 
+       * This provides immediate value to the user without requiring them to formulate
+       * the first question, making the chat interface more helpful from the start.
+       */
       if (typeof window !== 'undefined' && contextType === 'course') {
         const courseDescription = sessionStorage.getItem('courseDescription');
         
@@ -195,7 +306,15 @@ export default function ChatInterface({
           }, 1000);
         }
       } 
-      // Handle initial question from AI Assistant widget if present
+      /**
+       * Initial Question Handling
+       * 
+       * If an initial question was provided to the component (e.g., from a widget),
+       * we process it after displaying the welcome message.
+       * 
+       * This allows for seamless integration with other components that might want
+       * to start a conversation with a specific question.
+       */
       else if (initialQuestion) {
         console.log('ChatInterface: Processing initialQuestion:', initialQuestion);
         
@@ -223,7 +342,12 @@ export default function ChatInterface({
     }
   }, [contextType, courseName, initialQuestion, handleAIResponse]);
 
-  // Auto-scroll to bottom of chat when messages change
+  /**
+   * Auto-scroll Effect
+   * 
+   * Automatically scrolls the chat container to the bottom whenever new messages are added.
+   * This ensures that the most recent messages are always visible to the user.
+   */
   useEffect(() => {
     try {
       if (chatContainerRef.current) {
@@ -234,7 +358,20 @@ export default function ChatInterface({
     }
   }, [messages]);
 
-  // Function to get appropriate welcome message based on context
+  /**
+   * Get Welcome Message Function
+   * 
+   * Generates a contextual welcome message based on the type of chat (general, course, or exam).
+   * Each welcome message is tailored to the specific context and includes bullet points
+   * highlighting the capabilities of the AI assistant in that context.
+   * 
+   * The welcome messages are designed to be friendly, informative, and to encourage
+   * the user to engage with specific types of questions appropriate for the context.
+   * 
+   * @param type - The type of chat context ('general', 'course', or 'exam')
+   * @param name - Optional name (e.g., course name) to personalize the welcome message
+   * @returns A formatted welcome message string with capabilities and a prompt
+   */
   function getWelcomeMessage(type: string, name?: string): string {
     switch (type) {
       case 'course':
@@ -268,7 +405,12 @@ What specific exam or subject are you preparing for?`;
 How can I assist with your academic needs today?`;
     }
   }
-
+  /**
+   * Message Sending Handler
+   * 
+   * Processes user input when the send button is clicked or Enter is pressed.
+   * Creates a message object from the input, adds it to the chat, and triggers the AI response.
+   */
   const handleSendMessage = async () => {
     if (!userInput.trim()) return;
     
@@ -285,6 +427,15 @@ How can I assist with your academic needs today?`;
     await handleAIResponse(userMessage);
   };
 
+  /**
+   * Keyboard Event Handler
+   * 
+   * Handles keyboard events in the input field, specifically detecting
+   * when the Enter key is pressed without the Shift key to send the message.
+   * Shift+Enter allows for multi-line input.
+   * 
+   * @param e - Keyboard event from the input field
+   */
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -292,7 +443,15 @@ How can I assist with your academic needs today?`;
     }
   };
 
-  // Listen for direct question sending events
+  /**
+   * Custom Question Event Listener
+   * 
+   * Listens for custom events that might be dispatched by other components
+   * to send questions directly to the chat interface.
+   * 
+   * This allows for integration with other parts of the application,
+   * such as a floating AI assistant button or course material pages.
+   */
   useEffect(() => {
     const handleCustomQuestion = (event: CustomEvent) => {
       if (event.detail && event.detail.question) {
@@ -324,20 +483,46 @@ How can I assist with your academic needs today?`;
     };
   }, [messages, handleAIResponse]);
 
-  // Keep the streaming effect but add a check to prevent duplicates
+  /**
+   * Streaming Effect
+   * 
+   * Handles the continuation of message streaming when the loading state changes.
+   * This ensures that streaming responses are properly handled even if they span
+   * multiple API calls.
+   */
   useEffect(() => {
     if (isStreamingRef.current && !isLoading) {
       handleAIResponse();
     }
   }, [handleAIResponse, isLoading]);
 
-  // Add helper function for suggestions
+  /**
+   * Suggestion Click Handler
+   * 
+   * Handles clicks on suggestion buttons by setting the input field to the
+   * suggested text and hiding the suggestions panel.
+   * 
+   * @param suggestion - The suggested text to populate in the input field
+   */
   const handleSuggestionClick = (suggestion: string) => {
     setUserInput(suggestion);
     // Hide suggestions after clicking one
     setShowSuggestions(false);
   };
 
+  /**
+   * Component Render
+   * 
+   * Renders the chat interface with the following elements:
+   * - Message history with distinct styling for user and assistant messages
+   * - Loading indicator when waiting for AI response
+   * - Suggestion buttons for common questions (shown for new conversations)
+   * - Input form with text field and send button
+   * - Disclaimer about AI-generated responses
+   * 
+   * The component uses CSS classes that are compatible with the application's
+   * theme system, supporting both light and dark modes through the root element class.
+   */
   return (
     <div className="chat-container">
       <div 
@@ -377,6 +562,7 @@ How can I assist with your academic needs today?`;
       </div>
       
       <div className="chat-footer">
+        {/* Suggestion Buttons - Only shown for new conversations */}
         {showSuggestions && messages.length < 3 && (
           <div className="quick-suggestions">
             <p className="suggestions-title">Try asking about:</p>
@@ -408,6 +594,7 @@ How can I assist with your academic needs today?`;
             </div>
           </div>
         )}
+        {/* Message Input Form */}
         <form onSubmit={(e) => {
           e.preventDefault();
           handleSendMessage();
@@ -437,4 +624,4 @@ How can I assist with your academic needs today?`;
       </div>
     </div>
   );
-} 
+}

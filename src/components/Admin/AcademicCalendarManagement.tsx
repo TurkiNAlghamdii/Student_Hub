@@ -1,3 +1,21 @@
+/**
+ * Academic Calendar Management Component
+ * 
+ * This client-side component provides an administrative interface for managing
+ * academic and exam calendars. It allows administrators to upload, view, and delete
+ * calendar files and exam schedule information.
+ * 
+ * Key features:
+ * - Upload and manage academic calendar PDF files
+ * - Add and manage exam schedules with external links
+ * - Toggle active status of calendars
+ * - Delete outdated calendars
+ * - Tabbed interface for switching between academic and exam calendars
+ * 
+ * The component integrates with the application's theme system through conditional
+ * styling that adapts to both light and dark modes via the root element class.
+ */
+
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
@@ -11,6 +29,22 @@ import {
   DocumentTextIcon
 } from '@heroicons/react/24/outline'
 
+/**
+ * Calendar Data Interface
+ * 
+ * Defines the structure of academic calendar data retrieved from the database.
+ * This interface ensures type safety when working with calendar files.
+ * 
+ * @property id - Unique identifier for the calendar entry
+ * @property file_name - Original name of the uploaded file
+ * @property file_size - Size of the file in bytes
+ * @property file_type - MIME type of the file (should be application/pdf)
+ * @property file_url - Public URL to access the file
+ * @property description - Optional description of the calendar
+ * @property uploaded_at - Timestamp when the file was uploaded
+ * @property semester - Academic semester the calendar applies to
+ * @property active - Whether this calendar is currently active/visible to students
+ */
 interface CalendarData {
   id: string
   file_name: string
@@ -23,6 +57,20 @@ interface CalendarData {
   active: boolean
 }
 
+/**
+ * Exam Calendar Data Interface
+ * 
+ * Defines the structure of exam calendar data retrieved from the database.
+ * This interface ensures type safety when working with exam schedule information.
+ * 
+ * @property id - Unique identifier for the exam calendar entry
+ * @property title - Title of the exam schedule
+ * @property url - External URL to the exam schedule document or page
+ * @property exam_type - Type of exam (Mid Term or Final)
+ * @property semester - Academic semester the exam schedule applies to
+ * @property description - Description of the exam schedule
+ * @property created_at - Timestamp when the entry was created
+ */
 interface ExamCalendarData {
   id: string
   title: string
@@ -33,41 +81,68 @@ interface ExamCalendarData {
   created_at: string
 }
 
+/**
+ * Academic Calendar Management Component
+ * 
+ * Provides an administrative interface for managing academic and exam calendars.
+ * Administrators can upload PDF files for academic calendars and add links to
+ * exam schedules, as well as manage existing entries.
+ * 
+ * @returns The rendered academic calendar management interface
+ */
 export default function AcademicCalendarManagement() {
-  // Academic Calendar States
-  const [calendars, setCalendars] = useState<CalendarData[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [uploadError, setUploadError] = useState<string | null>(null)
-  const [isUploading, setIsUploading] = useState(false)
-  const [uploadProgress, setUploadProgress] = useState(0)
-  const [uploadSuccess, setUploadSuccess] = useState<string | null>(null)
-  const [deletingCalendar, setDeletingCalendar] = useState<string | null>(null)
-  const [semester, setSemester] = useState('')
-  const [description, setDescription] = useState('')
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  /**
+   * Academic Calendar States
+   * These state variables manage the academic calendar upload and display functionality
+   */
+  const [calendars, setCalendars] = useState<CalendarData[]>([])               // List of academic calendars
+  const [loading, setLoading] = useState(true)                                 // Loading state for academic calendars
+  const [error, setError] = useState<string | null>(null)                      // Error state for academic calendars
+  const [uploadError, setUploadError] = useState<string | null>(null)          // Error state for file uploads
+  const [isUploading, setIsUploading] = useState(false)                        // Upload in progress state
+  const [uploadProgress, setUploadProgress] = useState(0)                      // Upload progress percentage
+  const [uploadSuccess, setUploadSuccess] = useState<string | null>(null)      // Success message after upload
+  const [deletingCalendar, setDeletingCalendar] = useState<string | null>(null) // ID of calendar being deleted
+  const [semester, setSemester] = useState('')                                 // Semester input for new calendar
+  const [description, setDescription] = useState('')                           // Description input for new calendar
+  const fileInputRef = useRef<HTMLInputElement>(null)                          // Reference to file input element
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)          // Selected file for upload
 
-  // Exam Calendar States
-  const [activeTab, setActiveTab] = useState<'academic' | 'exam'>('academic')
-  const [examCalendars, setExamCalendars] = useState<ExamCalendarData[]>([])
-  const [loadingExams, setLoadingExams] = useState(true)
-  const [examError, setExamError] = useState<string | null>(null)
-  const [examTitle, setExamTitle] = useState('')
-  const [examUrl, setExamUrl] = useState('')
-  const [examSemester, setExamSemester] = useState('')
-  const [examType, setExamType] = useState<'Mid Term' | 'Final'>('Mid Term')
-  const [examDescription, setExamDescription] = useState('')
-  const [isAddingExam, setIsAddingExam] = useState(false)
-  const [examSuccess, setExamSuccess] = useState<string | null>(null)
-  const [deletingExamCalendar, setDeletingExamCalendar] = useState<string | null>(null)
+  /**
+   * Exam Calendar States
+   * These state variables manage the exam calendar creation and display functionality
+   */
+  const [activeTab, setActiveTab] = useState<'academic' | 'exam'>('academic')  // Active tab selection
+  const [examCalendars, setExamCalendars] = useState<ExamCalendarData[]>([])   // List of exam calendars
+  const [loadingExams, setLoadingExams] = useState(true)                       // Loading state for exam calendars
+  const [examError, setExamError] = useState<string | null>(null)              // Error state for exam calendars
+  const [examTitle, setExamTitle] = useState('')                               // Title input for new exam calendar
+  const [examUrl, setExamUrl] = useState('')                                   // URL input for new exam calendar
+  const [examSemester, setExamSemester] = useState('')                         // Semester input for new exam calendar
+  const [examType, setExamType] = useState<'Mid Term' | 'Final'>('Mid Term')   // Exam type selection
+  const [examDescription, setExamDescription] = useState('')                   // Description input for new exam calendar
+  const [isAddingExam, setIsAddingExam] = useState(false)                      // Adding exam calendar in progress
+  const [examSuccess, setExamSuccess] = useState<string | null>(null)          // Success message after adding exam
+  const [deletingExamCalendar, setDeletingExamCalendar] = useState<string | null>(null) // ID of exam calendar being deleted
 
-  // Fetch all calendars
+  /**
+   * Initial Data Fetching Effect
+   * 
+   * Fetches both academic and exam calendars from the database when the component mounts.
+   * This ensures the component displays the most up-to-date calendar information.
+   */
   useEffect(() => {
     fetchCalendars()
     fetchExamCalendars()
   }, [])
 
+  /**
+   * Fetch Academic Calendars
+   * 
+   * Retrieves all academic calendar entries from the database and updates the state.
+   * Calendars are sorted by upload date with the most recent first.
+   * Handles loading states and error conditions appropriately.
+   */
   const fetchCalendars = async () => {
     try {
       setLoading(true)
@@ -86,6 +161,13 @@ export default function AcademicCalendarManagement() {
     }
   }
 
+  /**
+   * Fetch Exam Calendars
+   * 
+   * Retrieves all exam calendar entries from the database and updates the state.
+   * Exam calendars are sorted by upload date with the most recent first.
+   * Handles loading states and error conditions appropriately.
+   */
   const fetchExamCalendars = async () => {
     try {
       setLoadingExams(true)
@@ -104,6 +186,18 @@ export default function AcademicCalendarManagement() {
     }
   }
 
+  /**
+   * Handle File Selection
+   * 
+   * Processes file selection from the file input element, validates the file type
+   * and size, and updates the state accordingly.
+   * 
+   * Validation rules:
+   * - Only PDF files are allowed
+   * - Maximum file size is 10MB
+   * 
+   * @param event - The file input change event
+   */
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0]

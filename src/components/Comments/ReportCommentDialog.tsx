@@ -1,3 +1,21 @@
+/**
+ * Report Comment Dialog Component
+ * 
+ * This component provides a modal dialog for reporting inappropriate comments.
+ * It allows users to select a reason for reporting and provide additional details.
+ * 
+ * Key features:
+ * - Animated modal dialog with smooth transitions
+ * - Categorized report reasons with radio button selection
+ * - Optional details input for additional context
+ * - Form validation and error handling
+ * - Success feedback with toast notifications
+ * 
+ * The component integrates with the application's theme system through CSS classes
+ * that adapt to both light and dark modes, ensuring a consistent visual experience
+ * across the application while maintaining readability in both theme contexts.
+ */
+
 import React, { useState } from 'react'
 import { 
   FlagIcon, 
@@ -8,6 +26,16 @@ import { motion, AnimatePresence } from 'framer-motion'
 import toast from 'react-hot-toast'
 import { useAuth } from '@/contexts/AuthContext'
 
+/**
+ * Report Comment Dialog Props
+ * 
+ * Configuration options for the ReportCommentDialog component.
+ * 
+ * @property commentId - Unique identifier of the comment being reported
+ * @property isOpen - Whether the dialog is currently visible
+ * @property onClose - Callback function to close the dialog
+ * @property onSuccess - Optional callback function to execute after successful report submission
+ */
 interface ReportCommentDialogProps {
   commentId: string
   isOpen: boolean
@@ -15,6 +43,15 @@ interface ReportCommentDialogProps {
   onSuccess?: () => void
 }
 
+/**
+ * Report Reasons Array
+ * 
+ * Predefined set of reasons for reporting a comment.
+ * These options provide users with standardized categories for reporting,
+ * making it easier to moderate and track issues with user-generated content.
+ * 
+ * Each reason has an ID for database storage and a user-friendly label.
+ */
 const REPORT_REASONS = [
   { id: 'spam', label: 'Spam or misleading' },
   { id: 'inappropriate', label: 'Inappropriate content' },
@@ -24,26 +61,68 @@ const REPORT_REASONS = [
   { id: 'other', label: 'Other (please specify)' }
 ]
 
+/**
+ * Report Comment Dialog Component
+ * 
+ * Modal dialog component for reporting inappropriate comments.
+ * This component handles the UI for selecting a report reason,
+ * providing additional details, and submitting the report to the server.
+ * 
+ * The component implements theme-aware styling that adapts to the application's
+ * light or dark theme through CSS classes, ensuring consistent visual appearance
+ * and readability across theme changes.
+ * 
+ * @param commentId - ID of the comment being reported
+ * @param isOpen - Whether the dialog is currently visible
+ * @param onClose - Function to call when the dialog should close
+ * @param onSuccess - Optional function to call after successful submission
+ * @returns React component for comment reporting dialog
+ */
 export default function ReportCommentDialog({ 
   commentId, 
   isOpen, 
   onClose,
   onSuccess 
 }: ReportCommentDialogProps) {
+  // State for form fields and UI management
   const [selectedReason, setSelectedReason] = useState('')
   const [details, setDetails] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  
+  // Get current user from authentication context
   const { user } = useAuth()
 
+  /**
+   * Handle reason selection change
+   * 
+   * Updates the selected reason state when the user selects a different
+   * report reason from the radio button options.
+   * 
+   * @param e - Change event from the radio input
+   */
   const handleReasonChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedReason(e.target.value)
   }
 
+  /**
+   * Handle details text change
+   * 
+   * Updates the details state when the user types in the textarea
+   * for providing additional information about the report.
+   * 
+   * @param e - Change event from the textarea
+   */
   const handleDetailsChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDetails(e.target.value)
   }
 
+  /**
+   * Reset form state
+   * 
+   * Clears all form fields and error messages, returning the form
+   * to its initial state. Called after submission or when closing the dialog.
+   */
   const resetForm = () => {
     setSelectedReason('')
     setDetails('')

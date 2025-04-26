@@ -1,3 +1,23 @@
+/**
+ * User Management Component
+ * 
+ * This client-side component provides an administrative interface for managing
+ * users in the Student Hub application. It allows administrators to view, search,
+ * and manage user accounts, including updating user roles and permissions.
+ * 
+ * Key features:
+ * - Comprehensive list of users with detailed profile information
+ * - Search functionality for finding specific users
+ * - Role management (admin, moderator, user)
+ * - Account status management (active, suspended)
+ * - Responsive design for various screen sizes
+ * 
+ * The component integrates with the application's theme system through consistent
+ * styling that adapts to both light and dark modes, ensuring a cohesive visual
+ * experience across the admin dashboard while maintaining readability and usability
+ * in both theme contexts.
+ */
+
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -13,6 +33,18 @@ import {
   XMarkIcon
 } from '@heroicons/react/24/outline'
 
+/**
+ * Student Profile Interface
+ * 
+ * Defines the structure of a student profile object retrieved from the database.
+ * This interface ensures type safety when working with student profile data
+ * throughout the management interface.
+ * 
+ * @property full_name - Optional full name of the student
+ * @property student_id - Optional student ID number
+ * @property faculty - Optional faculty or department the student belongs to
+ * @property email - Email address of the student
+ */
 interface StudentProfile {
   full_name?: string
   student_id?: string
@@ -20,16 +52,46 @@ interface StudentProfile {
   email: string
 }
 
+/**
+ * User With Metadata Interface
+ * 
+ * Extends the base User interface from Supabase with additional metadata
+ * specific to the Student Hub application, particularly the student profile
+ * information. This interface ensures type safety when working with enhanced
+ * user objects throughout the management interface.
+ * 
+ * @property student_profile - Optional student profile information associated with the user
+ */
 interface UserWithMetadata extends User {
   student_profile?: StudentProfile | null
 }
 
+/**
+ * User Management Component
+ * 
+ * Main component for managing users in the admin dashboard.
+ * This component handles fetching, displaying, searching, and managing user
+ * accounts in the Student Hub application.
+ * 
+ * The component implements theme-aware styling that adapts to the application's
+ * light or dark theme, ensuring consistent visual appearance and readability
+ * across theme changes.
+ * 
+ * @returns React component for user management interface
+ */
 export default function UserManagement() {
+  // State for storing all users and filtered users based on search
   const [users, setUsers] = useState<UserWithMetadata[]>([])
   const [filteredUsers, setFilteredUsers] = useState<UserWithMetadata[]>([])
+  
+  // State for search functionality
   const [searchQuery, setSearchQuery] = useState('')
+  
+  // State for loading and error handling
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  
+  // State for tracking which user is currently being updated
   const [updatingUser, setUpdatingUser] = useState<string | null>(null)
 
   useEffect(() => {

@@ -1,3 +1,22 @@
+/**
+ * Students Directory Page Component
+ * 
+ * This client-side component provides a searchable directory of students in the system.
+ * It allows users to browse, search, and view basic information about other students,
+ * with options to view detailed profiles or copy email addresses for contact.
+ * 
+ * Key features:
+ * - Authentication-protected access
+ * - Real-time search functionality
+ * - Student profile cards with animations
+ * - Email copy functionality with visual feedback
+ * - Links to individual student profiles
+ * 
+ * The component integrates with the application's theme system through CSS classes
+ * that adapt to both light and dark modes via the root element class, ensuring
+ * consistent styling across the application.
+ */
+
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -10,7 +29,18 @@ import Image from 'next/image'
 import Link from 'next/link'
 import '../profile/profile.css'
 
-// Add stylesheet for animations
+/**
+ * Animation Styles
+ * 
+ * Custom CSS animations for enhancing the user experience in the student directory.
+ * These animations are applied to various elements to create a more engaging and
+ * interactive interface. The animations include effects for hovering over student
+ * cards, clicking on icons, and visual feedback for interactions.
+ * 
+ * These styles are injected directly into the component rather than in a separate
+ * CSS file to keep all the animation-related code together and make it easier to
+ * maintain and modify.
+ */
 const animationStyles = `
 @keyframes pulse {
   0% {
@@ -178,6 +208,20 @@ const animationStyles = `
 }
 `;
 
+/**
+ * Student Interface
+ * 
+ * Defines the structure of a student object in the directory.
+ * This interface is used for type checking and ensuring data consistency
+ * when working with student information from the database.
+ * 
+ * @property id - Unique identifier for the student (UUID from Supabase Auth)
+ * @property full_name - Student's full name
+ * @property student_id - Student's university ID number
+ * @property faculty - Student's faculty/department
+ * @property avatar_url - Optional URL to the student's profile picture
+ * @property email - Optional student's email address
+ */
 interface Student {
   id: string
   full_name: string
@@ -187,18 +231,37 @@ interface Student {
   email?: string
 }
 
+/**
+ * SupabaseError Interface
+ * 
+ * Defines the structure of error objects returned by Supabase.
+ * Used for type checking when handling database errors.
+ * 
+ * @property message - The error message
+ */
 interface SupabaseError {
   message: string;
 }
 
+/**
+ * Student Directory Component
+ * 
+ * Main component for displaying and searching through the student directory.
+ * It fetches student data from Supabase and provides search functionality.
+ * 
+ * @returns The rendered student directory with search and student cards
+ */
 export default function StudentDirectory() {
+  // Navigation and authentication
   const router = useRouter()
-  const { user, loading: authLoading } = useAuth()
-  const [students, setStudents] = useState<Student[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [copiedEmails, setCopiedEmails] = useState<{[key: string]: boolean}>({})
+  const { user, loading: authLoading } = useAuth()  // Current user and auth loading state
+  
+  // State management
+  const [students, setStudents] = useState<Student[]>([])  // List of all students
+  const [loading, setLoading] = useState(true)            // Data loading state
+  const [error, setError] = useState<string | null>(null)  // Error state
+  const [searchQuery, setSearchQuery] = useState('')       // Current search query
+  const [copiedEmails, setCopiedEmails] = useState<{[key: string]: boolean}>({})  // Tracks which emails have been copied
   const [confetti, setConfetti] = useState<boolean>(false)
 
   useEffect(() => {

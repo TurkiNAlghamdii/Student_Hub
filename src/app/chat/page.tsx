@@ -52,6 +52,9 @@ export default function ChatPage() {
         console.log('Chat page: Found question in URL parameter:', foundQuestion);
         // Clean up the URL without refreshing
         window.history.replaceState({}, '', '/chat');
+        
+        // Set the initialQuestion state immediately
+        setInitialQuestion(foundQuestion);
       } 
       
       // Fallback to direct localStorage check
@@ -60,13 +63,17 @@ export default function ChatPage() {
         if (foundQuestion) {
           console.log('Chat page: Found question in localStorage:', foundQuestion);
           localStorage.removeItem('lastAiAssistantQuestion');
+          setInitialQuestion(foundQuestion);
         }
       }
       
-      // Set the question if found
+      // Send the question to the chat interface
       if (foundQuestion) {
-        console.log('Chat page: Setting initialQuestion state to:', foundQuestion);
-        sendQuestionToChat(foundQuestion);
+        console.log('Chat page: Sending question to chat interface:', foundQuestion);
+        // Wait a moment for components to initialize
+        setTimeout(() => {
+          sendQuestionToChat(foundQuestion);
+        }, 500);
       }
     }
     

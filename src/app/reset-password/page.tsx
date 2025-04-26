@@ -1,3 +1,22 @@
+/**
+ * Reset Password Page Component
+ * 
+ * This client-side component handles the password reset process after a user
+ * clicks on a reset link from their email. It validates the reset token from the URL,
+ * provides a form for entering a new password, and handles the password update process.
+ * 
+ * Key features:
+ * - Token validation from URL hash parameters
+ * - Password strength validation with visual feedback
+ * - Comprehensive error handling for various scenarios
+ * - Success state with automatic redirect to login
+ * - Theme-aware UI that adapts to light/dark mode
+ * 
+ * The component integrates with the application's theme system through CSS classes
+ * and conditional styling that adapt to both light and dark modes via the root element class,
+ * ensuring consistent styling and preventing flash of incorrect theme during navigation.
+ */
+
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -11,9 +30,20 @@ import { useTheme } from '@/contexts/ThemeContext'
 import { FormEvent } from 'react'
 import './reset-password.css'
 
-// Theme Toggle Button Component
+/**
+ * Theme Toggle Button Component
+ * 
+ * A simple component that allows users to toggle between light and dark themes.
+ * It uses the ThemeContext to access the current theme state and toggle function.
+ * 
+ * The button displays a sun icon in dark mode and a moon icon in light mode,
+ * providing intuitive visual feedback about the current theme and the action
+ * that will occur when clicked.
+ * 
+ * @returns A button component that toggles the theme when clicked
+ */
 function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme()
+  const { theme, toggleTheme } = useTheme()  // Access theme context
   
   return (
     <button
@@ -21,6 +51,7 @@ function ThemeToggle() {
       className="theme-toggle-button"
       aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
     >
+      {/* Show sun icon in dark mode, moon icon in light mode */}
       {theme === 'dark' ? (
         <SunIcon className="h-5 w-5" />
       ) : (
@@ -30,28 +61,55 @@ function ThemeToggle() {
   )
 }
 
+/**
+ * Reset Password Component
+ * 
+ * Main component for handling the password reset process after a user clicks
+ * on a reset link from their email. It validates the token, provides a form for
+ * entering a new password, and handles the password update.
+ * 
+ * @returns The rendered password reset form with appropriate state handling
+ */
 export default function ResetPassword() {
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [tokenProcessed, setTokenProcessed] = useState(false)
-  const [processingToken, setProcessingToken] = useState(true)
-  const [hasValidToken, setHasValidToken] = useState(false)
-  const [countdown, setCountdown] = useState(5) // Countdown timer for redirect (changed from 10 to 5)
+  // Form state
+  const [password, setPassword] = useState('')                       // New password input
+  const [confirmPassword, setConfirmPassword] = useState('')        // Confirm password input
+  const [showPassword, setShowPassword] = useState(false)           // Toggle password visibility
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)  // Toggle confirm password visibility
+  
+  // Process state
+  const [error, setError] = useState<string | null>(null)           // Error message display
+  const [success, setSuccess] = useState(false)                     // Success state after password reset
+  const [loading, setLoading] = useState(false)                     // Loading state during form submission
+  
+  // Token validation state
+  const [tokenProcessed, setTokenProcessed] = useState(false)       // Whether token processing has been attempted
+  const [processingToken, setProcessingToken] = useState(true)      // Token processing in progress
+  const [hasValidToken, setHasValidToken] = useState(false)         // Whether a valid token was found
+  
+  // Redirect state
+  const [countdown, setCountdown] = useState(5)                     // Countdown timer for redirect after success
+  
+  // Hooks
   const router = useRouter()
-  const { session, isPasswordRecovery } = useAuth()
-  const { theme } = useTheme()
+  const { session, isPasswordRecovery } = useAuth()                 // Auth context for session and recovery state
+  const { theme } = useTheme()                                      // Theme context for styling
 
-  // Countdown timer effect
+  /**
+   * Countdown Timer Effect
+   * 
+   * Handles the countdown timer after a successful password reset,
+   * automatically redirecting to the login page when the countdown reaches zero.
+   * This provides a better user experience by giving feedback about the
+   * upcoming redirect while allowing users to manually navigate if desired.
+   */
   useEffect(() => {
     if (success && countdown > 0) {
+      // Set up a timer to decrement the countdown every second
       const timer = setTimeout(() => {
         setCountdown(countdown - 1);
       }, 1000);
+      // Clean up the timer when the component unmounts or countdown changes
       return () => clearTimeout(timer);
     } else if (success && countdown === 0) {
       // Only redirect when countdown reaches zero
@@ -59,10 +117,23 @@ export default function ResetPassword() {
     }
   }, [success, countdown, router]);
 
-  // Process the recovery token directly
+  /**
+   * Recovery Token Processing Effect
+   * 
+   * This effect handles the validation of the password reset token from the URL hash.
+   * It runs once when the component mounts and performs several checks:
+   * 1. Extracts the token from the URL hash parameters
+   * 2. Verifies the token with Supabase Auth
+   * 3. Handles various error cases (expired token, missing token, etc.)
+   * 4. Sets appropriate state based on token validation results
+   * 
+   * If no valid token is found, it redirects the user to the forgot password page
+   * after displaying an appropriate error message.
+   */
   useEffect(() => {
     const processRecoveryToken = async () => {
       try {
+        // Skip if token has already been processed
         if (tokenProcessed) return;
         
         setProcessingToken(true);
@@ -70,27 +141,33 @@ export default function ResetPassword() {
         if (typeof window !== 'undefined') {
           const hashParams = window.location.hash;
           
+          // Check if URL contains a recovery token
           if (hashParams.includes('access_token') && hashParams.includes('type=recovery')) {
             setHasValidToken(true);
 
+            // Try to get the current session
             const { data, error } = await supabase.auth.getSession();
             
             if (error) {
+              // Handle expired token error
               if (error.message.includes('expired')) {
                 setError('Your password reset link has expired. Please request a new one.');
                 setHasValidToken(false);
               }
             } else if (!data.session) {
+              // If no session exists, try to verify the token directly
               try {
                 const tokenMatch = hashParams.match(/access_token=([^&]+)/);
                 if (tokenMatch && tokenMatch[1]) {
                   const token = tokenMatch[1];
                   
+                  // Verify the OTP token
                   const { error: verifyError } = await supabase.auth.verifyOtp({
                     token_hash: token,
                     type: 'recovery',
                   });
                   
+                  // Handle expired token error
                   if (verifyError && verifyError.message.includes('expired')) {
                     setError('Your password reset link has expired. Please request a new one.');
                     setHasValidToken(false);
@@ -101,21 +178,26 @@ export default function ResetPassword() {
               }
             }
           } else if (!isPasswordRecovery && session) {
+            // If user is already logged in and not in recovery mode, redirect to home
             router.push('/');
             return;
           } else if (!hashParams.includes('access_token')) {
+            // If no token is found in the URL
             setError('No reset token found. Please request a password reset from the login page.');
             setHasValidToken(false);
             
+            // Redirect to forgot password page after a delay
             setTimeout(() => {
               router.push('/forgot-password');
             }, 3000);
           }
         }
         
+        // Mark token as processed regardless of outcome
         setTokenProcessed(true);
         setProcessingToken(false);
       } catch (err) {
+        // Handle unexpected errors
         setError('An unexpected error occurred. Please try again or contact support if the issue persists.');
         setHasValidToken(true);
         setProcessingToken(false);
@@ -123,44 +205,62 @@ export default function ResetPassword() {
       }
     };
     
+    // Run the token processing function
     processRecoveryToken();
   }, [router, session, isPasswordRecovery, tokenProcessed]);
 
+  /**
+   * Handle Password Reset Form Submission
+   * 
+   * This function processes the password reset form submission, including:
+   * 1. Validating password requirements (matching, length, complexity)
+   * 2. Updating the user's password in Supabase Auth
+   * 3. Handling various error cases with specific error messages
+   * 4. Setting success state and signing out the user after successful reset
+   * 
+   * @param e - Form submission event
+   */
   const handleResetPassword = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     
     try {
-      // Validate password requirements
+      // Step 1: Validate password requirements
+      // Check if passwords match
       if (password !== confirmPassword) {
         setError('Passwords do not match. Please ensure both entries are identical.');
         setLoading(false);
         return;
       }
       
+      // Check password length
       if (password.length < 8) {
         setError('Password must be at least 8 characters long.');
         setLoading(false);
         return;
       }
       
+      // Check for uppercase letters
       if (!/[A-Z]/.test(password)) {
         setError('Password must contain at least one uppercase letter.');
         setLoading(false);
         return;
       }
       
+      // Check for numbers
       if (!/[0-9]/.test(password)) {
         setError('Password must contain at least one number.');
         setLoading(false);
         return;
       }
       
+      // Step 2: Update the user's password in Supabase Auth
       const { data, error } = await supabase.auth.updateUser({
         password: password
       });
 
+      // Step 3: Handle errors with specific messages
       if (error) {
         if (error.message.includes('different from the old password') || 
             error.message.includes('New password should be different')) {
@@ -177,26 +277,35 @@ export default function ResetPassword() {
         return;
       }
       
+      // Step 4: Handle success case
       if (data) {
+        // Sign out the user after successful password reset
         try {
           await supabase.auth.signOut();
         } catch (signOutErr) {
           console.error('Error signing out:', signOutErr);
         }
         
+        // Set success state and reset form
         setSuccess(true);
-        
         setPassword('');
         setConfirmPassword('');
       }
     } catch (err) {
+      // Handle unexpected errors
       const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred during password reset';
       setError(`Error: ${errorMessage}`);
     } finally {
+      // Reset loading state regardless of outcome
       setLoading(false);
     }
   };
 
+  /**
+   * Render the password reset interface
+   * The component adapts to the current theme through conditional styling
+   * and CSS classes that work with both light and dark modes.
+   */
   return (
     <div className="login-container">
       <ThemeToggle />

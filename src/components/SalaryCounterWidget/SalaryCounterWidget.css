@@ -1,3 +1,16 @@
+/**
+ * Salary Counter Widget CSS
+ *
+ * This stylesheet defines the visual appearance of the Salary Counter Widget component,
+ * including responsive layouts, theme-specific styling, and interactive elements.
+ * The stylesheet follows the application's theme system by using :root.dark and
+ * :root:not(.dark) selectors to apply appropriate styling based on the current theme.
+ *
+ * CSS variables (var(--card-bg), var(--card-border), etc.) are used to maintain
+ * consistent theming across the application and prevent theme flashing during navigation.
+ */
+
+/* Main container for the salary counter widget */
 .salary-counter-widget {
   @apply backdrop-blur-sm rounded-2xl p-5 transition-all duration-300;
   background-color: var(--card-bg);
@@ -6,6 +19,9 @@
   flex-direction: column;
 }
 
+/* Dark theme styling for the widget container
+ * Uses semi-transparent dark background with subtle green glow
+ * for a modern, elegant appearance in dark mode */
 .dark .salary-counter-widget {
   @apply bg-gray-900/50 border-gray-800/50;
   box-shadow: 
@@ -13,6 +29,10 @@
     0 0 60px rgba(0, 0, 0, 0.2);
 }
 
+/* Light theme styling for the widget container
+ * Uses semi-transparent white background with subtle shadows
+ * for a clean, minimal appearance in light mode
+ * The :root:not(.dark) selector ensures proper theme application without flashing */
 :root:not(.dark) .salary-counter-widget {
   @apply bg-white/80 border-gray-200/50;
   box-shadow: 
@@ -20,22 +40,34 @@
     0 0 40px rgba(0, 0, 0, 0.05);
 }
 
+/* Hover effect for the widget - subtle lift animation
+ * Creates a floating effect when users hover over the widget
+ * for improved interactivity and visual feedback */
 .salary-counter-widget:hover {
   transform: translateY(-5px);
 }
 
+/* Dark theme hover effect - enhanced glow
+ * Increases the green glow and shadow intensity on hover
+ * for better visual feedback in dark mode */
 .dark .salary-counter-widget:hover {
   box-shadow: 
     0 0 40px rgba(6, 78, 59, 0.1),
     0 0 80px rgba(0, 0, 0, 0.3);
 }
 
+/* Light theme hover effect - enhanced shadow
+ * Increases the shadow depth and subtle green tint on hover
+ * for better visual feedback in light mode */
 :root:not(.dark) .salary-counter-widget:hover {
   box-shadow: 
     0 0 30px rgba(6, 78, 59, 0.05),
     0 0 50px rgba(0, 0, 0, 0.1);
 }
 
+/* Widget header section - contains title and action button
+ * Uses flexbox to position elements with space between
+ * and includes a subtle border to separate from content area */
 .widget-header {
   display: flex;
   justify-content: space-between;
@@ -45,18 +77,26 @@
   padding-bottom: 8px;
 }
 
+/* Container for the widget title and icon
+ * Uses flexbox to align icon and text horizontally */
 .widget-title-container {
   display: flex;
   align-items: center;
 }
 
+/* Widget icon styling - dollar icon
+ * Uses the brand green color for the icon
+ * that remains consistent across both themes */
 .widget-icon {
   width: 20px;
   height: 20px;
-  color: #10b981;
+  color: #10b981; /* Brand green color */
   margin-right: 0.6rem;
 }
 
+/* Widget title text styling
+ * Uses CSS variable for text color to adapt to theme changes
+ * var(--foreground) is defined at the root level and changes with theme */
 .widget-title {
   margin: 0;
   font-size: 1.1rem;
@@ -64,14 +104,22 @@
   color: var(--foreground);
 }
 
+/* Dark theme title enhancement
+ * Adds a subtle green glow to the title text in dark mode
+ * for improved visibility and visual appeal */
 .dark .widget-title {
   text-shadow: 0 0 30px rgba(6, 78, 59, 0.3);
 }
 
+/* Container for action buttons in the header
+ * Uses flexbox to arrange multiple buttons if needed */
 .widget-actions {
   @apply flex items-center gap-2;
 }
 
+/* Info button styling - displays the next payment date
+ * Uses CSS variables for colors to maintain theme consistency
+ * var(--primary) and var(--primary-foreground) adapt to theme changes */
 .counter-info-button {
   @apply px-2.5 py-1 rounded-lg text-xs font-medium
     transition-all duration-300 ease-in-out flex items-center justify-center;
@@ -82,32 +130,53 @@
   white-space: nowrap;
 }
 
+/* Dark theme button styling - green gradient
+ * Uses a darker green gradient with subtle glow
+ * for better contrast and visibility in dark mode */
 .dark .counter-info-button {
   background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
   box-shadow: 0 4px 20px rgba(6, 78, 59, 0.15);
 }
 
+/* Light theme button styling - brighter green gradient
+ * Uses a brighter green gradient with subtle shadow
+ * for better visibility and appeal in light mode */
 :root:not(.dark) .counter-info-button {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   box-shadow: 0 4px 15px rgba(6, 78, 59, 0.1);
 }
 
+/* Button hover effect - subtle scale animation
+ * Slightly enlarges the button on hover for better interactivity
+ * and visual feedback to users */
 .counter-info-button:hover {
   @apply transform scale-[1.02];
 }
 
+/* Dark theme button hover effect - enhanced glow
+ * Increases the green glow intensity on hover
+ * for better visual feedback in dark mode */
 .dark .counter-info-button:hover {
   box-shadow: 0 4px 25px rgba(6, 78, 59, 0.25);
 }
 
+/* Light theme button hover effect - enhanced shadow
+ * Increases the shadow depth and subtle green tint on hover
+ * for better visual feedback in light mode */
 :root:not(.dark) .counter-info-button:hover {
   box-shadow: 0 4px 20px rgba(6, 78, 59, 0.15);
 }
 
+/* Widget content area - contains the countdown timer
+ * Uses flex grow to take up remaining space in the container */
 .widget-content {
   flex: 1;
 }
 
+/* Countdown timer container
+ * Uses flexbox to arrange the time units horizontally
+ * with consistent spacing and subtle border
+ * Uses CSS variable for border color to adapt to theme changes */
 .countdown-container {
   display: flex;
   align-items: center;
@@ -119,16 +188,25 @@
   border: 1px solid var(--card-border);
 }
 
+/* Dark theme countdown container
+ * Uses semi-transparent dark background with subtle border
+ * for better contrast and visibility in dark mode */
 .dark .countdown-container {
   background: rgba(22, 27, 34, 0.5);
   border: 1px solid rgba(75, 85, 99, 0.3);
 }
 
+/* Light theme countdown container
+ * Uses semi-transparent light gray background with subtle border
+ * for a clean, minimal appearance in light mode */
 :root:not(.dark) .countdown-container {
   background: rgba(240, 240, 240, 0.5);
   border: 1px solid rgba(75, 85, 99, 0.15);
 }
 
+/* Individual time unit container (days, hours, minutes, seconds)
+ * Uses flexbox column layout to stack value and label
+ * with minimum width to ensure consistent spacing */
 .countdown-item {
   display: flex;
   flex-direction: column;
@@ -136,38 +214,49 @@
   min-width: 50px;
 }
 
+/* Time value styling - large bold numbers
+ * Uses the brand green color that remains consistent across themes
+ * with subtle text shadow for enhanced visibility */
 .countdown-value {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #10b981;
+  color: #10b981; /* Brand green color */
   line-height: 1;
   text-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
 }
 
+/* Time unit label styling ("Days", "Hours", etc.)
+ * Uses smaller, muted text with CSS variable for color
+ * var(--muted-foreground) adapts to theme changes */
 .countdown-label {
   font-size: 0.7rem;
   color: var(--muted-foreground);
   margin-top: 0.4rem;
 }
 
+/* Separator between time units (colons)
+ * Uses semi-transparent green color that works in both themes
+ * with slight vertical adjustment for alignment */
 .countdown-separator {
   font-size: 1.75rem;
   font-weight: 700;
-  color: rgba(16, 185, 129, 0.7);
+  color: rgba(16, 185, 129, 0.7); /* Semi-transparent brand green */
   margin-top: -0.5rem;
 }
 
-/* For smaller screens */
+/* Responsive adjustments for smaller screens (tablets and mobile)
+ * Reduces sizes and spacing to ensure the widget fits properly
+ * on smaller viewport widths while maintaining readability */
 @media (max-width: 768px) {
   .countdown-item {
-    min-width: 40px;
+    min-width: 40px; /* Smaller width for time units */
   }
   
   .countdown-value {
-    font-size: 1.5rem;
+    font-size: 1.5rem; /* Smaller font size for time values */
   }
   
   .countdown-separator {
-    font-size: 1.5rem;
+    font-size: 1.5rem; /* Smaller font size for separators */
   }
-} 
+}

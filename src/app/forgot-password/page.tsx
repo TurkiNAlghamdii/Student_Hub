@@ -1,3 +1,22 @@
+/**
+ * Forgot Password Page Component
+ * 
+ * This client-side component provides a password reset functionality that allows users to:
+ * - Request a password reset email by providing their KAU email address
+ * - Receive feedback on the success or failure of their request
+ * - Navigate back to the login page
+ * 
+ * The component includes security features such as:
+ * - Email domain validation (only KAU domains allowed)
+ * - Rate limiting to prevent abuse
+ * - Secure error handling that doesn't reveal if an email exists
+ * 
+ * The component respects the application's theme system by using CSS classes
+ * that work with both light and dark modes via the root element class.
+ * All styling is defined in forgot-password.css which uses :root.dark and :root:not(.dark)
+ * selectors to ensure proper theming without any flash of incorrect theme.
+ */
+
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -11,7 +30,17 @@ import { SunIcon, MoonIcon } from '@heroicons/react/24/outline'
 import { FormEvent } from 'react'
 import './forgot-password.css'
 
-// Theme Toggle Button Component
+/**
+ * Theme Toggle Button Component
+ * 
+ * A reusable component that allows users to switch between light and dark modes.
+ * Uses the ThemeContext to access and modify the current theme.
+ * 
+ * The button displays a sun icon in dark mode and a moon icon in light mode,
+ * with appropriate accessibility labels for screen readers.
+ * 
+ * @returns A button that toggles between light and dark themes
+ */
 function ThemeToggle() {
   const { theme, toggleTheme } = useTheme()
   
@@ -30,7 +59,28 @@ function ThemeToggle() {
   )
 }
 
+/**
+ * ForgotPassword Component
+ * 
+ * Main component for handling password reset requests.
+ * Provides a form for users to enter their email address and request a password reset link.
+ * 
+ * @returns Rendered forgot password page with form and feedback messages
+ */
 export default function ForgotPassword() {
+  /**
+   * Component State
+   * 
+   * - email: User's input email address
+   * - error: Primary error message to display to the user
+   * - success: Flag indicating if the reset email was sent successfully
+   * - loading: Flag indicating if a request is in progress
+   * - errorDetails: Technical error details (only shown when expanded)
+   * - attemptCount: Counter for rate limiting password reset attempts
+   * - router: Next.js router for navigation
+   * - session: User's authentication session from AuthContext
+   * - theme: Current theme from ThemeContext
+   */
   const [email, setEmail] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -41,19 +91,52 @@ export default function ForgotPassword() {
   const { session } = useAuth()
   const { theme } = useTheme()
 
+  /**
+   * Session Check Effect
+   * 
+   * Redirects authenticated users to the home page.
+   * If a user is already logged in, they don't need the password reset functionality.
+   * 
+   * This effect runs whenever the session or router changes.
+   */
   useEffect(() => {
     if (session) {
       router.push('/')
     }
   }, [session, router])
 
-  // Rate limiting check (10 attempts maximum in a session)
+  /**
+   * Rate Limiting Effect
+   * 
+   * Prevents abuse by limiting the number of password reset attempts to 10 per session.
+   * Sets an error message when the limit is reached.
+   * 
+   * This is a security measure to prevent brute force attacks and email flooding.
+   * The limit is reset when the page is refreshed or reopened.
+   * 
+   * This effect runs whenever the attemptCount changes.
+   */
   useEffect(() => {
     if (attemptCount >= 10) {
       setError('Too many reset attempts. Please try again later.');
     }
   }, [attemptCount]);
 
+  /**
+   * Password Reset Request Handler
+   * 
+   * Handles the submission of the password reset form. The function:
+   * 1. Validates the email format and domain
+   * 2. Checks rate limiting to prevent abuse
+   * 3. Sends a password reset request to Supabase
+   * 4. Handles success and error states appropriately
+   * 5. Provides user feedback on the request status
+   * 
+   * For security reasons, the function shows a success message even if the email
+   * doesn't exist in the system, to prevent email enumeration attacks.
+   * 
+   * @param e - Form submission event
+   */
   const handleResetPassword = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     
@@ -86,7 +169,13 @@ export default function ForgotPassword() {
     setAttemptCount(prev => prev + 1) // Increment attempt counter
 
     try {
-      // Requesting password reset
+      /**
+       * Password Reset Request Process
+       * 
+       * 1. Determine the correct redirect URL based on the current environment
+       * 2. Send the password reset request to Supabase with the email and redirect URL
+       * 3. Handle the response appropriately
+       */
       
       // Get the base URL for the redirect
       // Use the current origin to ensure the reset link works in any environment
@@ -98,6 +187,13 @@ export default function ForgotPassword() {
         redirectTo: redirectUrl,
       })
 
+      /**
+       * Error Handling Logic
+       * 
+       * Provides specific error messages based on the type of error received.
+       * For security reasons, shows success even if the email doesn't exist to prevent
+       * email enumeration attacks where attackers could determine valid emails.
+       */
       if (error) {
         // More specific error messages
         if (error.message.includes('rate limit')) {
@@ -117,6 +213,12 @@ export default function ForgotPassword() {
         setSuccess(true);
       }
     } catch (err: unknown) {
+      /**
+       * Unexpected Error Handling
+       * 
+       * Captures any unexpected errors that weren't handled in the specific error cases.
+       * Shows a user-friendly message while storing technical details for debugging.
+       */
       const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred during password reset request';
       setError('We encountered an issue sending the reset email. Please try again later.');
       setErrorDetails(errorMessage); // Store detailed error for debugging
@@ -125,9 +227,29 @@ export default function ForgotPassword() {
     }
   }
 
+  /**
+   * Early Return for Authenticated Users
+   * 
+   * If the user is already authenticated (has an active session),
+   * don't render the password reset form at all.
+   * The useEffect above will redirect them to the home page.
+   */
   // If session exists, don't render the form
   if (session) return null
 
+  /**
+   * Main Component Render
+   * 
+   * Renders the complete forgot password page with:
+   * - Theme toggle button for switching between light and dark modes
+   * - Animated card containing either the password reset form or success message
+   * - Appropriate feedback based on the current state (error, loading, success)
+   * 
+   * The UI is designed to be responsive and uses theme-compatible styling
+   * that works in both light and dark modes through CSS classes.
+   * The styling uses :root.dark and :root:not(.dark) selectors to ensure proper theming
+   * without any flash of incorrect theme during page load or navigation.
+   */
   return (
     <div className="login-container">
       <ThemeToggle />
@@ -146,6 +268,7 @@ export default function ForgotPassword() {
           Reset Password
         </motion.h2>
         
+        {/* Conditional rendering based on success state */}
         {success ? (
           <motion.div
             className="success-message"
@@ -169,7 +292,7 @@ export default function ForgotPassword() {
               </ol>
             </div>
             <p className={`text-xs italic mb-4 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>
-              If you don&apos;t see the email within a few minutes, check your spam folder or try again.
+              If you don't see the email within a few minutes, check your spam folder or try again.
             </p>
             <Link href="/login" className={`inline-block px-4 py-2 rounded-lg transition-all w-full text-center ${theme === 'dark' ? 'bg-gradient-to-r from-gray-700 to-gray-800 text-white hover:from-gray-600 hover:to-gray-700 border border-gray-700/50' : 'bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 hover:from-gray-300 hover:to-gray-400 border border-gray-300'}`}>
               Back to Login
@@ -189,7 +312,7 @@ export default function ForgotPassword() {
                 </svg>
                 <div>
                   <p className={`text-sm mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                    Enter your KAU email address and we&apos;ll send you a link to reset your password.
+                    Enter your KAU email address and we'll send you a link to reset your password.
                   </p>
                   <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                     Only <span className={`font-medium ${theme === 'dark' ? 'text-emerald-400' : 'text-emerald-600'}`}>@stu.kau.edu.sa</span> and <span className={`font-medium ${theme === 'dark' ? 'text-emerald-400' : 'text-emerald-600'}`}>@kau.edu.sa</span> domains are accepted.

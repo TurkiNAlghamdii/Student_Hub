@@ -1,3 +1,12 @@
+/**
+ * Admin Dashboard Page
+ * 
+ * This page provides administrative functionality for managing the Student Hub application.
+ * It includes sections for user management, course management, content moderation,
+ * file management, support requests, and academic calendar management.
+ * 
+ * Access is restricted to users with admin privileges only.
+ */
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -22,14 +31,27 @@ import {
   CalendarIcon
 } from '@heroicons/react/24/outline'
 
+/**
+ * Admin Page Component
+ * 
+ * Handles admin dashboard rendering and functionality
+ */
 export default function AdminPage() {
   const router = useRouter()
+  // Get user authentication state from context
   const { user, loading: authLoading } = useAuth()
+  // Track if current user has admin privileges
   const [isAdmin, setIsAdmin] = useState(false)
+  // Track loading state for admin verification
   const [loading, setLoading] = useState(true)
+  // Track which admin section is currently active
   const [activeSection, setActiveSection] = useState<'dashboard' | 'users' | 'courses' | 'contentMod' | 'fileManagement' | 'supportRequests' | 'academicCalendar'>('dashboard')
 
-  // Check if user is admin
+  /**
+   * Check if user has admin privileges
+   * Redirects to login page if not authenticated
+   * Redirects to home page if authenticated but not an admin
+   */
   useEffect(() => {
     if (!authLoading) {
       if (!user) {
@@ -37,6 +59,7 @@ export default function AdminPage() {
         return
       }
 
+      // Check various formats of admin flag in user metadata
       const isUserAdmin = user.app_metadata?.is_admin === true || 
                          user.app_metadata?.is_admin === 'true' || 
                          String(user.app_metadata?.is_admin).toLowerCase() === 'true'
@@ -50,6 +73,9 @@ export default function AdminPage() {
     }
   }, [user, authLoading, router])
 
+  /**
+   * Loading state - shown while checking authentication and admin status
+   */
   if (loading || authLoading) {
     return (
       <div className="min-h-screen admin-container">
@@ -61,15 +87,23 @@ export default function AdminPage() {
     )
   }
 
+  /**
+   * If user is not an admin, return null
+   * This is a fallback in case the redirect in useEffect hasn't completed yet
+   */
   if (!isAdmin) {
     return null
   }
 
+  /**
+   * Main admin dashboard render
+   */
   return (
     <div className="min-h-screen admin-container">
       <Navbar />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-6">
+          {/* Admin dashboard header with title and admin badge */}
           <div className="welcome-section bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-800/50 relative overflow-hidden">
             <div className="welcome-container flex items-center justify-between relative z-1">
               <div className="greeting-content flex items-center gap-4">
@@ -89,9 +123,12 @@ export default function AdminPage() {
             </div>
           </div>
           
+          {/* Conditional rendering based on active section */}
+          {/* Dashboard view with admin function cards */}
           {activeSection === 'dashboard' ? (
             <div className="shortcuts-section">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* User Management Card */}
                 <div 
                   onClick={() => setActiveSection('users')}
                   className="admin-card"
@@ -187,6 +224,7 @@ export default function AdminPage() {
             </div>
           ) : (
             <>
+              {/* Back button to return to main dashboard */}
               <button
                 onClick={() => setActiveSection('dashboard')}
                 className="back-button flex items-center gap-2 dark:text-gray-400 text-gray-600 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors dark:bg-gray-900/30 bg-gray-200/50 rounded-lg px-4 py-2 dark:border-gray-800/30 border-gray-300/50 border hover:border-emerald-500/20 mb-6"
@@ -195,6 +233,7 @@ export default function AdminPage() {
                 Back to Dashboard
               </button>
 
+              {/* Conditional rendering of admin components based on active section */}
               {activeSection === 'users' && <UserManagement />}
               {activeSection === 'courses' && <CourseManagement />}
               {activeSection === 'contentMod' && <ContentModeration />}
@@ -207,4 +246,4 @@ export default function AdminPage() {
       </main>
     </div>
   )
-} 
+}

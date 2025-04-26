@@ -1,3 +1,22 @@
+/**
+ * Comment Section Component
+ * 
+ * This client-side component provides a complete comment system for course pages,
+ * allowing users to post comments, reply to existing comments, and report inappropriate content.
+ * 
+ * Key features:
+ * - Hierarchical comment threads with nested replies
+ * - Real-time comment posting and updating
+ * - Comment moderation through reporting functionality
+ * - User authentication integration
+ * - Optimistic UI updates for a responsive feel
+ * - Pagination for handling large comment threads
+ * 
+ * The component integrates with the application's theme system through CSS classes
+ * that adapt to both light and dark modes, ensuring a consistent visual experience
+ * across the application while maintaining readability in both theme contexts.
+ */
+
 'use client'
 
 import React, { useState, useEffect, useRef, useCallback } from 'react'
@@ -22,6 +41,19 @@ import './comments.css'
 import ReportCommentDialog from './ReportCommentDialog'
 import { toast } from 'react-hot-toast'
 
+/**
+ * Comment Interface
+ * 
+ * Defines the structure of a comment object retrieved from the database.
+ * This interface ensures type safety when working with comment data.
+ * 
+ * @property id - Unique identifier for the comment
+ * @property content - Text content of the comment
+ * @property created_at - Timestamp when the comment was created
+ * @property user_id - Identifier of the user who posted the comment
+ * @property parent_id - Identifier of the parent comment (null for top-level comments)
+ * @property user - Object containing information about the comment author
+ */
 interface Comment {
   id: string
   content: string
@@ -35,16 +67,48 @@ interface Comment {
   }
 }
 
+/**
+ * Comment With Replies Interface
+ * 
+ * Extends the base Comment interface to include nested replies,
+ * enabling the hierarchical structure of comment threads.
+ * 
+ * @property replies - Optional array of child comments (replies)
+ */
 interface CommentWithReplies extends Comment {
   replies?: CommentWithReplies[]
 }
 
+/**
+ * Comment Section Props
+ * 
+ * Configuration options for the CommentSection component.
+ * 
+ * @property courseCode - The course code to which these comments belong
+ */
 interface CommentSectionProps {
   courseCode: string
 }
 
+/**
+ * Comment Section Component
+ * 
+ * Main component for displaying and managing course comments.
+ * This component handles fetching, displaying, creating, and managing comments
+ * for a specific course, including nested reply threads.
+ * 
+ * The component implements theme-aware styling that adapts to the application's
+ * light or dark theme through CSS classes, ensuring consistent visual appearance
+ * and readability across theme changes.
+ * 
+ * @param courseCode - The course code to which these comments belong
+ * @returns React component for course comment section
+ */
 export default function CommentSection({ courseCode }: CommentSectionProps) {
+  // Get current user from authentication context
   const { user } = useAuth()
+  
+  // State for comments and UI management
   const [comments, setComments] = useState<CommentWithReplies[]>([])
   const [newComment, setNewComment] = useState('')
   const [isLoading, setIsLoading] = useState(true)

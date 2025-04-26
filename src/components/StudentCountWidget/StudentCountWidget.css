@@ -1,3 +1,18 @@
+/**
+ * StudentCountWidget CSS
+ *
+ * This stylesheet defines the visual appearance of the Student Count Widget component,
+ * including animations, theme-specific styling, and interactive elements.
+ * The stylesheet follows the application's theme system by using :root.dark and
+ * :root:not(.dark) selectors to apply appropriate styling based on the current theme.
+ *
+ * CSS variables from the global theme are used for consistent colors across the application.
+ */
+
+/* Main widget container
+ * Uses backdrop-filter for a frosted glass effect
+ * Applies theme variables for background and border colors
+ * Includes transition for hover animation effects */
 .student-count-widget {
   @apply backdrop-blur-sm rounded-2xl p-5 transition-all duration-300;
   background-color: var(--card-bg);
@@ -6,6 +21,10 @@
   flex-direction: column;
 }
 
+/* Dark theme specific styling for the widget
+ * Uses the .dark class selector for theme-specific styling
+ * Applies semi-transparent dark background with subtle green glow
+ * Multiple box shadows create depth and emphasis */
 .dark .student-count-widget {
   @apply bg-gray-900/50 border-gray-800/50;
   box-shadow: 
@@ -13,6 +32,10 @@
     0 0 60px rgba(0, 0, 0, 0.2);
 }
 
+/* Light theme specific styling for the widget
+ * Uses the :root:not(.dark) selector for theme-specific styling
+ * Applies semi-transparent light background with subtle shadows
+ * Lighter box shadow values for a softer appearance */
 :root:not(.dark) .student-count-widget {
   @apply bg-white/80 border-gray-200/50;
   box-shadow: 
@@ -20,22 +43,35 @@
     0 0 40px rgba(0, 0, 0, 0.05);
 }
 
+/* Hover effect for the widget
+ * Subtle upward movement on hover for interactive feedback
+ * Combined with the transition property for smooth animation */
 .student-count-widget:hover {
   transform: translateY(-5px);
 }
 
+/* Dark theme hover effect enhancement
+ * Increases the glow effect when hovering in dark mode
+ * Green tint in the shadow reinforces the application's brand color */
 .dark .student-count-widget:hover {
   box-shadow: 
     0 0 40px rgba(6, 78, 59, 0.1),
     0 0 80px rgba(0, 0, 0, 0.3);
 }
 
+/* Light theme hover effect enhancement
+ * Increases shadow depth when hovering in light mode
+ * Maintains the subtle green tint for brand consistency */
 :root:not(.dark) .student-count-widget:hover {
   box-shadow: 
     0 0 30px rgba(6, 78, 59, 0.05),
     0 0 50px rgba(0, 0, 0, 0.1);
 }
 
+/* Widget header section
+ * Uses flexbox to position title and status indicator
+ * Border uses theme variable for consistent styling
+ * Spacing provides visual separation from content */
 .widget-header {
   display: flex;
   justify-content: space-between;
@@ -45,35 +81,56 @@
   padding-bottom: 8px;
 }
 
+/* Container for the widget title and icon
+ * Uses flexbox for horizontal alignment
+ * Groups the icon and text as a single visual unit */
 .widget-title-container {
   display: flex;
   align-items: center;
 }
 
+/* Icon styling in the widget header
+ * Uses the brand green color for visual emphasis
+ * Consistent sizing and spacing for alignment with text */
 .widget-icon {
   width: 20px;
   height: 20px;
-  color: #10b981;
+  color: #10b981; /* Brand green color */
   margin-right: 0.6rem;
 }
 
+/* Widget title text styling
+ * Semi-bold weight for emphasis without being too heavy
+ * Uses theme variable for text color to adapt to theme changes
+ * Reset margin to ensure consistent spacing */
 .widget-title {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--foreground);
+  color: var(--foreground); /* Theme-aware text color */
 }
 
+/* Dark theme enhancement for the title
+ * Adds a subtle green text shadow for emphasis in dark mode
+ * Creates a slight glow effect that reinforces the brand color */
 .dark .widget-title {
   text-shadow: 0 0 30px rgba(6, 78, 59, 0.3);
 }
 
+/* Main content area of the widget
+ * Uses flex grow to fill available space
+ * Column layout for stacking count sections and indicators */
 .widget-content {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
+/* Container for count sections
+ * Uses flexbox for horizontal layout of count sections
+ * Rounded corners and padding for visual separation
+ * Relative positioning for pseudo-element decorations
+ * Overflow hidden to contain any decorative elements */
 .counts-row {
   display: flex;
   align-items: center;
@@ -86,16 +143,27 @@
   overflow: hidden;
 }
 
+/* Dark theme styling for the counts row
+ * Semi-transparent dark background for depth
+ * Subtle border for definition against the widget background */
 .dark .counts-row {
   background: rgba(22, 27, 34, 0.5);
   border: 1px solid rgba(75, 85, 99, 0.3);
 }
 
+/* Light theme styling for the counts row
+ * Light semi-transparent background for subtle contrast
+ * Very light border for definition without heaviness */
 :root:not(.dark) .counts-row {
   background: rgba(240, 240, 240, 0.5);
   border: 1px solid rgba(75, 85, 99, 0.15);
 }
 
+/* Decorative top border gradient for counts row
+ * Uses pseudo-element for non-rectangular border
+ * Green gradient reinforces the brand color
+ * Fades at edges for a subtle, polished appearance
+ * Works in both light and dark themes without modification */
 .counts-row::before {
   content: '';
   position: absolute;
@@ -111,6 +179,10 @@
     transparent 100%);
 }
 
+/* Individual count section container
+ * Uses flexbox for vertical alignment of number and title
+ * Centered content with consistent padding
+ * Higher z-index ensures content appears above decorative elements */
 .count-section {
   display: flex;
   flex-direction: column;
@@ -122,37 +194,60 @@
   height: 100%;
 }
 
+/* Separator between count sections
+ * Uses theme variable for border color to adapt to theme changes
+ * Only applied to the first section to create a divider */
 .count-section:first-child {
   border-right: 1px solid var(--card-border);
 }
 
+/* Count number styling
+ * Large bold font for visual emphasis
+ * Hardware acceleration enabled with transform for smooth animations
+ * Tight line height for compact appearance
+ * Relative positioning for decorative underline */
 .count-number {
   font-size: 1.75rem;
   font-weight: 700;
   position: relative;
   display: inline-block;
-  transform: translateZ(0);
+  transform: translateZ(0); /* Enable hardware acceleration */
   line-height: 1;
 }
 
+/* Dark theme gradient text effect for count numbers
+ * Creates a white-to-green gradient for visual interest
+ * Uses text clipping for the gradient effect
+ * Includes fallback color property for older browsers
+ * Green text shadow adds a subtle glow effect */
 .dark .count-number {
   background: linear-gradient(to bottom, #ffffff, #10b981);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  color: transparent;
+  color: transparent; /* Fallback */
   text-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
+/* Light theme gradient text effect for count numbers
+ * Creates a dark-green-to-light-green gradient for visual interest
+ * Uses text clipping for the gradient effect
+ * Includes fallback color property for older browsers
+ * Lighter text shadow for a more subtle effect in light mode */
 :root:not(.dark) .count-number {
   background: linear-gradient(to bottom, #064e3b, #10b981);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  color: transparent;
+  color: transparent; /* Fallback */
   text-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
 }
 
+/* Decorative underline for count numbers
+ * Uses pseudo-element for a non-rectangular underline
+ * Green gradient that fades at the edges for a subtle effect
+ * Slightly narrower than the text (80% width) for a refined look
+ * Works in both light and dark themes without modification */
 .count-number::after {
   content: '';
   position: absolute;
@@ -165,16 +260,27 @@
   opacity: 0.6;
 }
 
+/* Count title styling (labels below the numbers)
+ * Small uppercase text for a clean, modern appearance
+ * Medium weight and letter spacing for legibility
+ * Uses theme variable for text color to adapt to theme changes
+ * Small top margin for spacing from the number */
 .count-title {
   position: relative;
   font-size: 0.7rem;
   font-weight: 500;
-  color: var(--muted-foreground);
+  color: var(--muted-foreground); /* Theme-aware text color */
   margin-top: 0.4rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
+/* Count badge for additional indicators
+ * Small circular badge positioned at the top-right corner
+ * Uses the brand green color with transparency
+ * Centered content with flexbox
+ * Offset with transform for a partially overlapping appearance
+ * Works in both light and dark themes without modification */
 .count-badge {
   position: absolute;
   top: 0;
@@ -188,11 +294,17 @@
   align-items: center;
   justify-content: center;
   font-size: 8px;
-  color: #10b981;
+  color: #10b981; /* Brand green color */
   font-weight: bold;
   transform: translate(5px, -5px);
 }
 
+/* Decorative pulsing ring animation
+ * Positioned absolutely in the center of its container
+ * Large circular gradient that fades at the edges
+ * Uses the brand green color with very low opacity
+ * Animated with the ringPulse keyframes
+ * Lower z-index ensures it stays behind content */
 .ring-pulse {
   position: absolute;
   top: 50%;
@@ -212,6 +324,11 @@
   animation: ringPulse 4s infinite;
 }
 
+/* Animation keyframes for the pulsing ring effect
+ * Starts and ends with no opacity and smaller scale
+ * Peaks at 50% with higher opacity and full scale
+ * Creates a breathing effect that draws subtle attention
+ * Smooth transitions throughout the animation */
 @keyframes ringPulse {
   0% {
     opacity: 0;
@@ -227,6 +344,12 @@
   }
 }
 
+/* Live status indicator in the widget header
+ * Small pill-shaped badge with the brand green color
+ * Uses flexbox to align the dot and text
+ * Subtle background and border for a refined appearance
+ * Green glow effect with box-shadow
+ * Works in both light and dark themes without modification */
 .active-status-indicator {
   display: flex;
   align-items: center;
@@ -239,6 +362,11 @@
   box-shadow: 0 0 10px rgba(16, 185, 129, 0.1);
 }
 
+/* Pulsing dot in the live status indicator
+ * Small green circle that indicates active status
+ * Positioned relatively for the pulsing animation
+ * Uses the brand green color with high opacity
+ * Small right margin for spacing from the text */
 .pulse-dot {
   height: 6px;
   width: 6px;
@@ -249,27 +377,47 @@
   position: relative;
 }
 
+/* Pulsing animation for the dot
+ * Uses pseudo-element for the pulsing ring
+ * Positioned absolutely around the dot
+ * Green border that expands and fades with the animation
+ * Continuous animation with the pulse keyframes */
 .pulse-dot::after {
   content: '';
   position: absolute;
-  inset: -3px;
+  inset: -3px; /* Shorthand for top/right/bottom/left */
   border-radius: 50%;
   border: 1px solid rgba(16, 185, 129, 0.4);
   animation: pulse 2s infinite;
 }
 
+/* Animation keyframes for the pulsing dot effect
+ * Starts with smaller scale and high opacity
+ * Expands and fades out by 70% of the animation
+ * Returns to starting scale but remains invisible
+ * Creates a continuous pulsing effect */
 @keyframes pulse {
   0% { transform: scale(0.8); opacity: 0.8; }
   70% { transform: scale(1.5); opacity: 0; }
   100% { transform: scale(0.8); opacity: 0; }
 }
 
+/* Container for the growth percentage indicator
+ * Positioned at the bottom-right of the widget
+ * Small top margin for separation from count sections
+ * Uses flexbox for alignment */
 .growth-indicator {
   display: flex;
   justify-content: flex-end;
   margin-top: 0.5rem;
 }
 
+/* Growth percentage pill styling
+ * Small pill-shaped badge with rounded corners
+ * Uses flexbox for content alignment
+ * Subtle shadow for depth
+ * Animated entrance with fadeInUp animation
+ * Base styling shared by both positive and negative variants */
 .growth-pill {
   display: inline-flex;
   align-items: center;
@@ -281,18 +429,30 @@
   animation: fadeInUp 0.5s ease-out;
 }
 
+/* Positive growth indicator styling
+ * Green color scheme for positive growth
+ * Semi-transparent background with matching border
+ * Works in both light and dark themes without modification */
 .growth-pill.positive {
   background-color: rgba(16, 185, 129, 0.1);
-  color: rgb(16, 185, 129);
+  color: rgb(16, 185, 129); /* Brand green color */
   border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
+/* Negative growth indicator styling
+ * Red color scheme for negative growth
+ * Semi-transparent background with matching border
+ * Works in both light and dark themes without modification */
 .growth-pill.negative {
   background-color: rgba(239, 68, 68, 0.1);
-  color: rgb(239, 68, 68);
+  color: rgb(239, 68, 68); /* Red color */
   border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
+/* Animation keyframes for the growth pill entrance
+ * Starts slightly below final position and invisible
+ * Moves up and fades in for a subtle entrance effect
+ * Creates a sense of the data being updated */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -304,6 +464,10 @@
   }
 }
 
+/* Separator between values (if needed)
+ * Large bold font for visual separation
+ * Uses the brand green color with transparency
+ * Negative top margin to adjust vertical alignment */
 .separator {
   font-size: 1.75rem;
   font-weight: 700;
@@ -311,11 +475,16 @@
   margin-top: -0.5rem;
 }
 
+/* Trend icon styling for the growth rate
+ * Small icon with the brand green color
+ * Inline display with right margin for spacing from text
+ * Vertical alignment adjusted to align with text
+ * Works in both light and dark themes without modification */
 .trend-icon {
   display: inline-block;
   width: 18px;
   height: 18px;
   margin-right: 4px;
-  color: #10b981;
+  color: #10b981; /* Brand green color */
   vertical-align: -4px;
-} 
+}

@@ -1,3 +1,21 @@
+/**
+ * Events Page Component
+ * 
+ * This client-side component provides a comprehensive events management system that allows:
+ * - Viewing upcoming university events in a responsive grid layout
+ * - Admin users to create new events with title, description, date, and location
+ * - Admin users to delete existing events
+ * - Viewing event details including formatted dates and location links
+ * 
+ * The component includes authentication checks, admin role verification,
+ * and complete CRUD operations through Supabase API endpoints.
+ * 
+ * The component respects the application's theme system by using CSS classes
+ * that work with both light and dark modes via the root element class.
+ * All styling is defined in events.css which uses :root.dark and :root:not(.dark)
+ * selectors to ensure proper theming without any flash of incorrect theme.
+ */
+
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -9,6 +27,18 @@ import { PlusIcon, MapPinIcon, CalendarIcon, TrashIcon, ExclamationTriangleIcon 
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner'
 import './events.css'
 
+/**
+ * Event Interface
+ * 
+ * Defines the structure of event data received from the Supabase database.
+ * 
+ * @property id - Unique identifier for the event
+ * @property title - Title of the event
+ * @property description - Detailed description of the event
+ * @property date - Date and time of the event (ISO string format)
+ * @property location - Location of the event (can be a physical location or URL)
+ * @property created_at - Timestamp when the event was created
+ */
 interface Event {
   id: string
   title: string
@@ -18,7 +48,32 @@ interface Event {
   created_at: string
 }
 
+/**
+ * EventsPage Component
+ * 
+ * Main component for displaying and managing university events.
+ * Provides different functionality based on user role (admin vs. regular user).
+ * 
+ * @returns Rendered events page with appropriate states for loading, admin tools, and event listings
+ */
 export default function EventsPage() {
+  /**
+   * Component State
+   * 
+   * - router: Next.js router for navigation
+   * - user/authLoading: Authentication state from AuthContext
+   * - events: Array of events fetched from Supabase
+   * - loading: Loading state during data fetching
+   * - isAdmin: Flag indicating if current user has admin privileges
+   * - showAddModal: Controls visibility of event creation modal
+   * - showDeleteModal: Controls visibility of event deletion confirmation modal
+   * - eventToDelete: ID of event selected for deletion
+   * - deletingEvent: Loading state during event deletion
+   * - formData: Form state for creating new events
+   * - submitting: Loading state during event creation
+   * - error: Error message for form validation or API errors
+   * - showAdminTools: Controls visibility of admin debugging tools
+   */
   const router = useRouter()
   const { user, loading: authLoading } = useAuth()
   const [events, setEvents] = useState<Event[]>([])
@@ -38,7 +93,20 @@ export default function EventsPage() {
   const [error, setError] = useState('')
   const [showAdminTools, setShowAdminTools] = useState(false)
 
-  // Check if user is admin and fetch events
+  /**
+   * Authentication, Admin Check, and Events Fetch Effect
+   * 
+   * This effect handles three important tasks:
+   * 1. Redirects unauthenticated users to the login page
+   * 2. Checks if the current user has admin privileges
+   * 3. Fetches all events from the Supabase database
+   * 
+   * Admin status is determined by checking the user's app_metadata.is_admin value,
+   * with multiple checks to handle different potential formats of the value.
+   * Events are fetched and sorted by date in ascending order.
+   * 
+   * This effect runs whenever the user, authentication state, or router changes.
+   */
   useEffect(() => {
     const checkAdminAndFetchEvents = async () => {
       if (!user) return
@@ -79,11 +147,34 @@ export default function EventsPage() {
     }
   }, [user, authLoading, router])
 
+  /**
+   * Form Input Change Handler
+   * 
+   * Handles changes to form inputs in the event creation modal.
+   * Updates the formData state with the new value for the corresponding field.
+   * 
+   * @param e - Change event from input or textarea element
+   */
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
+  /**
+   * Event Creation Form Submit Handler
+   * 
+   * Handles the submission of the event creation form. The function:
+   * 1. Validates that all required fields are filled
+   * 2. Submits the new event data to Supabase
+   * 3. Refreshes the events list with the newly created event
+   * 4. Resets the form and closes the modal on success
+   * 5. Handles and displays any errors that occur during the process
+   * 
+   * This function is only accessible to admin users who can see the
+   * event creation button and modal.
+   * 
+   * @param e - Form submission event
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSubmitting(true)
@@ -133,7 +224,16 @@ export default function EventsPage() {
     }
   }
 
-  // Format date for display
+  /**
+   * Date Formatting Helper
+   * 
+   * Formats ISO date strings into a more readable format for display.
+   * Uses the browser's Intl.DateTimeFormat API to format the date
+   * with year, month, day, hour, and minute.
+   * 
+   * @param dateString - ISO date string to format
+   * @returns Formatted date string (e.g., "January 1, 2025, 12:00 PM")
+   */
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = { 
       year: 'numeric', 
@@ -145,7 +245,16 @@ export default function EventsPage() {
     return new Date(dateString).toLocaleDateString('en-US', options)
   }
 
-  // Check if a string is a URL
+  /**
+   * URL Validation Helper
+   * 
+   * Determines if a string is a valid URL by attempting to create
+   * a URL object with it. This is used to determine whether to render
+   * the location as a clickable link or plain text.
+   * 
+   * @param str - String to check if it's a valid URL
+   * @returns Boolean indicating if the string is a valid URL
+   */
   const isUrl = (str: string) => {
     try {
       new URL(str)
@@ -155,13 +264,33 @@ export default function EventsPage() {
     }
   }
 
-  // Add function to initiate event deletion (shows confirmation modal)
+  /**
+   * Event Deletion Initiator
+   * 
+   * Prepares for event deletion by storing the event ID and showing
+   * the confirmation modal. This creates a two-step deletion process
+   * to prevent accidental deletions.
+   * 
+   * @param eventId - ID of the event to be deleted
+   */
   const initiateDeleteEvent = (eventId: string) => {
     setEventToDelete(eventId);
     setShowDeleteModal(true);
   }
 
-  // Add function to handle event deletion
+  /**
+   * Event Deletion Handler
+   * 
+   * Handles the actual deletion of an event after confirmation.
+   * The function:
+   * 1. Deletes the event from the Supabase database
+   * 2. Updates the local state to remove the deleted event
+   * 3. Closes the confirmation modal
+   * 4. Handles and displays any errors that occur during deletion
+   * 
+   * This function is only accessible to admin users who can see the
+   * delete button on event cards.
+   */
   const handleDeleteEvent = async () => {
     if (!eventToDelete) return;
     
@@ -194,16 +323,46 @@ export default function EventsPage() {
     }
   }
 
-  // Function to cancel deletion and close modal
+  /**
+   * Deletion Cancellation Handler
+   * 
+   * Cancels the event deletion process by clearing the eventToDelete state
+   * and closing the confirmation modal without making any changes.
+   */
   const cancelDelete = () => {
     setEventToDelete(null);
     setShowDeleteModal(false);
   }
 
+  /**
+   * Loading State Rendering
+   * 
+   * Shows a loading spinner while authentication is being verified
+   * or events data is being fetched. This provides visual feedback
+   * to users during data loading operations.
+   * 
+   * The LoadingSpinner component is designed to work with the application's
+   * theme system, displaying appropriately in both light and dark modes.
+   */
   if (authLoading || loading) {
     return <LoadingSpinner />
   }
 
+  /**
+   * Main Component Render
+   * 
+   * Renders the complete events page with multiple sections:
+   * - Events listing in a responsive grid
+   * - Add event button (admin only)
+   * - Event creation modal (admin only)
+   * - Event deletion confirmation modal (admin only)
+   * - Hidden admin tools toggle
+   * 
+   * The UI is designed to be responsive and uses theme-compatible styling
+   * that works in both light and dark modes through CSS classes defined in events.css.
+   * The styling uses :root.dark and :root:not(.dark) selectors to ensure proper theming
+   * without any flash of incorrect theme during page load or navigation.
+   */
   return (
     <div className="events-container">
       <Navbar />

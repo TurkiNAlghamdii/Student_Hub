@@ -1,3 +1,21 @@
+/**
+ * GPA Calculator Client Component
+ * 
+ * This client-side component provides a comprehensive GPA calculation tool that allows students to:
+ * - Calculate their semester GPA based on current courses and grades
+ * - Calculate their cumulative GPA by including previous GPA and credit hours
+ * - Add, edit, and remove courses dynamically
+ * - View detailed grade points and quality points for each course
+ * 
+ * The calculator follows King Abdulaziz University's 5-point GPA system and provides
+ * accurate calculations with proper rounding and grade letter determination.
+ * 
+ * The component respects the application's theme system by using CSS classes
+ * that work with both light and dark modes via the root element class.
+ * All styling is defined in gpa-calculator.css which uses :root.dark and :root:not(.dark)
+ * selectors to ensure proper theming without any flash of incorrect theme.
+ */
+
 'use client'
 
 import { useState } from 'react'
@@ -5,7 +23,23 @@ import Navbar from '@/components/Navbar/Navbar'
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
 import './gpa-calculator.css'
 
-// Define the grade types and their values
+/**
+ * Grade Point Values
+ * 
+ * Defines the grade types and their corresponding point values according to
+ * King Abdulaziz University's 5-point GPA system.
+ * 
+ * Each grade has a specific point value that is used in GPA calculations:
+ * - A+ = 5.00 (Excellent)
+ * - A  = 4.75 (Excellent)
+ * - B+ = 4.50 (Very Good)
+ * - B  = 4.00 (Very Good)
+ * - C+ = 3.50 (Good)
+ * - C  = 3.00 (Good)
+ * - D+ = 2.50 (Pass)
+ * - D  = 2.00 (Pass)
+ * - F  = 1.00 (Fail)
+ */
 const gradeValues = {
   'A+': { points: 5.00 },
   'A': { points: 4.75 },
@@ -18,10 +52,26 @@ const gradeValues = {
   'F': { points: 1.00 },
 }
 
-// Define possible grades for dropdown
+/**
+ * Possible Grades Array
+ * 
+ * Defines the list of possible grades for the dropdown selection in the course table.
+ * The empty string represents the default 'Select grade' option.
+ * 
+ * The grades are ordered from highest to lowest for intuitive selection in the dropdown menu.
+ */
 const possibleGrades = ['', 'A+', 'A', 'B+', 'B', 'C+', 'C', 'D+', 'D', 'F']
 
-// Interface for course data
+/**
+ * Course Interface
+ * 
+ * Defines the structure of course data used in the GPA calculator.
+ * 
+ * @property id - Unique identifier for the course
+ * @property name - Name or title of the course
+ * @property grade - Letter grade received in the course (A+, A, B+, etc.)
+ * @property hours - Credit hours for the course (typically 1-6)
+ */
 interface Course {
   id: number
   name: string
@@ -29,7 +79,24 @@ interface Course {
   hours: number
 }
 
-// Calculate GPA based on grades and credit hours
+/**
+ * GPA Calculation Function
+ * 
+ * Calculates both semester and cumulative GPA based on current courses and previous academic record.
+ * The function handles both new students (no previous GPA) and continuing students.
+ * 
+ * The calculation follows these steps:
+ * 1. Handle null/undefined values for previous GPA and credit hours
+ * 2. Return appropriate values if no courses are provided
+ * 3. Calculate semester points and hours based on current courses
+ * 4. Calculate semester GPA by dividing semester points by semester hours
+ * 5. Calculate cumulative stats by combining semester stats with previous academic record
+ * 
+ * @param courses - Array of Course objects containing grade and credit hour information
+ * @param prevGPA - Previous cumulative GPA (can be null for new students)
+ * @param prevCreditHours - Previous total credit hours completed (can be null for new students)
+ * @returns Object containing semester and cumulative GPA statistics
+ */
 function calculateGPA(courses: Course[], prevGPA: number | null, prevCreditHours: number | null) {
   // Convert null or undefined values to 0
   const prevGPAValue = prevGPA || 0
@@ -77,7 +144,18 @@ function calculateGPA(courses: Course[], prevGPA: number | null, prevCreditHours
   }
 }
 
-// Get letter grade based on GPA value
+/**
+ * Letter Grade Determination Function
+ * 
+ * Converts a numeric GPA value to its corresponding letter grade with description.
+ * This follows King Abdulaziz University's grading scale and descriptions.
+ * 
+ * The function uses a series of threshold checks, starting from the highest possible grade,
+ * and returns the appropriate letter grade with its description (Excellent, Very Good, etc.)
+ * 
+ * @param gpa - Numeric GPA value (typically between 0 and 5)
+ * @returns String representation of the letter grade with description
+ */
 function getLetterGrade(gpa: number): string {
   if (gpa >= 4.75) return 'Excellent (A+)'
   if (gpa >= 4.5) return 'Excellent (A)'
@@ -90,7 +168,22 @@ function getLetterGrade(gpa: number): string {
   return 'Fail (F)'
 }
 
+/**
+ * GPA Calculator Client Component
+ * 
+ * Main component for the GPA calculator functionality.
+ * Manages state for courses, previous GPA data, and handles all user interactions.
+ * 
+ * @returns Rendered GPA calculator with interactive form elements and real-time calculations
+ */
 export default function GpaCalculatorClient() {  
+  /**
+   * Component State
+   * 
+   * - prevCreditHours: String value for previous credit hours input field
+   * - prevGPA: String value for previous GPA input field
+   * - courses: Array of Course objects representing the current semester courses
+   */
   // State for previous GPA data - using string for input fields
   const [prevCreditHours, setPrevCreditHours] = useState<string>('')
   const [prevGPA, setPrevGPA] = useState<string>('')
@@ -105,6 +198,13 @@ export default function GpaCalculatorClient() {
     { id: 6, name: '[Course 06]', grade: '', hours: 3 },
   ])
 
+  /**
+   * Data Processing
+   * 
+   * Convert string inputs to numbers for calculations and calculate GPA results.
+   * This section handles the conversion of user input strings to numeric values,
+   * with appropriate null handling for empty inputs.
+   */
   // Convert string inputs to numbers for calculations
   const prevGPANumber = prevGPA.trim() !== '' ? parseFloat(prevGPA) : null
   const prevCreditHoursNumber = prevCreditHours.trim() !== '' ? parseFloat(prevCreditHours) : null
@@ -112,7 +212,16 @@ export default function GpaCalculatorClient() {
   // Calculate current GPA results
   const results = calculateGPA(courses, prevGPANumber, prevCreditHoursNumber)
 
-  // Handle course update
+  /**
+   * Course Update Handler
+   * 
+   * Updates a specific field of a course in the courses array.
+   * Uses the functional form of setState to ensure updates are based on the latest state.
+   * 
+   * @param id - ID of the course to update
+   * @param field - Field name to update (name, grade, or hours)
+   * @param value - New value for the specified field
+   */
   const updateCourse = (id: number, field: keyof Course, value: string | number) => {
     setCourses(prev => 
       prev.map(course => 
@@ -121,17 +230,45 @@ export default function GpaCalculatorClient() {
     )
   }
 
-  // Add new course
+  /**
+   * Add Course Handler
+   * 
+   * Adds a new course to the courses array with default values.
+   * Generates a unique ID by finding the maximum existing ID and adding 1.
+   * Sets a default name with zero-padded ID, empty grade, and 3 credit hours.
+   */
   const addCourse = () => {
     const newId = Math.max(0, ...courses.map(c => c.id)) + 1
     setCourses([...courses, { id: newId, name: `[Course ${String(newId).padStart(2, '0')}]`, grade: '', hours: 3 }])
   }
 
-  // Remove course
+  /**
+   * Remove Course Handler
+   * 
+   * Removes a course from the courses array based on its ID.
+   * Uses the functional form of setState with filter to create a new array
+   * excluding the course with the specified ID.
+   * 
+   * @param id - ID of the course to remove
+   */
   const removeCourse = (id: number) => {
     setCourses(prev => prev.filter(course => course.id !== id))
   }
 
+  /**
+   * Main Component Render
+   * 
+   * Renders the complete GPA calculator with multiple sections:
+   * - Header with title
+   * - Previous GPA input section
+   * - Results section showing semester and cumulative GPA
+   * - Courses table for entering course grades and credit hours
+   * 
+   * The UI is designed to be responsive and uses theme-compatible styling
+   * that works in both light and dark modes through CSS classes defined in gpa-calculator.css.
+   * The styling uses :root.dark and :root:not(.dark) selectors to ensure proper theming
+   * without any flash of incorrect theme during page load or navigation.
+   */
   return (
     <div className="gpa-calculator-container">
       <Navbar />
@@ -142,7 +279,7 @@ export default function GpaCalculatorClient() {
         </div>
 
         <div className="gpa-calculator-section">
-          {/* Previous GPA Section */}
+          {/* Previous GPA Section - For entering previous academic record */}
           <div className="previous-gpa-section">
             <h2 className="section-subtitle">Cumulative GPA</h2>
             <div className="input-group">
@@ -188,8 +325,9 @@ export default function GpaCalculatorClient() {
             </div>
           </div>
 
-          {/* Results Section */}
+          {/* Results Section - Displays calculated GPA results */}
           <div className="results-section">
+            {/* Cumulative GPA results - Combines previous and current semester */}
             <div className="cumulative-results">
               <h2 className="section-subtitle">Cumulative Results</h2>
               <div className="results-grid">
@@ -212,6 +350,7 @@ export default function GpaCalculatorClient() {
               </div>
             </div>
 
+            {/* Semester GPA results - Based only on current courses */}
             <div className="semester-results">
               <h2 className="section-subtitle">Semester Results</h2>
               <div className="results-grid">
@@ -235,8 +374,9 @@ export default function GpaCalculatorClient() {
             </div>
           </div>
 
-          {/* Courses Section */}
+          {/* Courses Section - Interactive table for managing courses */}
           <div className="courses-table-section">
+            {/* Table header with title and add course button */}
             <div className="courses-table-header">
               <h2 className="section-subtitle">Course Grades</h2>
               <button 
@@ -250,7 +390,9 @@ export default function GpaCalculatorClient() {
               </button>
             </div>
             
+            {/* Courses table with column headers and course rows */}
             <div className="courses-table">
+              {/* Table column headers */}
               <div className="courses-table-head">
                 <div className="course-cell course-name-cell">Course Name</div>
                 <div className="course-cell course-grade-cell">Grade</div>
@@ -260,6 +402,7 @@ export default function GpaCalculatorClient() {
                 <div className="course-cell course-actions-cell">Actions</div>
               </div>
               
+              {/* Table body with course rows */}
               <div className="courses-table-body">
                 {courses.map((course) => {
                   const gradePoint = course.grade ? 

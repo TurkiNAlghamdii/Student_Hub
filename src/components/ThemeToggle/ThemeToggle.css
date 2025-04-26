@@ -1,3 +1,16 @@
+/**
+ * ThemeToggle CSS
+ *
+ * This stylesheet defines the visual appearance and behavior of the ThemeToggle component,
+ * including positioning in different layouts, animations, and responsive design.
+ * The stylesheet uses CSS variables from the global theme for consistent styling.
+ */
+
+/* Base styling for the theme toggle button
+ * - Square button with centered content using flexbox
+ * - Uses theme variables for colors to adapt to current theme
+ * - Smooth transition for hover and active states
+ * - Subtle border that matches other UI elements */
 .theme-toggle-button {
   display: flex;
   align-items: center;
@@ -12,7 +25,11 @@
   border: 1px solid var(--card-border);
 }
 
-/* Standalone theme toggle (for auth pages) */
+/* Positioning for standalone theme toggle on authentication pages
+ * - Absolute positioning in the top-right corner
+ * - Higher z-index to ensure it appears above other elements
+ * - Consistent positioning across all auth pages
+ * - This ensures the toggle is always accessible even without the navbar */
 .login-container .theme-toggle-button,
 .register-container .theme-toggle-button,
 .forgot-password-container .theme-toggle-button,
@@ -23,7 +40,11 @@
   z-index: 50;
 }
 
-/* Hide standalone theme toggle on pages with navbar */
+/* Hide duplicate theme toggles when navbar is present
+ * - Prevents showing both standalone toggle and navbar toggle simultaneously
+ * - Uses modern CSS selectors like :has() for parent matching
+ * - Important flag ensures these rules take precedence
+ * - Multiple selectors cover different page layouts */
 body:has(.navbar) > .theme-toggle-button,
 body:has(.home-container) > .theme-toggle-button,
 .home-container .theme-toggle-button:not(.nav-buttons .theme-toggle-button),
@@ -31,35 +52,60 @@ body:has(.home-container) > .theme-toggle-button,
   display: none !important;
 }
 
+/* Hover state styling
+ * - Changes background to accent color for visual feedback
+ * - Subtle scale increase creates a "pop" effect
+ * - Uses theme variables to maintain consistency with overall design */
 .theme-toggle-button:hover {
   background-color: var(--accent);
   transform: scale(1.05);
 }
 
+/* Active state (when being clicked)
+ * - Slight scale decrease creates a "pressed" effect
+ * - Provides tactile feedback for the interaction
+ * - Combined with hover state for a complete interaction experience */
 .theme-toggle-button:active {
   transform: scale(0.95);
 }
 
-/* Animation for icon transition */
+/* Animation for the icon inside the button
+ * - Smooth transition for any transform changes
+ * - Slightly longer duration than the button transition
+ * - Applies to both sun and moon icons */
 .theme-toggle-button svg {
   transition: transform 0.3s ease;
 }
 
+/* Hover effect for the icon
+ * - Slight rotation adds playfulness to the interaction
+ * - Subtle enough to not be distracting
+ * - Complements the button scale effect */
 .theme-toggle-button:hover svg {
   transform: rotate(12deg);
 }
 
-/* Navbar specific styling */
+/* Specific styling for theme toggle in the navbar
+ * - Removes right margin when in the navbar's right section
+ * - Ensures proper alignment with other navbar elements
+ * - Maintains consistent spacing in the navigation */
 .nav-right .theme-toggle-button {
   margin-right: 0;
 }
 
-/* Sidebar specific styling */
+/* Specific styling for theme toggle in the sidebar
+ * - Adds right margin when in the sidebar header
+ * - Creates proper spacing from adjacent elements
+ * - Ensures consistent layout in the sidebar context */
 .sidebar-header .theme-toggle-button {
   margin-right: 8px;
 }
 
-/* Media query for smaller devices */
+/* Responsive adjustments for smaller screens
+ * - Slightly smaller button size on mobile devices
+ * - Reduced icon size for better proportions
+ * - Maintains the same visual style at a more appropriate scale
+ * - Breakpoint matches Tailwind's sm breakpoint for consistency */
 @media (max-width: 640px) {
   .theme-toggle-button {
     width: 34px;
