@@ -1,5 +1,8 @@
 .ai-assistant-widget {
-  @apply backdrop-blur-sm rounded-2xl p-6 transition-all duration-300;
+  backdrop-filter: blur(8px);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: all 0.3s;
   background-color: var(--card-bg);
   border: 1px solid var(--card-border);
   height: 100%;
@@ -8,14 +11,16 @@
 }
 
 .dark .ai-assistant-widget {
-  @apply bg-gray-900/50 border-gray-800/50;
+  background-color: rgba(17, 24, 39, 0.5);
+  border-color: rgba(31, 41, 55, 0.5);
   box-shadow: 
     0 0 30px rgba(6, 78, 59, 0.05),
     0 0 60px rgba(0, 0, 0, 0.2);
 }
 
 :root:not(.dark) .ai-assistant-widget {
-  @apply bg-white/80 border-gray-200/50;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-color: rgba(229, 231, 235, 0.5);
   box-shadow: 
     0 0 20px rgba(6, 78, 59, 0.03),
     0 0 40px rgba(0, 0, 0, 0.05);
@@ -83,12 +88,20 @@
 }
 
 .widget-actions {
-  @apply flex items-center gap-2;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .chat-button {
-  @apply px-3 py-1.5 rounded-lg text-sm font-medium
-    transition-all duration-300 ease-in-out flex items-center justify-center;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--primary-foreground);
   background: var(--primary);
   border: 1px solid rgba(6, 78, 59, 0.2);
@@ -107,7 +120,7 @@
 }
 
 .chat-button:hover {
-  @apply transform scale-[1.02];
+  transform: scale(1.02);
 }
 
 .dark .chat-button:hover {
@@ -171,31 +184,58 @@
   align-items: center;
 }
 
+/* Prompt suggestion styling to match course items */
+.prompt-suggestion-button {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
 /* Light mode styling */
 :root:not(.dark) .prompt-suggestion-button {
-  background-color: rgba(16, 185, 129, 0.05);
-  border: 1px solid rgba(16, 185, 129, 0.15);
+  background: rgba(240, 240, 240, 0.5);
 }
 
 :root:not(.dark) .prompt-suggestion-button:hover {
-  background-color: rgba(16, 185, 129, 0.1);
+  background: rgba(230, 230, 230, 0.6);
+  transform: scale(1.02);
   border: 1px solid rgba(16, 185, 129, 0.2);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1), 0 0 15px rgba(6, 78, 59, 0.05);
 }
 
 /* Dark mode styling */
 .dark .prompt-suggestion-button {
-  background-color: rgba(26, 26, 26, 0.5); /* Slightly transparent to blend with container */
-  border: 1px solid var(--card-border);
-  box-shadow: none;
+  background: rgba(22, 27, 34, 0.5);
+  border: 1px solid transparent;
 }
 
 .dark .prompt-suggestion-button:hover {
-  @apply transform scale-[1.02];
-  background-color: rgba(31, 41, 55, 0.5); /* Slightly transparent secondary */
-  border: 1px solid var(--card-border);
+  background: rgba(31, 41, 55, 0.6);
+  transform: scale(1.02);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), 0 0 15px rgba(6, 78, 59, 0.1);
 }
 
-/* No more category-specific colored borders */
+/* Gradient effect on hover */
+.prompt-suggestion-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0), rgba(16, 185, 129, 0.05), rgba(16, 185, 129, 0));
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+
+.prompt-suggestion-button:hover::after {
+  transform: translateX(100%);
+}
+
+/* Category styling is maintained through the button classes
+   but we no longer display explicit category indicators */
 
 /* For smaller screens, make it responsive */
 @media (max-width: 768px) {
@@ -206,4 +246,8 @@
   .widget-title {
     font-size: 1.1rem;
   }
-} 
+  
+  .prompt-suggestions-grid {
+    grid-template-columns: 1fr;
+  }
+}
