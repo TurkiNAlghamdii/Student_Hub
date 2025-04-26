@@ -142,21 +142,19 @@ export default function ChatPage() {
           </div>
         )}
         
-        <div className="chat-welcome-section">
-          <div>
-            <h1 className="chat-welcome-text">Academic AI Assistant</h1>
-            <p className="chat-welcome-description">Ask me anything about your courses, assignments, or academic topics</p>
-          </div>
-          <div className="course-tag">
-            Powered by AI
-          </div>
-        </div>
-        
         <div className="chat-container-wrapper">
-          <div className="chat-shortcut-section flex flex-col">
-            <div className="flex-1">
-              <ChatInterface initialQuestion={initialQuestion} />
+          <div className="chat-welcome-section">
+            <div>
+              <h1 className="chat-welcome-text">Academic AI Assistant</h1>
+              <p className="chat-welcome-description">Ask me anything about your courses, assignments, or academic topics</p>
             </div>
+            <div className="course-tag">
+              Powered by AI
+            </div>
+          </div>
+          
+          <div className="chat-shortcut-section">
+            <ChatInterface initialQuestion={initialQuestion} />
           </div>
         </div>
       </main>

@@ -125,6 +125,65 @@ export default function ChatInterface({
   }, [contextType, courseName, initialQuestion]);
 
   /**
+   * Scroll to Bottom Function
+   * 
+   * Scrolls the chat container to the bottom to show new messages.
+   * Uses a more reliable approach with smoother animation.
+   */
+  const scrollToBottom = () => {
+    // Use a more reliable approach with multiple attempts and smoother scrolling
+    const scrollAttempt = (attempts = 0) => {
+      if (chatContainerRef.current) {
+        const scrollElement = chatContainerRef.current;
+        const scrollHeight = scrollElement.scrollHeight;
+        
+        // Use smooth scrolling for better UX
+        scrollElement.scrollTo({
+          top: scrollHeight,
+          behavior: 'smooth'
+        });
+      }
+      
+      // Try again a few times with increasing delays to ensure scrolling happens
+      if (attempts < 3) {
+        setTimeout(() => scrollAttempt(attempts + 1), 150 * (attempts + 1));
+      }
+    };
+    
+    // Start the scrolling attempts
+    scrollAttempt();
+  };
+
+  /**
+   * Window Resize Handler
+   * 
+   * Ensures chat container adjusts properly when window size changes
+   * and maintains scroll position at the bottom.
+   */
+  useEffect(() => {
+    const handleResize = () => {
+      // After resize, ensure we're still scrolled to the bottom
+      scrollToBottom();
+    };
+    
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  /**
+   * Auto-scroll Effect
+   * 
+   * Automatically scrolls to the bottom of the chat container whenever
+   * a new message is added or the loading state changes.
+   */
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isLoading]);
+
+  /**
    * Handle AI Response Function
    * 
    * Manages communication with the chat API endpoint and processes responses.
@@ -188,6 +247,7 @@ export default function ChatInterface({
         
         console.log('ChatInterface: Adding AI response to chat');
         setMessages(prev => [...prev, assistantMessage]);
+        scrollToBottom();
       } else {
         throw new Error('Invalid response format from API');
       }
@@ -343,22 +403,6 @@ export default function ChatInterface({
   }, [contextType, courseName, initialQuestion, handleAIResponse]);
 
   /**
-   * Auto-scroll Effect
-   * 
-   * Automatically scrolls the chat container to the bottom whenever new messages are added.
-   * This ensures that the most recent messages are always visible to the user.
-   */
-  useEffect(() => {
-    try {
-      if (chatContainerRef.current) {
-        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-      }
-    } catch (error) {
-      console.error('Error scrolling to bottom:', error);
-    }
-  }, [messages]);
-
-  /**
    * Get Welcome Message Function
    * 
    * Generates a contextual welcome message based on the type of chat (general, course, or exam).
@@ -414,17 +458,27 @@ How can I assist with your academic needs today?`;
   const handleSendMessage = async () => {
     if (!userInput.trim()) return;
     
-    // Add user message to chat
     const userMessage: Message = {
       role: 'user',
-      content: userInput,
+      content: userInput
     };
     
+    // Add user message to chat
     setMessages(prev => [...prev, userMessage]);
+    
+    // Clear input
     setUserInput('');
     
-    // Handle AI response
-    await handleAIResponse(userMessage);
+    // Hide suggestions after first message
+    if (showSuggestions) {
+      setShowSuggestions(false);
+    }
+    
+    // Scroll to bottom after adding user message
+    scrollToBottom();
+    
+    // Get AI response
+    handleAIResponse(userMessage);
   };
 
   /**

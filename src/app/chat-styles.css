@@ -21,63 +21,53 @@
 
 /* Override main-content padding for the chat page */
 .home-container .main-content {
-  padding-top: 2rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0;
 }
 
 .chat-welcome-section {
   backdrop-filter: blur(8px);
-  border-radius: 1rem;
-  padding: 2rem;
-  margin-bottom: 2rem;
+  border-radius: 0.5rem 0.5rem 0 0;
+  padding: 0.75rem;
+  margin-bottom: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
   transition: all 0.5s;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  width: 100%;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.1);
 }
 
 /* Dark theme welcome section */
 :root.dark .chat-welcome-section {
   background-color: rgba(17, 24, 39, 0.5);
-  border: 1px solid rgba(31, 41, 55, 0.5);
-  box-shadow: 
-    0 0 40px rgba(6, 78, 59, 0.1),
-    0 0 80px rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(31, 41, 55, 0.5);
+  box-shadow: none;
 }
 
 /* Light theme welcome section */
 :root:not(.dark) .chat-welcome-section {
   background-color: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-  box-shadow: 
-    0 0 40px rgba(6, 78, 59, 0.05),
-    0 0 20px rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+  box-shadow: none;
 }
 
 .chat-welcome-section:hover {
-  transform: translateY(-2px);
+  transform: none;
 }
 
 /* Dark theme welcome section hover */
 :root.dark .chat-welcome-section:hover {
-  box-shadow: 
-    0 0 50px rgba(6, 78, 59, 0.15),
-    0 0 90px rgba(0, 0, 0, 0.3);
+  box-shadow: none;
 }
 
 /* Light theme welcome section hover */
 :root:not(.dark) .chat-welcome-section:hover {
-  box-shadow: 
-    0 0 40px rgba(6, 78, 59, 0.1),
-    0 0 30px rgba(0, 0, 0, 0.08);
+  box-shadow: none;
 }
 
 .chat-welcome-text {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 700;
 }
 
@@ -94,8 +84,8 @@
 }
 
 .chat-welcome-description {
-  margin-top: 0.5rem;
-  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
   line-height: 1.25rem;
 }
 
@@ -110,21 +100,28 @@
 }
 
 .chat-container-wrapper {
-  max-width: 800px;
+  max-width: 1300px;
   margin: 0 auto;
   width: 100%;
-  padding: 0 1rem;
+  padding: 0 0.5rem;
+  height: 98vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .chat-shortcut-section {
   backdrop-filter: blur(8px);
-  border-radius: 1rem;
-  padding: 1.25rem;
-  margin-bottom: 2rem;
+  border-radius: 0 0 0.5rem 0.5rem;
+  padding: 1rem 1rem 0.5rem;
+  margin-bottom: 0.5rem;
   transition: all 0.3s;
   position: relative;
   z-index: 10;
-  min-height: 60vh;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(6, 78, 59, 0.05), 0 0 40px rgba(0, 0, 0, 0.08);
 }
 
 /* Dark theme chat section */
@@ -132,8 +129,8 @@
   background-color: rgba(17, 24, 39, 0.5);
   border: 1px solid rgba(31, 41, 55, 0.5);
   box-shadow: 
-    0 0 30px rgba(6, 78, 59, 0.05),
-    0 0 60px rgba(0, 0, 0, 0.2);
+    0 0 40px rgba(6, 78, 59, 0.1),
+    0 0 80px rgba(0, 0, 0, 0.2);
 }
 
 /* Light theme chat section */
@@ -141,8 +138,8 @@
   background-color: rgba(255, 255, 255, 0.7);
   border: 1px solid rgba(16, 185, 129, 0.2);
   box-shadow: 
-    0 0 30px rgba(6, 78, 59, 0.03),
-    0 0 15px rgba(0, 0, 0, 0.05);
+    0 0 40px rgba(6, 78, 59, 0.05),
+    0 0 25px rgba(0, 0, 0, 0.05);
 }
 
 /* Dark theme chat section hover */
@@ -321,3 +318,36 @@
 /* Removed conflicting .loading-container and .loading-spinner styles */
 
 /* ... (other chat-specific styles if any) ... */
+
+/* Mobile responsiveness for chat containers */
+@media (max-width: 640px) {
+  .chat-container-wrapper {
+    height: 95vh;
+    padding: 0 0.25rem;
+  }
+  
+  .chat-welcome-section {
+    padding: 0.5rem;
+    flex-direction: column;
+    text-align: center;
+    gap: 0.35rem;
+  }
+  
+  .chat-welcome-text {
+    font-size: 1.1rem;
+  }
+  
+  .chat-shortcut-section {
+    padding: 0.75rem 0.75rem 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .chat-container-wrapper {
+    height: 92vh;
+  }
+  
+  .chat-welcome-description {
+    font-size: 0.75rem;
+  }
+}
