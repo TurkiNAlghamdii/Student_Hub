@@ -267,38 +267,119 @@
 
 .quick-nav-container {
   display: flex;
+  flex-direction: column;
   gap: 0.5rem;
-  justify-content: space-between;
+  margin-top: 1.5rem;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  background-color: rgba(16, 185, 129, 0.05);
+  border: 1px solid rgba(16, 185, 129, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s ease;
+}
+
+/* Dark theme nav container */
+:root.dark .quick-nav-container {
+  background-color: rgba(31, 41, 55, 0.4);
+  border: 1px solid rgba(55, 65, 81, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+/* Light theme nav container */
+:root:not(.dark) .quick-nav-container {
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  backdrop-filter: blur(8px);
+}
+
+.quick-nav-container:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Dark theme nav container hover */
+:root.dark .quick-nav-container:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  border-color: rgba(16, 185, 129, 0.4);
+  background-color: rgba(31, 41, 55, 0.5);
+}
+
+/* Light theme nav container hover */
+:root:not(.dark) .quick-nav-container:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  border-color: rgba(16, 185, 129, 0.3);
+  background-color: rgba(255, 255, 255, 0.95);
 }
 
 .quick-nav-button {
-  @apply flex flex-col items-center justify-center gap-1 py-2 px-3 rounded transition-all duration-200 text-xs flex-1;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
 }
 
 /* Dark theme nav button */
 :root.dark .quick-nav-button {
-  background: rgba(31, 41, 55, 0.25);
   color: #d1d5db;
-  border: 1px solid rgba(75, 85, 99, 0.2);
+  background-color: transparent;
 }
 
 /* Light theme nav button */
 :root:not(.dark) .quick-nav-button {
-  background: rgba(243, 244, 246, 0.5);
   color: #4b5563;
-  border: 1px solid rgba(209, 213, 219, 0.3);
+  background-color: transparent;
+}
+
+.quick-nav-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, #10b981, #059669);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.quick-nav-button:hover {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  padding-left: 1.25rem;
+}
+
+.quick-nav-button:hover::before {
+  opacity: 1;
 }
 
 /* Dark theme nav button hover */
 :root.dark .quick-nav-button:hover {
-  background: rgba(31, 41, 55, 0.4);
-  color: #f9fafb;
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10b981;
 }
 
 /* Light theme nav button hover */
 :root:not(.dark) .quick-nav-button:hover {
-  background: rgba(243, 244, 246, 0.8);
-  color: #111827;
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #059669;
+}
+
+.quick-nav-button svg {
+  transition: all 0.3s ease;
+}
+
+.quick-nav-button:hover svg {
+  transform: scale(1.1);
+  color: #10b981;
 }
 
 .quick-nav-button:active {

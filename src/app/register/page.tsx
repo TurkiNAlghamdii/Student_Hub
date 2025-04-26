@@ -171,6 +171,11 @@ export default function Register() {
         setError('All fields are required for student registration')
         return
       }
+      // Add student ID length validation
+      if (studentId.length !== 7) {
+        setError('Student ID must be exactly 7 digits')
+        return
+      }
     } else {
       // Faculty/staff validation
       if (!fullName) {
@@ -350,9 +355,13 @@ export default function Register() {
                     type="text"
                     required
                     value={studentId}
-                    onChange={(e) => setStudentId(e.target.value.replace(/\D/g, ''))}
+                    onChange={(e) => {
+                      // Allow only digits and limit length to 7
+                      const digits = e.target.value.replace(/\D/g, '');
+                      setStudentId(digits.slice(0, 7));
+                    }}
                     className="input-field"
-                    placeholder="Student ID"
+                    placeholder="Student ID (7 digits)"
                   />
                 </motion.div>
 

@@ -595,8 +595,17 @@ interface StudentProfile {
 
                   {/* Grid Layout for Form Fields */}
                   <div className="info-grid">
+                    {/* Full Name Field */}
                     <div className="info-item">
-                      <label htmlFor="full_name">Name</label>
+                      {/* Name Label */}
+                      <label htmlFor="full_name">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                          <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Name
+                      </label>
+                      {/* Name Input Field */}
                       <input
                         type="text"
                         id="full_name"
@@ -604,12 +613,22 @@ interface StudentProfile {
                         value={formData.full_name || ''}
                         onChange={handleChange}
                         required
-                        className="w-full p-2"
                       />
                     </div>
 
+                    {/* Student ID Field */}
                     <div className="info-item">
-                      <label htmlFor="student_id">Student ID</label>
+                      {/* Student ID Label with ID Card Icon */}
+                      <label htmlFor="student_id">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon">
+                          <path d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5z"></path>
+                          <path d="M8 9h8"></path>
+                          <path d="M8 13h6"></path>
+                          <path d="M8 17h4"></path>
+                        </svg>
+                        Student ID
+                      </label>
+                      {/* Student ID Input Field */}
                       <input
                         type="text"
                         id="student_id"
@@ -617,19 +636,26 @@ interface StudentProfile {
                         value={formData.student_id || ''}
                         onChange={handleChange}
                         required
-                        className="w-full p-2"
                       />
                     </div>
 
+                    {/* Faculty Dropdown Field with Icon */}
                     <div className="info-item">
-                      <label htmlFor="faculty">Faculty</label>
+                      {/* Label with Academic Cap Icon */}
+                      <label htmlFor="faculty">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon">
+                          <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                          <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                        </svg>
+                        Faculty
+                      </label>
+                      {/* Faculty Selection Dropdown - Styled with theme-aware CSS */}
                       <select
                         id="faculty"
                         name="faculty"
                         value={formData.faculty || ''}
                         onChange={handleChange}
                         required
-                        className="w-full p-2"
                       >
                         <option value="">Select Faculty</option>
                         <option value="Faculty of Computing">Faculty of Computing</option>
@@ -640,15 +666,23 @@ interface StudentProfile {
                       </select>
                     </div>
 
+                    {/* Email Field (Disabled) */}
                     <div className="info-item email-container">
-                      <label htmlFor="email">Email</label>
+                      {/* Email Label with Mail Icon */}
+                      <label htmlFor="email">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon">
+                          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                          <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                        Email
+                      </label>
+                      {/* Email Input Field (Disabled - Cannot be changed) */}
                       <input
                         type="email"
                         id="email"
                         name="email"
                         value={studentProfile?.email || ''}
                         disabled
-                        className="w-full p-2"
                       />
                     </div>
                   </div>
@@ -699,17 +733,38 @@ interface StudentProfile {
 
                     <div className="info-item">
                       <label>Student ID</label>
-                      <p>{studentProfile?.student_id || 'Not provided'}</p>
+                      <div className="info-content">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="info-icon">
+                          <rect x="3" y="4" width="18" height="16" rx="2" />
+                          <circle cx="9" cy="10" r="2" />
+                          <path d="M15 8h2" />
+                          <path d="M15 12h2" />
+                          <path d="M7 16h10" />
+                        </svg>
+                        <p>{studentProfile?.student_id || 'Not provided'}</p>
+                      </div>
                     </div>
 
                     <div className="info-item">
                       <label>Faculty</label>
-                      <p>{studentProfile?.faculty || 'Not provided'}</p>
+                      <div className="info-content">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="info-icon">
+                          <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                          <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
+                        </svg>
+                        <p>{studentProfile?.faculty || 'Not provided'}</p>
+                      </div>
                     </div>
 
                     <div className="info-item email-container">
                       <label>Email</label>
-                      <p>{studentProfile?.email || 'Not provided'}</p>
+                      <div className="info-content">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="info-icon">
+                          <rect x="2" y="4" width="20" height="16" rx="2" />
+                          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                        </svg>
+                        <p>{studentProfile?.email || 'Not provided'}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -729,7 +784,7 @@ interface StudentProfile {
                     <div className="account-box">
                       <h3 className="account-box-title">Security Settings</h3>
                       <p className="account-box-description">
-                        Manage your account password and security preferences
+                        Manage your account password
                       </p>
                       <button 
                         className="change-password-button"
