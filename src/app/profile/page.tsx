@@ -98,6 +98,13 @@ interface StudentProfile {
     const [isChangingPassword, setIsChangingPassword] = useState(false)  // Password change in progress
     const [passwordError, setPasswordError] = useState<string | null>(null)  // Password-specific errors
     
+    // Password visibility state
+    const [passwordVisibility, setPasswordVisibility] = useState({
+      currentPassword: false,
+      newPassword: false,
+      confirmPassword: false
+    })  // Controls whether passwords are shown or hidden
+    
     /**
      * Handles changes to form inputs when editing profile information
      * Updates the formData state with the new values
@@ -762,60 +769,126 @@ interface StudentProfile {
         {/* Modals */}
         {showPasswordModal && (
           <div className="modal-overlay fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="password-modal bg-gray-900 border border-gray-800 rounded-xl p-6 max-w-md w-full shadow-xl">
-              <h3 className="text-xl font-bold text-primary mb-4">Change Password</h3>
+            <div className="password-modal">
+              <h3>Change Password</h3>
               
               {passwordError && (
-                <div className="error-message p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 mb-4">
+                <div className="error-message mb-4">
                   {passwordError}
                 </div>
               )}
               
               <form onSubmit={handlePasswordChange}>
                 <div className="form-group mb-4">
-                  <label htmlFor="currentPassword" className="text-sm font-medium text-gray-300 mb-1 block">
+                  <label htmlFor="currentPassword">
                     Current Password
                   </label>
-                  <input
-                    type="password"
-                    id="currentPassword"
-                    name="currentPassword"
-                    value={passwordData.currentPassword}
-                    onChange={handlePasswordInputChange}
-                    className="w-full p-3 border border-gray-700 rounded-lg bg-gray-800 text-white focus:ring-primary focus:border-primary transition duration-200"
-                    required
-                  />
+                  <div className="password-input-container">
+                    <input
+                      type={passwordVisibility.currentPassword ? "text" : "password"}
+                      id="currentPassword"
+                      name="currentPassword"
+                      value={passwordData.currentPassword}
+                      onChange={handlePasswordInputChange}
+                      required
+                    />
+                    <button 
+                      type="button" 
+                      className="password-toggle-button" 
+                      onClick={() => setPasswordVisibility(prev => ({
+                        ...prev,
+                        currentPassword: !prev.currentPassword
+                      }))}
+                      aria-label={passwordVisibility.currentPassword ? "Hide password" : "Show password"}
+                    >
+                      {passwordVisibility.currentPassword ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                          <line x1="1" y1="1" x2="23" y2="23" />
+                        </svg>
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                          <circle cx="12" cy="12" r="3" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
                 </div>
                 
                 <div className="form-group mb-4">
-                  <label htmlFor="newPassword" className="text-sm font-medium text-gray-300 mb-1 block">
+                  <label htmlFor="newPassword">
                     New Password
                   </label>
-                  <input
-                    type="password"
-                    id="newPassword"
-                    name="newPassword"
-                    value={passwordData.newPassword}
-                    onChange={handlePasswordInputChange}
-                    className="w-full p-3 border border-gray-700 rounded-lg bg-gray-800 text-white focus:ring-primary focus:border-primary transition duration-200"
-                    required
-                    minLength={6}
-                  />
+                  <div className="password-input-container">
+                    <input
+                      type={passwordVisibility.newPassword ? "text" : "password"}
+                      id="newPassword"
+                      name="newPassword"
+                      value={passwordData.newPassword}
+                      onChange={handlePasswordInputChange}
+                      required
+                      minLength={6}
+                    />
+                    <button 
+                      type="button" 
+                      className="password-toggle-button" 
+                      onClick={() => setPasswordVisibility(prev => ({
+                        ...prev,
+                        newPassword: !prev.newPassword
+                      }))}
+                      aria-label={passwordVisibility.newPassword ? "Hide password" : "Show password"}
+                    >
+                      {passwordVisibility.newPassword ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                          <line x1="1" y1="1" x2="23" y2="23" />
+                        </svg>
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                          <circle cx="12" cy="12" r="3" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
                 </div>
                 
                 <div className="form-group mb-6">
-                  <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-300 mb-1 block">
+                  <label htmlFor="confirmPassword">
                     Confirm New Password
                   </label>
-                  <input
-                    type="password"
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    value={passwordData.confirmPassword}
-                    onChange={handlePasswordInputChange}
-                    className="w-full p-3 border border-gray-700 rounded-lg bg-gray-800 text-white focus:ring-primary focus:border-primary transition duration-200"
-                    required
-                  />
+                  <div className="password-input-container">
+                    <input
+                      type={passwordVisibility.confirmPassword ? "text" : "password"}
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      value={passwordData.confirmPassword}
+                      onChange={handlePasswordInputChange}
+                      required
+                    />
+                    <button 
+                      type="button" 
+                      className="password-toggle-button" 
+                      onClick={() => setPasswordVisibility(prev => ({
+                        ...prev,
+                        confirmPassword: !prev.confirmPassword
+                      }))}
+                      aria-label={passwordVisibility.confirmPassword ? "Hide password" : "Show password"}
+                    >
+                      {passwordVisibility.confirmPassword ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                          <line x1="1" y1="1" x2="23" y2="23" />
+                        </svg>
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                          <circle cx="12" cy="12" r="3" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
                 </div>
                 
                 <div className="flex gap-3">
@@ -830,7 +903,7 @@ interface StudentProfile {
                       })
                       setPasswordError(null)
                     }}
-                    className="cancel-button bg-gray-800 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-lg border border-gray-700 transition-all duration-200 flex-1"
+                    className="cancel-button"
                     disabled={isChangingPassword}
                   >
                     Cancel
@@ -838,7 +911,7 @@ interface StudentProfile {
                   
                   <button
                     type="submit"
-                    className="submit-button bg-primary hover:bg-primary/90 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="submit-button"
                     disabled={isChangingPassword}
                   >
                     {isChangingPassword ? (
