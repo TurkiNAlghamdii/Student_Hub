@@ -1,0 +1,106 @@
+/**
+ * 404 Page Styles
+ * 
+ * Styling for the custom 404 error page that integrates with the application's
+ * emerald color scheme and design patterns.
+ */
+
+/**
+ * Floating Animation
+ * 
+ * Defines a gentle up-and-down floating animation for elements with the
+ * .float-animation class.
+ */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.float-animation {
+  animation: float 4s ease-in-out infinite;
+}
+
+/**
+ * Glow Effect
+ * 
+ * Creates a soft glow effect around text using the primary color.
+ * Uses CSS variables for theme-aware coloring.
+ */
+.glow {
+  text-shadow: 0 0 10px rgba(var(--primary-rgb), 0.3),
+               0 0 20px rgba(var(--primary-rgb), 0.2),
+               0 0 30px rgba(var(--primary-rgb), 0.1);
+}
+
+/**
+ * Background Patterns
+ * 
+ * These classes create theme-specific background patterns that match
+ * the application's design system.
+ */
+
+/* Dark mode background with dotted pattern and gradient */
+.dark .pattern-bg {
+  background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.15) 1px, transparent 0) !important;
+  background-size: 40px 40px !important;
+  @apply bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
+}
+
+/* Light mode background with dotted pattern and gradient */
+:root:not(.dark) .pattern-bg {
+  background-image: radial-gradient(circle at 1px 1px, rgb(156, 163, 175, 0.15) 1px, transparent 0) !important;
+  background-size: 40px 40px !important;
+  @apply bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50;
+}
+
+/**
+ * Button Styles
+ * 
+ * Defines styles for buttons on the 404 page to match the application's
+ * design system. Includes hover and active states with animations.
+ */
+
+/* Base button styles */
+.not-found-button {
+  @apply transition-all duration-300 ease-in-out;
+  border: 1px solid rgba(6, 78, 59, 0.2);
+}
+
+/* Primary button with emerald gradient (dark mode) */
+.dark .not-found-button.primary-button {
+  background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
+  box-shadow: 0 4px 20px rgba(6, 78, 59, 0.15);
+}
+
+/* Primary button with emerald gradient (light mode) */
+:root:not(.dark) .not-found-button.primary-button {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 15px rgba(6, 78, 59, 0.1);
+}
+
+/* Hover state for all buttons */
+.not-found-button:hover {
+  @apply transform scale-[1.02];
+}
+
+/* Dark mode hover state */
+.dark .not-found-button:hover {
+  box-shadow: 0 4px 25px rgba(6, 78, 59, 0.25);
+}
+
+/* Light mode hover state */
+:root:not(.dark) .not-found-button:hover {
+  box-shadow: 0 4px 20px rgba(6, 78, 59, 0.15);
+}
+
+/* Active state (when clicked) for all buttons */
+.not-found-button:active {
+  @apply transform scale-[0.98];
+} 
