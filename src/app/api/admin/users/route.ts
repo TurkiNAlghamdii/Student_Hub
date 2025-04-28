@@ -39,11 +39,16 @@ export async function GET() {
     if (authError) throw authError
 
     /**
-     * Identify and fetch student profiles
+     * Filter for authenticated users (email confirmed)
+     */
+    const confirmedUsers = authUsers.users.filter(user => user.email_confirmed_at != null);
+
+    /**
+     * Identify and fetch student profiles for confirmed users
      * We identify students by their email domain (@stu.kau.edu.sa)
      * and fetch their additional profile information from the students table
      */
-    const studentEmails = authUsers.users
+    const studentEmails = confirmedUsers
       .filter(user => user.email?.endsWith('@stu.kau.edu.sa'))
       .map(user => user.email)
 
@@ -70,7 +75,7 @@ export async function GET() {
      * This creates a comprehensive user object that includes both
      * authentication data and profile information where available
      */
-    const usersWithProfiles = authUsers.users.map(user => ({
+    const usersWithProfiles = confirmedUsers.map(user => ({
       ...user,
       student_profile: studentProfiles[user.email || ''] || null
     }))

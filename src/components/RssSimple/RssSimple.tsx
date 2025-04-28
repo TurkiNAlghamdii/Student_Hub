@@ -19,7 +19,7 @@
 
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import TwitterXIcon from '../icons/TwitterXIcon'
 import styles from './RssSimple.module.css'
@@ -102,93 +102,144 @@ interface RssSimpleProps {
  * RSS Simple Component
  * 
  * Fetches and displays RSS feed content from X (Twitter), with theme integration.
- * The component handles loading states, errors, and empty feeds gracefully.
+ * The component adapts to both light and dark themes, providing a consistent
+ * user experience across the application.
  * 
- * It uses both CSS modules for styling and inline styles for theme-specific adjustments
- * to ensure proper theme integration and prevent theme flashing during navigation.
- * 
- * @param url - URL of the RSS feed to fetch
- * @param title - Title for the widget (defaults to "Latest Updates")
- * @param count - Number of items to display (defaults to 3)
- * @returns React component for displaying the RSS feed
+ * @param {RssSimpleProps} props - Component props
+ * @returns {JSX.Element} Rendered component
  */
-const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps) => {
-  // State for storing feed data and handling loading/error states
+const RssSimple = ({ url, title = 'Latest Updates', count = 3 }: RssSimpleProps) => {
+  // State for feed data, loading status, and error handling
   const [feedData, setFeedData] = useState<FeedData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
-  const [isViewMoreHovered, setIsViewMoreHovered] = useState(false)
+  const [isViewMoreHovered, setIsViewMoreHovered] = useState<boolean>(false)
+  
   // Get current theme from context
   const { theme } = useTheme()
-
+  
+  // Refs for tweet items to apply theme
+  const itemRefs = useRef<HTMLElement[]>([])
+  
+  // Function to add item refs for theme application
+  const addItemRef = (el: HTMLElement | null) => {
+    if (el && !itemRefs.current.includes(el)) {
+      itemRefs.current.push(el)
+    }
+  }
+  
   /**
-   * Dynamic Theme Styles
+   * Force Apply Theme
    * 
-   * Creates inline styles based on the current theme to ensure proper
-   * theme integration. This approach is used alongside CSS modules to
-   * provide complete theme coverage and prevent theme flashing.
-   * 
-   * For dark mode, uses semi-transparent dark backgrounds with appropriate
-   * contrast for text and borders.
+   * Forcefully applies theme styles to all tweet items using inline styles.
+   * This ensures proper theme application even when CSS modules might be
+   * overridden by other styles or when theme changes dynamically.
    */
-  const darkModeStyles = theme === 'dark' ? {
-    backgroundColor: 'rgba(17, 24, 39, 0.7)',
-    borderColor: 'rgba(55, 65, 81, 0.5)',
-    color: '#f9fafb'
-  } : {}
-
-  /**
-   * Theme Integration Effect
-   * 
-   * Ensures the RSS component properly integrates with the application's theme system
-   * by adding or removing a global class based on the current theme.
-   * 
-   * This approach helps override any default RSS styling that might not respect
-   * the theme context and ensures consistent appearance across theme changes.
-   * The cleanup function removes the class when the component unmounts to prevent
-   * side effects.
-   */
-  useEffect(() => {
-    const rssContainer = document.querySelector(`.${styles.container}`);
-    if (rssContainer) {
+  const forceApplyTheme = () => {
+    // Apply theme to the container element as well
+    const container = document.querySelector(`.${styles.container}`);
+    if (container) {
       if (theme === 'dark') {
-        document.documentElement.classList.add('force-dark-rss');
+        container.classList.add('dark-rss');
       } else {
-        document.documentElement.classList.remove('force-dark-rss');
+        container.classList.remove('dark-rss');
       }
     }
-
-    // Clean up when component unmounts
+    
+    // Apply theme to each item
+    itemRefs.current.forEach(item => {
+      if (!item) return;
+      
+      if (theme === 'dark') {
+        item.classList.add('dark-rss');
+        
+        // Apply dark mode styles directly with !important - exact match from StudentCountWidget
+        item.style.setProperty('background-color', 'rgba(17, 24, 39, 0.5)', 'important'); // bg-gray-900/50
+        item.style.setProperty('border-color', 'rgba(31, 41, 55, 0.5)', 'important');     // border-gray-800/50
+        item.style.setProperty('color', '#f8fafc', 'important');
+        item.style.setProperty('box-shadow', '0 0 30px rgba(6, 78, 59, 0.05), 0 0 60px rgba(0, 0, 0, 0.2)', 'important');
+        
+        // Force text color on description elements
+        const descriptions = item.querySelectorAll(`.${styles.description}`);
+        descriptions.forEach(desc => {
+          if (desc instanceof HTMLElement) {
+            desc.style.setProperty('color', '#f9fafb', 'important');
+          }
+        });
+      } else {
+        item.classList.remove('dark-rss');
+        
+        // Reset to light mode styles
+        item.style.removeProperty('background-color');
+        item.style.removeProperty('border-color');
+        item.style.removeProperty('color');
+        item.style.removeProperty('box-shadow');
+        
+        // Reset description color
+        const descriptions = item.querySelectorAll(`.${styles.description}`);
+        descriptions.forEach(desc => {
+          if (desc instanceof HTMLElement) {
+            desc.style.removeProperty('color');
+          }
+        });
+        
+        // Re-apply light mode styles
+        item.style.setProperty('background-color', 'rgba(255, 255, 255, 0.8)', 'important');
+        item.style.setProperty('border-color', 'rgba(203, 213, 225, 0.5)', 'important');
+        item.style.setProperty('color', '#1e293b', 'important');
+        item.style.setProperty('box-shadow', '0 2px 4px rgba(0, 0, 0, 0.05)', 'important');
+      }
+    });
+  }
+  
+  // Apply theme immediately and set up a MutationObserver to watch for DOM changes
+  useEffect(() => {
+    forceApplyTheme();
+    
+    // Set up multiple timeouts to catch any items added after initial render
+    const timeouts = [100, 500, 1000, 2000].map(delay => 
+      setTimeout(() => forceApplyTheme(), delay)
+    );
+    
+    // Set up a MutationObserver to watch for DOM changes
+    const observer = new MutationObserver(() => {
+      forceApplyTheme();
+    });
+    
+    // Start observing the document body for DOM changes
+    observer.observe(document.body, { 
+      childList: true, 
+      subtree: true 
+    });
+    
     return () => {
-      document.documentElement.classList.remove('force-dark-rss');
+      timeouts.forEach(clearTimeout);
+      observer.disconnect();
     };
   }, [theme])
-
-  /**
-   * Fetch RSS Feed Data
-   * 
-   * Fetches the RSS feed data from the provided URL via the application's API.
-   * The API endpoint handles the actual RSS parsing and returns structured data.
-   * 
-   * This effect runs when the component mounts and whenever the URL changes.
-   * It manages loading states and error handling to provide appropriate feedback
-   * to users in all scenarios.
-   */
+  
+  // Effect to fetch feed data when component mounts or URL changes
   useEffect(() => {
+    /**
+     * Fetch Feed Data
+     * 
+     * Fetches RSS feed data from the specified URL via API.
+     * Handles loading states, errors, and data processing.
+     */
     const fetchFeed = async () => {
       try {
         setLoading(true)
-        // Encode the URL to ensure it's safe for use in a query parameter
-        const encodedUrl = encodeURIComponent(url)
-        const response = await fetch(`/api/rss?url=${encodedUrl}`)
-
+        setError(null)
+        
+        // Use API route to fetch RSS feed
+        const response = await fetch(`/api/rss?url=${encodeURIComponent(url)}`)
+        
         if (!response.ok) {
-          throw new Error(`Failed to fetch feed: ${response.status}`)
+          throw new Error(`Failed to fetch feed: ${response.statusText}`)
         }
-
+        
         const data = await response.json()
         setFeedData(data)
-        setError(null)
       } catch (err) {
         console.error('Error fetching RSS feed:', err)
         setError('Failed to load feed. Please try again later.')
@@ -196,50 +247,75 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
         setLoading(false)
       }
     }
-
+    
     fetchFeed()
   }, [url])
-
+  
   /**
-   * Format Date for Display
+   * Format Date
    * 
-   * Converts a date string from the RSS feed into a human-readable format.
-   * Uses locale-specific formatting to display the month, day, and year.
-   * Includes error handling to return the original string if parsing fails.
+   * Formats a date string into a more readable format.
    * 
-   * @param {string} dateString - The date string to format
-   * @returns {string} Formatted date string (e.g., "Apr 26, 2025")
+   * @param {string} dateString - Date string to format
+   * @returns {string} Formatted date string
    */
-  const formatDate = (dateString: string) => {
-    if (!dateString) return ''
-
+  const formatDate = (dateString: string): string => {
     try {
       const date = new Date(dateString)
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
+      
+      // Check if date is valid
+      if (isNaN(date.getTime())) {
+        return 'Unknown date'
+      }
+      
+      // Format date as relative time (e.g., "2 hours ago")
+      const now = new Date()
+      const diffMs = now.getTime() - date.getTime()
+      const diffMins = Math.floor(diffMs / (1000 * 60))
+      
+      if (diffMins < 60) {
+        return `${diffMins} min${diffMins !== 1 ? 's' : ''} ago`
+      }
+      
+      const diffHours = Math.floor(diffMins / 60)
+      if (diffHours < 24) {
+        return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`
+      }
+      
+      const diffDays = Math.floor(diffHours / 24)
+      if (diffDays < 30) {
+        return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`
+      }
+      
+      // For older dates, use simple date format
+      return date.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric',
+        year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
       })
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (e) {
-      return dateString
+    } catch (error) {
+      console.error('Error formatting date:', error)
+      return 'Unknown date'
     }
   }
-
+  
   /**
-   * Get Image URL from Feed Item
+   * Get All Images from Feed Item
    * 
-   * Extracts the most appropriate image URL from a feed item using multiple strategies:
+   * Extracts all images from a feed item using multiple strategies:
    * 1. First checks for media attachments with image MIME types
-   * 2. Falls back to extracting image URLs from HTML content or description
+   * 2. Extracts all image URLs from HTML content or description
+   * 3. Checks for pic.twitter.com links which are commonly used for images
    * 
-   * This function ensures we can display images from RSS feeds even when they're
+   * This function ensures we can display all images from RSS feeds even when they're
    * structured differently or don't explicitly provide media attachments.
    * 
-   * @param {FeedItem} item - The feed item to extract an image from
-   * @returns {string|null} URL of the image, or null if no image is found
+   * @param {FeedItem} item - The feed item to extract images from
+   * @returns {string[]} Array of image URLs found in the item
    */
-  const getImageUrl = (item: FeedItem): string | null => {
+  const getAllImages = (item: FeedItem): string[] => {
+    const images: string[] = []
+    
     // First check if we have media content from our API
     if (item.media && item.media.length > 0) {
       // Filter for image types
@@ -247,58 +323,118 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
         m.type.startsWith('image/') || m.url.match(/\.(jpg|jpeg|png|gif|webp)$/i)
       )
 
-      if (imageMedia.length > 0) {
-        return imageMedia[0].url
-      }
+      imageMedia.forEach(media => {
+        if (media.url && !images.includes(media.url)) {
+          images.push(media.url)
+        }
+      })
     }
 
-    // Fallback: extract from content or description
-    return extractImageFromContent(item.content, item.description)
-  }
+    // Extract from content
+    if (item.content) {
+      const contentImages = extractImagesFromHtml(item.content)
+      contentImages.forEach(url => {
+        if (!images.includes(url)) {
+          images.push(url)
+        }
+      })
+    }
 
+    // Extract from description
+    if (item.description) {
+      const descriptionImages = extractImagesFromHtml(item.description)
+      descriptionImages.forEach(url => {
+        if (!images.includes(url)) {
+          images.push(url)
+        }
+      })
+    }
+    
+    // Check for Twitter image links in title or description
+    const checkForTwitterPics = (text: string) => {
+      // Look for pic.twitter.com links
+      const twitterPicRegex = /https?:\/\/pic\.twitter\.com\/[a-zA-Z0-9]+/g
+      const matches = text.match(twitterPicRegex)
+      if (matches) {
+        // For each pic.twitter.com link, add a constructed image URL
+        matches.forEach(match => {
+          // Extract the ID from the pic.twitter.com URL
+          const id = match.split('/').pop()
+          if (id) {
+            // Construct a likely image URL (Twitter images are often stored on twimg.com)
+            const possibleImageUrl = `https://pbs.twimg.com/media/${id}?format=jpg&name=medium`
+            if (!images.includes(possibleImageUrl)) {
+              images.push(possibleImageUrl)
+            }
+          }
+        })
+      }
+    }
+    
+    // Check title and description for Twitter pic links
+    if (item.title) checkForTwitterPics(item.title)
+    if (item.description) checkForTwitterPics(item.description)
+
+    return images
+  }
+  
   /**
-   * Extract Image URL from HTML Content
+   * Extract All Image URLs from HTML Content
    * 
-   * Uses regular expressions to find image URLs within HTML content or description.
-   * This is a fallback method when explicit media attachments aren't available.
+   * Uses regular expressions to find all image URLs within HTML content.
+   * Also extracts image URLs from direct links to image files.
    * 
-   * The function first checks the content field, then falls back to the description
-   * field, extracting the src attribute from the first img tag found.
-   * 
-   * @param {string} content - HTML content that might contain image tags
-   * @param {string} description - HTML description that might contain image tags
-   * @returns {string|null} URL of the first image found, or null if no image is found
+   * @param {string} html - HTML content that might contain image tags or image links
+   * @returns {string[]} Array of image URLs found in the HTML
    */
-  const extractImageFromContent = (content: string, description: string): string | null => {
-    // First try to find image in content
-    if (content) {
-      const imgRegex = /<img[^>]+src="([^"]+)"/i
-      const match = content.match(imgRegex)
-      if (match && match[1]) {
-        return match[1]
+  const extractImagesFromHtml = (html: string): string[] => {
+    const images: string[] = []
+    
+    // Extract images from img tags
+    const imgRegex = /<img[^>]+src="([^"]+)"/gi
+    let imgMatch
+    while ((imgMatch = imgRegex.exec(html)) !== null) {
+      if (imgMatch && imgMatch[1]) {
+        // Filter out tiny icons and emoji-sized images (usually < 50px)
+        if (!imgMatch[0].includes('width="16"') && 
+            !imgMatch[0].includes('height="16"') && 
+            !imgMatch[0].includes('emoji')) {
+          images.push(imgMatch[1])
+        }
       }
     }
-
-    // If no image in content, try description
-    if (description) {
-      const imgRegex = /<img[^>]+src="([^"]+)"/i
-      const match = description.match(imgRegex)
-      if (match && match[1]) {
-        return match[1]
+    
+    // Extract images from links to image files
+    const linkRegex = /<a[^>]*href="([^"]*\.(jpg|jpeg|png|gif|webp))"[^>]*>/gi
+    let linkMatch
+    while ((linkMatch = linkRegex.exec(html)) !== null) {
+      if (linkMatch && linkMatch[1] && !images.includes(linkMatch[1])) {
+        images.push(linkMatch[1])
       }
     }
-
-    return null
+    
+    // Extract direct image URLs in text
+    const urlRegex = /https?:\/\/[^\s"'<>]+\.(jpg|jpeg|png|gif|webp)/gi
+    let urlMatch
+    while ((urlMatch = urlRegex.exec(html)) !== null) {
+      if (urlMatch && urlMatch[0] && !images.includes(urlMatch[0])) {
+        images.push(urlMatch[0])
+      }
+    }
+    
+    // Filter out duplicates and return
+    return [...new Set(images)]
   }
-
+  
   /**
    * Clean Description Text
    * 
    * Sanitizes HTML description text for display by:
-   * 1. Removing image tags while preserving surrounding text
+   * 1. Converting image tags to placeholders that we'll handle separately
    * 2. Converting line breaks to spaces
    * 3. Normalizing whitespace (removing extra spaces)
    * 4. Trimming leading and trailing whitespace
+   * 5. Removing any links to image files (which will be displayed as actual images)
    * 
    * This ensures the description text is clean and readable when displayed.
    * 
@@ -306,55 +442,68 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
    * @returns {string} Cleaned description text
    */
   const cleanDescription = (description: string): string => {
-    if (!description) return '';
+    if (!description) return ''
 
-    // Remove image tags while preserving text
-    return description
+    // Replace image tags with a placeholder
+    let cleanedText = description
+      // Replace image tags with a placeholder
       .replace(/<img[^>]*>/g, '')
+      // Replace <br> tags with spaces
       .replace(/<br\s*\/?>/gi, ' ')
+      // Replace multiple spaces with a single space
       .replace(/\s\s+/g, ' ')
-      .trim();
+      // Remove links to image files
+      .replace(/<a[^>]*href="[^"]*\.(jpg|jpeg|png|gif|webp)"[^>]*>[^<]*<\/a>/gi, '')
+      // Remove any remaining image URLs
+      .replace(/https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp)/gi, '')
+      // Trim leading/trailing whitespace
+      .trim()
+      
+    return cleanedText
   }
-
+  
   /**
    * Check if Post is a Retweet
    * 
    * Determines whether an X post is a retweet by checking for common retweet
-   * indicators in both the description and title fields. This allows the UI
-   * to visually distinguish between original posts and retweets.
+   * indicators in the title or description.
    * 
-   * The function looks for patterns like:
-   * - Text starting with "RT @"
-   * - Text containing " RT @"
-   * - Text matching the pattern "Retweeted @username"
-   * 
-   * @param {string} description - Description text of the post
-   * @param {string} title - Title of the post
+   * @param {string} description - Post description to check
+   * @param {string} title - Post title to check
    * @returns {boolean} True if the post is a retweet, false otherwise
    */
   const isRetweet = (description: string, title: string): boolean => {
-    if (!description && !title) return false;
-
-    // Check description first
-    if (description) {
-      // Common retweet indicators
-      if (description.startsWith('RT @') ||
-        description.includes(' RT @') ||
-        /Retweeted\s+@\w+/i.test(description)) {
-        return true;
-      }
-    }
-
-    // Check title as a fallback
+    if (!description && !title) return false
+    
+    // Check for common retweet indicators
+    const retweetIndicators = [
+      'retweeted',
+      'RT @',
+      'Retweet',
+      'reposted'
+    ]
+    
+    // Check title
     if (title) {
-      if (title.startsWith('RT @') ||
-        title.includes(' RT @') ||
-        /Retweeted\s+@\w+/i.test(title)) {
-        return true;
+      const lowerTitle = title.toLowerCase()
+      for (const indicator of retweetIndicators) {
+        if (lowerTitle.includes(indicator.toLowerCase())) {
+          return true
+        }
+      }
+    }
+    
+    // Check description
+    if (description) {
+      const lowerDesc = description.toLowerCase()
+      for (const indicator of retweetIndicators) {
+        if (lowerDesc.includes(indicator.toLowerCase())) {
+          return true
+        }
       }
     }
 
-    return false;
+    return false
   }
 
   /**
@@ -366,7 +515,7 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
    */
   if (loading) {
     return (
-      <div className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`} style={darkModeStyles}>
+      <div className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`}>
         <div className={styles.widgetHeader}>
           <div className={styles.widgetTitleContainer}>
             <TwitterXIcon className={styles.widgetIcon} />
@@ -393,7 +542,7 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
    */
   if (error) {
     return (
-      <div className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`} style={darkModeStyles}>
+      <div className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`}>
         <div className={styles.widgetHeader}>
           <div className={styles.widgetTitleContainer}>
             <TwitterXIcon className={styles.widgetIcon} />
@@ -419,7 +568,7 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
    */
   if (!feedData || !feedData.items || feedData.items.length === 0) {
     return (
-      <div className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`} style={darkModeStyles}>
+      <div className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`}>
         <div className={styles.widgetHeader}>
           <div className={styles.widgetTitleContainer}>
             <TwitterXIcon className={styles.widgetIcon} />
@@ -459,8 +608,9 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
    */
   return (
     <div
-      className={`${styles.container} ${theme === 'dark' ? 'dark-rss' : ''}`}
-      style={darkModeStyles}>
+      className={`${styles.container} ${theme === 'dark' ? 'dark' : ''}`}
+       data-theme={theme}
+     >
       <div className={styles.widgetHeader}>
         <div className={styles.widgetTitleContainer}>
           <TwitterXIcon className={styles.widgetIcon} />
@@ -490,63 +640,99 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
       <div className={styles.widgetContent}>
         <ul className={styles.items}>
           {displayItems.map((item, index) => {
-            const imageUrl = getImageUrl(item);
-            const cleanedDescription = cleanDescription(item.description);
+            // Extract all images from the item
+            const images = getAllImages(item)
             
+            // For debugging - log the item and images to console
+            console.log('Tweet item:', item)
+            console.log('Extracted images:', images)
+            
+            // Clean the description for display
+            const cleanedDescription = cleanDescription(item.description || '')
+            
+            // Check if this is a retweet
+            const isRetweeted = item.title?.toLowerCase().includes('retweeted') || 
+                               item.description?.toLowerCase().includes('retweeted')
+
             return (
               <li 
                 key={index} 
                 className={`${styles.item} ${theme === 'dark' ? 'dark-rss' : ''}`}
-                style={theme === 'dark' ? {
-                  backgroundColor: 'rgba(30, 41, 59, 0.7)',
-                  borderColor: 'rgba(71, 85, 105, 0.5)',
-                  color: '#f9fafb'
-                } : {}}>
+                ref={el => addItemRef(el)}
+              >
                 <a href={item.link} target="_blank" rel="noopener noreferrer" className={styles.link}>
                   <div className={styles.itemContent}>
+                    {/* Tweet Header with Date and Badge */}
                     <div className={styles.tweetHeader}>
-                      {item.pubDate && (
+                      {/* FCIT KAU Avatar */}
+                      <div className={styles.tweetAuthor}>
+                        <div className={styles.avatarContainer}>
+                          <div className={styles.hashtagAvatar}>#</div>
+                        </div>
+                        <div className={styles.authorInfo}>
+                          <span className={styles.authorName}>FCIT KAU</span>
+                          <span className={styles.authorHandle}>@FCITKAU</span>
+                        </div>
+                      </div>
+                      <div className={styles.tweetMeta}>
+                        <span className={styles.date}>
+                          {formatDate(item.pubDate)}
+                        </span>
                         <span 
-                          className={styles.date}
-                          style={theme === 'dark' ? { color: '#9ca3af' } : {}}
-                        >{formatDate(item.pubDate)}</span>
-                      )}
-                      <span 
-                        className={isRetweet(item.description, item.title) ? styles.retweetBadge : styles.tweetBadge}
-                        style={theme === 'dark' && isRetweet(item.description, item.title) 
-                          ? { backgroundColor: 'rgba(99, 102, 241, 0.2)', borderColor: 'rgba(99, 102, 241, 0.4)', color: '#a5b4fc' } 
-                          : theme === 'dark' 
-                            ? { backgroundColor: 'rgba(16, 185, 129, 0.2)', borderColor: 'rgba(16, 185, 129, 0.4)', color: '#34d399' } 
-                            : {}
-                        }
-                      >
-                        {isRetweet(item.description, item.title) ? 'Retweet' : 'Post'}
-                      </span>
+                          className={isRetweeted ? styles.retweetBadge : styles.tweetBadge}
+                        >
+                          {isRetweeted ? 'Retweet' : 'Post'}
+                        </span>
+                      </div>
                     </div>
                     
-                    <p 
-                      className={styles.description} 
-                      style={theme === 'dark' ? { color: '#d1d5db' } : {}}
-                      dangerouslySetInnerHTML={{ __html: cleanedDescription }}></p>
+                    {/* Tweet Content */}
+                    <div className={styles.tweetContent}>
+                      {/* Text Content */}
+                      <p className={styles.description} 
+                         style={{ color: theme === 'dark' ? '#f9fafb' : '#1e293b' }}
+                         dangerouslySetInnerHTML={{ __html: cleanedDescription }}></p>
+                      
+                      {/* Image Gallery */}
+                      {images.length > 0 && (
+                        <div className={`${styles.imageGallery} ${images.length > 1 ? styles.multipleImages : ''}`}>
+                          {images.map((imageUrl, imgIndex) => (
+                            <div 
+                              key={imgIndex} 
+                              className={styles.imageContainer}
+                            >
+                              <Image
+                                src={imageUrl}
+                                alt={`Tweet image ${imgIndex + 1}`}
+                                width={400}
+                                height={225}
+                                className={styles.tweetImage}
+                                priority={index < 2 && imgIndex === 0} // Prioritize first image of first two tweets
+                                onError={(e) => {
+                                  // Hide the image container if the image fails to load
+                                  const target = e.target as HTMLImageElement
+                                  const container = target.closest(`.${styles.imageContainer}`) as HTMLElement | null
+                                  if (container) {
+                                    container.style.display = 'none'
+                                  }
+                                }}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                     
-                    {imageUrl && (
-                      <div 
-                        className={styles.imageContainer}
-                        style={theme === 'dark' ? { backgroundColor: 'rgba(15, 23, 42, 0.6)', borderColor: 'rgba(51, 65, 85, 0.5)' } : {}}
-                      >
-                        <Image
-                          src={imageUrl}
-                          alt={item.title}
-                          width={300}
-                          height={200}
-                          className="w-full h-48 object-cover rounded-lg"
-                        />
-                      </div>
-                    )}
+                    {/* Tweet Footer */}
+                    <div className={styles.tweetFooter}>
+                      <span className={styles.viewOnX}>
+                        View on X
+                      </span>
+                    </div>
                   </div>
                 </a>
               </li>
-            );
+            )
           })}
         </ul>
       </div>
@@ -554,4 +740,4 @@ const RssSimple = ({ url, title = "Latest Updates", count = 3 }: RssSimpleProps)
   )
 }
 
-export default RssSimple 
+export default RssSimple

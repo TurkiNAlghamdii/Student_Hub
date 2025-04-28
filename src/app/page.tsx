@@ -398,7 +398,7 @@ export default function Home() {
           <div className="row mt-6">
             <div className="col">
               <RssSimple 
-                url="https://rss.app/feeds/pcVOetZC9dx4E4dt.xml" 
+                url="https://rss.app/feeds/vbp2nHhkjpUT6erj.xml" 
                 title="FCIT X Feed" 
                 count={3}
               />
