@@ -76,7 +76,7 @@ export default function AcademicCalendarPage() {
 
     // Adjust PDF height based on window size
     const updatePdfHeight = () => {
-      setPdfHeight(`calc(100vh - 300px)`)
+      setPdfHeight(`calc(100vh - 300px)`) // 100hv is the full height of the window
     }
     
     window.addEventListener('resize', updatePdfHeight)
@@ -192,8 +192,8 @@ export default function AcademicCalendarPage() {
                   <CalendarIcon className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Academic Calendar</h1>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">View and download academic and exam calendars</p>
+                  <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Calendars</h1>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">View and download the academic and exam calendars</p>
                 </div>
               </div>
             </div>
