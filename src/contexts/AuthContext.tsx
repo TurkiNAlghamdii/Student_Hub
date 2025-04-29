@@ -201,10 +201,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   /**
    * Checks if the current session has expired due to inactivity
    * Sessions expire after 30 minutes of inactivity
+   * Only applies to authenticated users
    * 
    * @returns Boolean indicating if the session has expired
    */
   const checkSessionExpiry = (): boolean => {
+    // Only check session expiry for authenticated users
+    if (!session) {
+      return false;
+    }
+    
     const lastActivity = localStorage.getItem('lastActivity');
     if (lastActivity) {
       const lastActivityTime = parseInt(lastActivity);

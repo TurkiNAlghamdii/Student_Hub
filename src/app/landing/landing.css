@@ -493,7 +493,7 @@
 
 /* Features Section */
 .landing-features {
-  padding: 5rem 2rem;
+  padding: 5rem 2rem 2rem;
   text-align: center;
 }
 
@@ -527,7 +527,7 @@
 
 .landing-features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
   padding: 2rem;
   max-width: 1200px;
@@ -535,7 +535,6 @@
 }
 
 .landing-feature-card {
-  background-color: var(--card-bg);
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -546,6 +545,18 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
+}
+
+.dark .landing-feature-card {
+  background-color: #0e1119;
+  border: 1px solid rgba(75, 85, 99, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+:root:not(.dark) .landing-feature-card {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(226, 232, 240, 0.5);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 .landing-feature-card:hover {

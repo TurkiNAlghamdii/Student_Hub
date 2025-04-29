@@ -28,6 +28,22 @@ export default function LandingPage() {
   const router = useRouter()
   const { session } = useAuth()
   const [loading, setLoading] = useState(true)
+  
+  // Update last activity timestamp to prevent session timeout
+  useEffect(() => {
+    // Only update if we have a session (user is logged in)
+    if (session) {
+      const updateActivity = () => {
+        localStorage.setItem('lastActivity', Date.now().toString())
+      }
+      
+      // Update immediately and then every 30 seconds
+      updateActivity()
+      const interval = setInterval(updateActivity, 30000)
+      
+      return () => clearInterval(interval)
+    }
+  }, [session])
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   // Simulate initial loading process
@@ -224,48 +240,21 @@ export default function LandingPage() {
           <div className="landing-feature-card card-animation card-delay-1">
             <div className="landing-feature-icon courses-icon"></div>
             <h3>Course Management</h3>
-            <p>Organize your courses, access materials, and track assignments in one place.</p>
+            <p>Keep track of your Course meterials and learn more about your courses.</p>
           </div>
           
           <div className="landing-feature-card card-animation card-delay-2">
             <div className="landing-feature-icon calendar-icon"></div>
-            <h3>Academic Calendar</h3>
+            <h3>Academic Calendar & Events</h3>
             <p>Stay on top of important academic dates, deadlines, and events.</p>
           </div>
           
           <div className="landing-feature-card card-animation card-delay-3">
             <div className="landing-feature-icon gpa-icon"></div>
-            <h3>GPA Calculator</h3>
-            <p>Calculate and track your GPA with our easy-to-use calculator.</p>
-          </div>
-          
-          <div className="landing-feature-card card-animation card-delay-4">
-            <div className="landing-feature-icon ai-icon"></div>
-            <h3>AI Assistant</h3>
-            <p>Get help with your studies using our intelligent AI assistant.</p>
+            <h3>Learn more about your university journey</h3>
+            <p>How does the summer training work? what are the requirements for the graduation project?</p>
           </div>
         </div>
-      </section>
-
-      {/* Call to Action Section */}
-      <section className="landing-cta-section">
-        <motion.div 
-          className="landing-cta-content"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <h2>Ready to enhance your academic experience?</h2>
-          <p>Join Student Hub today and take control of your academic journey from A to Z.</p>
-          <div className="landing-cta-buttons">
-            <Link href="/register" className="landing-cta-button primary">
-              Get Started
-            </Link>
-            <Link href="/login" className="landing-cta-button secondary">
-              Log In
-            </Link>
-          </div>
-        </motion.div>
       </section>
 
       {/* Footer */}
