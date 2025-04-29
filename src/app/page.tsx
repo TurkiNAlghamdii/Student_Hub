@@ -141,8 +141,8 @@ export default function Home() {
     // Handle authentication state
     if (!authLoading) {
       if (!user) {
-        // Redirect to login if not authenticated
-        router.push('/login')
+        // Redirect to landing page if not authenticated
+        router.push('/landing')
       } else {
         // Fetch profile if authenticated
         fetchStudentProfile()

@@ -1,0 +1,775 @@
+/**
+ * Landing Page Styles
+ * 
+ * This file contains styles for the Student Hub landing page.
+ * It follows the application's theme system with support for both light and dark modes.
+ * Uses the emerald color scheme from the main application.
+ */
+
+/* Container */
+.landing-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background);
+  color: var(--foreground);
+  background-size: 40px 40px;
+}
+
+/* Dark mode specific styles */
+.dark .landing-container {
+  background: linear-gradient(to bottom right, #0a0a0a, #111827, #0a0a0a);
+  background-image: radial-gradient(circle at 1px 1px, rgb(55, 65, 81, 0.15) 1px, transparent 0) !important;
+  background-size: 40px 40px !important;
+}
+
+/* Light mode specific styles */
+:root:not(.dark) .landing-container {
+  background: linear-gradient(to bottom right, #f9fafb, #f3f4f6, #f9fafb);
+  background-image: radial-gradient(circle at 1px 1px, rgb(156, 163, 175, 0.15) 1px, transparent 0) !important;
+  background-size: 40px 40px !important;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #0a0a0a;
+}
+
+/* Dark mode loading overlay */
+.dark .loading-overlay {
+  background-color: #0a0a0a;
+}
+
+/* Light mode loading overlay */
+:root:not(.dark) .loading-overlay {
+  background-color: #ffffff;
+}
+
+/* Navigation */
+.navbar {
+  position: relative; /* Changed from sticky to relative */
+  z-index: 50;
+  background-color: var(--card-bg);
+  border-bottom: 1px solid var(--card-border);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.dark .navbar {
+  background-color: rgba(17, 24, 39, 0.5); /* bg-gray-900/50 */
+  border-bottom: 1px solid rgba(31, 41, 55, 0.5); /* border-gray-800/50 */
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+}
+
+:root:not(.dark) .navbar {
+  background-color: rgba(255, 255, 255, 0.8); /* bg-white/80 */
+  border-bottom: 1px solid rgba(229, 231, 235, 0.5); /* border-gray-200/50 */
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.nav-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.nav-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.nav-title .hashtag {
+  color: var(--primary);
+  font-weight: 800;
+  margin-right: 1px;
+  font-size: 1.6rem;
+}
+
+.nav-title .title-text {
+  background: linear-gradient(to right, #10b981, #064e3b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 30px rgba(6, 78, 59, 0.3);
+}
+
+.landing-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-link-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link-item::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(16,185,129,0.2), rgba(16,185,129,0.8), rgba(16,185,129,0.2));
+  background-size: 200% 100%;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s ease;
+}
+
+.nav-link-item:hover {
+  color: var(--primary);
+  background-color: rgba(16, 185, 129, 0.05);
+}
+
+.nav-link-item:hover::before {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.nav-link-icon {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.nav-link-item:hover .nav-link-icon {
+  transform: scale(1.2);
+}
+
+.nav-link-text {
+  font-weight: 500;
+}
+
+/* Hero Section */
+.landing-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 2rem;
+}
+
+.landing-hero-content {
+  flex: 1;
+  max-width: 600px;
+}
+
+.landing-hero-title {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  color: var(--foreground);
+  line-height: 1.2;
+  background: linear-gradient(to right, #10b981, #064e3b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 30px rgba(6, 78, 59, 0.3);
+}
+
+.landing-hero-subtitle {
+  font-size: 1.25rem;
+  color: var(--muted-foreground);
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.landing-hero-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.placeholder-image {
+  width: 100%;
+  max-width: 500px;
+  height: 450px; /* Increased height to accommodate the text */
+  background-color: transparent;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible; /* Changed from hidden to visible */
+  padding-bottom: 80px; /* Add padding at the bottom for the text */
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  background-color: #000000;
+  backdrop-filter: blur(5px);
+}
+
+/* Animated Hashtag with elegant styling */
+.animated-hash {
+  width: 200px;
+  height: 200px;
+  transform-origin: 50% 50%;
+  filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.5));
+  position: relative;
+  z-index: 2;
+}
+
+/* Add a subtle glow effect to the hashtag */
+.hero-photo-container::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: 1;
+  animation: glow-pulse 4s ease-in-out infinite;
+}
+
+/* Add a subtle circular border */
+.hero-photo-container::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 180px;
+  height: 180px;
+  background: transparent;
+  border-radius: 50%;
+  z-index: 0;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.1);
+}
+
+.hash-line {
+  fill: none;
+  stroke: var(--primary, #10b981);
+  stroke-width: 8; /* Same thickness as in the app */
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 3px rgba(16, 185, 129, 0.5));
+}
+
+/* Set dash array/offset based on line lengths (vertical=80, horizontal=70) */
+.hash-line.line-1, 
+.hash-line.line-2 {
+  stroke-dasharray: 80;
+  stroke-dashoffset: 80;
+  animation: draw-stroke 1.5s ease-in-out infinite;
+}
+
+.hash-line.line-3, 
+.hash-line.line-4 {
+  stroke-dasharray: 70;
+  stroke-dashoffset: 70;
+  animation-name: draw-stroke-h; /* Use a dedicated animation */
+  animation-duration: 1.5s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+/* Stagger animation start times - Exact same as in the app */
+.hash-line.line-1 { animation-delay: 0s; }
+.hash-line.line-2 { animation-delay: 0.05s; }
+.hash-line.line-3 { animation-delay: 0.1s; }
+.hash-line.line-4 { animation-delay: 0.15s; }
+
+/* Pulse animation for the glow effect */
+@keyframes pulse {
+  0% {
+    opacity: 0.3;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  100% {
+    opacity: 0.3;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+}
+
+/* Drawing Animation - Exact same as in the app */
+@keyframes draw-stroke {
+  0% {
+    stroke-dashoffset: 80; /* Use actual length */
+    opacity: 0;
+  }
+  10% {
+     opacity: 1; /* Fade in quickly */
+  }
+  50% {
+    stroke-dashoffset: 0; /* Draw the line */
+    opacity: 1;
+  }
+  70% {
+    stroke-dashoffset: 0; /* Hold */
+    opacity: 1;
+  }
+  90%, 100% {
+    stroke-dashoffset: 80; /* Reset for loop */
+    opacity: 0; /* Fade out */
+  }
+}
+
+/* Dedicated animation for horizontal lines - Exact same as in the app */
+@keyframes draw-stroke-h {
+  0% { stroke-dashoffset: 70; opacity: 0; }
+  10% { opacity: 1; }
+  50% { stroke-dashoffset: 0; opacity: 1; }
+  70% { stroke-dashoffset: 0; opacity: 1; }
+  90%, 100% { stroke-dashoffset: 70; opacity: 0; }
+}
+
+/* We need to set the --initial-offset for horizontal lines specifically */
+.hash-line.line-3, 
+.hash-line.line-4 {
+  animation-name: draw-stroke-h;
+}
+
+@keyframes draw-stroke-h {
+  0% { stroke-dashoffset: 70; opacity: 0; }
+  20% { opacity: 1; }
+  50% { stroke-dashoffset: 0; opacity: 1; }
+  70% { stroke-dashoffset: 0; opacity: 1; }
+  90%, 100% { stroke-dashoffset: 70; opacity: 0; }
+}
+
+/* Hero Text Below Hashtag */
+.hero-text-overlay {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 1px;
+  color: var(--primary);
+  text-transform: uppercase;
+  z-index: 2;
+  bottom: 120px; /* Moved up much closer to the hashtag */
+  left: 0;
+  right: 0;
+  text-align: center;
+  width: 100%;
+}
+
+.hero-text-overlay span {
+  display: inline-block;
+  background: linear-gradient(to right, #10b981, #047857);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 10px rgba(16, 185, 129, 0.2);
+  font-size: 2.2rem;
+  font-weight: 800;
+}
+
+/* Typewriter effect */
+.typewriter {
+  display: inline-block;
+  overflow: hidden;
+  border-right: .15em solid #10b981;
+  white-space: nowrap;
+  width: 0;
+  animation: 
+    typing 3.5s steps(20, end) 1s forwards,
+    blink-caret .75s step-end infinite;
+}
+
+/* The typing effect */
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+/* The typewriter cursor effect */
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: #10b981; }
+}
+
+
+
+
+
+/* CTA Buttons */
+.landing-cta-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.landing-cta-button {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(6, 78, 59, 0.1);
+  border: 1px solid rgba(6, 78, 59, 0.2);
+}
+
+.landing-cta-button.primary {
+  color: white;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.dark .landing-cta-button.primary {
+  background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
+  box-shadow: 0 4px 20px rgba(6, 78, 59, 0.15);
+}
+
+.landing-cta-button.primary:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 4px 20px rgba(6, 78, 59, 0.2);
+}
+
+.landing-cta-button.secondary {
+  background-color: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+}
+
+.landing-cta-button.secondary:hover {
+  background-color: rgba(var(--primary-rgb), 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(6, 78, 59, 0.1);
+}
+
+.landing-cta-button:active {
+  transform: scale(0.98);
+}
+
+/* Features Section */
+.landing-features {
+  padding: 5rem 2rem;
+  text-align: center;
+}
+
+.landing-section-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 3rem;
+  background: linear-gradient(to right, #10b981, #064e3b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 30px rgba(6, 78, 59, 0.3);
+}
+
+.title-animation {
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: fadeInDown 0.6s ease forwards;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.landing-features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.landing-feature-card {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid var(--card-border);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.landing-feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.15);
+}
+
+.card-animation {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+.card-delay-1 {
+  animation-delay: 0.2s;
+}
+
+.card-delay-2 {
+  animation-delay: 0.4s;
+}
+
+.card-delay-3 {
+  animation-delay: 0.6s;
+}
+
+.card-delay-4 {
+  animation-delay: 0.8s;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.landing-feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #10b981, #059669);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.landing-feature-card:hover::before {
+  transform: scaleX(1);
+}
+
+.landing-feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.landing-feature-icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 1.5rem;
+  background-color: rgba(var(--primary-rgb), 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.landing-feature-card h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--foreground);
+}
+
+.landing-feature-card p {
+  color: var(--muted-foreground);
+  line-height: 1.6;
+}
+
+/* CTA Section */
+.landing-cta-section {
+  padding: 5rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  margin: 4rem 0;
+}
+
+.landing-cta-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 78, 59, 0.1) 100%);
+  border-radius: 1rem;
+  z-index: -1;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.dark .landing-cta-section::before {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(6, 78, 59, 0.1) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.1);
+}
+
+.landing-cta-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  border-radius: 1rem;
+}
+
+.landing-cta-content h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  background: linear-gradient(to right, #10b981, #064e3b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 30px rgba(6, 78, 59, 0.3);
+}
+
+.landing-cta-content p {
+  font-size: 1.25rem;
+  color: var(--muted-foreground);
+  margin-bottom: 2rem;
+}
+
+.landing-cta-content .landing-cta-buttons {
+  justify-content: center;
+}
+
+/* Footer */
+.landing-footer {
+  margin-top: auto;
+  padding: 2rem;
+  background-color: var(--background);
+  border-top: 1px solid var(--border);
+}
+
+.landing-footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.landing-footer-content p {
+  color: var(--muted-foreground);
+  margin: 0;
+}
+
+.landing-footer-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.landing-footer-link {
+  color: var(--muted-foreground);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.landing-footer-link:hover {
+  color: var(--primary);
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .landing-hero {
+    flex-direction: column;
+    text-align: center;
+    padding: 3rem 1.5rem;
+  }
+  
+  .landing-hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .landing-nav {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .landing-cta-buttons {
+    justify-content: center;
+  }
+  
+  .landing-footer-content {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+}
+
+/* Feature Icons - Updated to use emerald color */
+.courses-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2310b981'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 32px;
+}
+
+.calendar-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2310b981'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 32px;
+}
+
+.gpa-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2310b981'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 32px;
+}
+
+.ai-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2310b981'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 32px;
+}
+
+

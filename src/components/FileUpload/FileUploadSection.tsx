@@ -307,7 +307,7 @@ const FileUploadSection: React.FC<FileUploadSectionProps> = ({
                   : 'Drag and drop your file here, or click to browse'}
               </p>
               <p className="dropzone-hint-modern">
-                PDF, Word, Excel, PowerPoint, Images, ZIP (Max: 10MB)
+                PDF, Word, Excel, PowerPoint, Images, ZIP (Max: 300MB)
               </p>
             </div>
           )}

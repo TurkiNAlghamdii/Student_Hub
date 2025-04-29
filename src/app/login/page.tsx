@@ -148,6 +148,9 @@ export default function Login() {
         transition={{ duration: 0.5, delay: 0.1 }}
       >
         <div className="public-nav-links">
+          <Link href="/landing" className="public-tool-link">
+            Home
+          </Link>
           <Link href="/academic-calendar" className="public-tool-link">
             Academic Calendar
           </Link>
