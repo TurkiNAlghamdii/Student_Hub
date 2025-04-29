@@ -28,6 +28,7 @@ export default function LandingPage() {
   const router = useRouter()
   const { session } = useAuth()
   const [loading, setLoading] = useState(true)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   // Simulate initial loading process
   useEffect(() => {
@@ -83,6 +84,7 @@ export default function LandingPage() {
             </Link>
           </div>
           <div className="nav-right">
+            {/* Desktop Navigation Links */}
             <div className="landing-nav-links">
               <Link href="/academic-calendar" className="nav-link-item">
                 <span className="nav-link-icon">📅</span>
@@ -98,8 +100,52 @@ export default function LandingPage() {
               </Link>
               <ThemeToggle />
             </div>
+            
+            {/* Mobile Menu Button */}
+            <button 
+              className="mobile-menu-button" 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle mobile menu"
+            >
+              <div className={`hamburger ${mobileMenuOpen ? 'open' : ''}`}>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </button>
           </div>
         </motion.div>
+        
+        {/* Mobile Navigation Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div 
+              className="mobile-nav-menu"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="mobile-nav-links">
+                <Link href="/academic-calendar" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+                  <span className="nav-link-icon">📅</span>
+                  <span className="nav-link-text">Academic Calendar</span>
+                </Link>
+                <Link href="/gpa-calculator" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+                  <span className="nav-link-icon">+/-</span>
+                  <span className="nav-link-text">GPA Calculator</span>
+                </Link>
+                <Link href="/pomodoro" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+                  <span className="nav-link-icon">⏱️</span>
+                  <span className="nav-link-text">Pomodoro Clock</span>
+                </Link>
+                <div className="mobile-theme-toggle">
+                  <ThemeToggle />
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Hero Section */}
@@ -124,8 +170,7 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.5 }}
           >
-            Simplify your academic journey with tools for course management, 
-            GPA calculation, event tracking, and more.
+            All-in-one PLATFORM to make student life simpler and better!
           </motion.p>
           <motion.div 
             className="landing-cta-buttons"
@@ -211,7 +256,7 @@ export default function LandingPage() {
           transition={{ duration: 0.5 }}
         >
           <h2>Ready to enhance your academic experience?</h2>
-          <p>Join Student Hub today and take control of your academic journey.</p>
+          <p>Join Student Hub today and take control of your academic journey from A to Z.</p>
           <div className="landing-cta-buttons">
             <Link href="/register" className="landing-cta-button primary">
               Get Started
