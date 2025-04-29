@@ -39,15 +39,22 @@ export default function LandingPage() {
     return () => clearTimeout(timer)
   }, [])
 
-  // Redirect authenticated users to home page
+  // Only redirect authenticated users if they explicitly navigate to the landing page
+  // This prevents automatic redirects after viewing the landing page
   useEffect(() => {
-    if (session) {
+    // Check if this is a direct navigation to the landing page
+    const isDirectNavigation = document.referrer === '' || !document.referrer.includes(window.location.host)
+    
+    if (session && isDirectNavigation) {
       router.push('/')
     }
   }, [session, router])
 
-  // If user is already authenticated, don't render the landing page
-  if (session) return null
+  // Only skip rendering if user is authenticated AND this is a direct navigation
+  if (session && typeof window !== 'undefined' && 
+      (document.referrer === '' || !document.referrer.includes(window.location.host))) {
+    return null
+  }
 
   if (loading) {
     return (

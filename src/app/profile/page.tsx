@@ -815,7 +815,7 @@ interface StudentProfile {
             
             <div className="privacy-notes mt-8">
               <p className="text-sm">
-                We respect your privacy. Your personal information is securely stored and will never be shared with third parties.
+                We respect your privacy. Your personal information is securely stored.
               </p>
             </div>
           </div>
