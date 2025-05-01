@@ -20,7 +20,8 @@
 
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { supabase } from '@/lib/supabase'
 import { format } from 'date-fns'
 import { 
@@ -97,6 +98,8 @@ export default function SupportRequests() {
   const [updating, setUpdating] = useState<string | null>(null)
   const [selectedRequest, setSelectedRequest] = useState<SupportRequest | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  // State to track if we're in a browser environment for portal rendering
+  const [isBrowser, setIsBrowser] = useState(false)
 
   // State for support request statistics
   const [stats, setStats] = useState({
@@ -105,6 +108,11 @@ export default function SupportRequests() {
     in_progress: 0,
     resolved: 0
   })
+
+  // Set isBrowser to true after component mounts (for portal rendering)
+  useEffect(() => {
+    setIsBrowser(true)
+  }, [])
 
   // Fetch all support requests
   useEffect(() => {
@@ -623,9 +631,9 @@ export default function SupportRequests() {
         </table>
       </div>
 
-      {/* Request Details Modal */}
-      {isModalOpen && selectedRequest && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-center z-50 pt-20 overflow-y-auto">
+      {/* Modal will be rendered outside the container using createPortal */}
+      {isBrowser && isModalOpen && selectedRequest && createPortal(
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-center z-[100] pt-20 overflow-y-auto">
           <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 w-full max-w-2xl mx-auto my-8 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-white">Support Request Details</h3>
@@ -722,8 +730,9 @@ export default function SupportRequests() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )
-} 
+}

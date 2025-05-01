@@ -21,6 +21,7 @@ import FileManagement from '@/components/Admin/FileManagement'
 import SupportRequests from '@/components/Admin/SupportRequests'
 import AcademicCalendarManagement from '@/components/Admin/AcademicCalendarManagement'
 import './admin-styles.css'
+import './admin-light-mode.css'
 import { 
   UserGroupIcon, 
   AcademicCapIcon,

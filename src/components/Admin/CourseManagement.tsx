@@ -20,6 +20,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { 
   PencilIcon,
   TrashIcon,
@@ -193,6 +194,7 @@ export default function CourseManagement() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isBrowser, setIsBrowser] = useState(false)
   const [editingCourse, setEditingCourse] = useState<Course | null>(null)
 
   // Form state with default values to ensure controlled inputs
@@ -219,9 +221,14 @@ export default function CourseManagement() {
   // Add a ref for the instructions textarea
   const instructionsTextareaRef = useRef<HTMLTextAreaElement>(null);
   
-  // Add state for preview mode
+  // State for Markdown editor
   const [previewMode, setPreviewMode] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
+  
+  // Set isBrowser to true after component mounts (for portal rendering)
+  useEffect(() => {
+    setIsBrowser(true)
+  }, []);
 
   useEffect(() => {
     fetchCourses()
@@ -596,9 +603,9 @@ export default function CourseManagement() {
         </table>
       </div>
 
-      {/* Course Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-center z-50 pt-20 overflow-y-auto">
+      {/* Course Modal - Using createPortal to render outside the container */}
+      {isBrowser && isModalOpen && createPortal(
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-center z-[100] pt-20 overflow-y-auto">
           <div className="dark:bg-gray-900 bg-white rounded-xl dark:border-gray-800 border-gray-200 p-6 w-full max-w-md mx-auto my-8 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold dark:text-white text-gray-800">
@@ -657,8 +664,7 @@ export default function CourseManagement() {
                     value={formData.description}
                     onChange={handleInputChange}
                     rows={4}
-                    className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-sm shadow-sm placeholder-gray-400
-                             focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                    className="w-full dark:bg-gray-800/70 bg-gray-100/70 backdrop-blur-sm dark:border-gray-700 border-gray-300 rounded-lg px-3 py-2 dark:text-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     placeholder="Detailed description of the course"
                   />
                 </div>
@@ -668,7 +674,7 @@ export default function CourseManagement() {
                   <label htmlFor="Instractions" className="block text-sm font-medium dark:text-gray-400 text-gray-600 mb-1">Instractions</label>
                   
                   {/* Enhanced Toolbar */}
-                  <div className="flex flex-wrap items-center gap-1 mb-2 p-1 bg-gray-800/50 rounded-md border border-gray-700">
+                  <div className="flex flex-wrap items-center gap-1 mb-2 p-1 dark:bg-gray-800/50 bg-gray-200/70 rounded-md dark:border-gray-700 border-gray-300">
                     <div className="flex gap-1 mr-2">
                       <button 
                         type="button" 
@@ -700,7 +706,7 @@ export default function CourseManagement() {
                       <button 
                         type="button" 
                         onClick={() => handleMarkdownFormat('bold')}
-                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 hover:dark:bg-gray-600 text-gray-300 font-bold"
+                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 bg-gray-300 hover:dark:bg-gray-600 hover:bg-gray-400 dark:text-gray-300 text-gray-700 font-bold"
                         title="Bold"
                       >
                         B
@@ -708,7 +714,7 @@ export default function CourseManagement() {
                       <button 
                         type="button" 
                         onClick={() => handleMarkdownFormat('italic')}
-                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 hover:dark:bg-gray-600 text-gray-300 italic"
+                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 bg-gray-300 hover:dark:bg-gray-600 hover:bg-gray-400 dark:text-gray-300 text-gray-700 italic"
                         title="Italic"
                       >
                         I
@@ -716,7 +722,7 @@ export default function CourseManagement() {
                       <button 
                         type="button" 
                         onClick={() => handleMarkdownFormat('highlight')}
-                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 hover:dark:bg-gray-600 text-gray-300"
+                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 bg-gray-300 hover:dark:bg-gray-600 hover:bg-gray-400 dark:text-gray-300 text-gray-700"
                         title="Highlight"
                       >
                         <span className="bg-yellow-300 text-black px-1">H</span>
@@ -727,7 +733,7 @@ export default function CourseManagement() {
                       <button 
                         type="button" 
                         onClick={() => handleMarkdownFormat('ul')}
-                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 hover:dark:bg-gray-600 text-gray-300"
+                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 bg-gray-300 hover:dark:bg-gray-600 hover:bg-gray-400 dark:text-gray-300 text-gray-700"
                         title="Bulleted List"
                       >
                         • List
@@ -735,7 +741,7 @@ export default function CourseManagement() {
                       <button 
                         type="button" 
                         onClick={() => handleMarkdownFormat('ol')}
-                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 hover:dark:bg-gray-600 text-gray-300"
+                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 bg-gray-300 hover:dark:bg-gray-600 hover:bg-gray-400 dark:text-gray-300 text-gray-700"
                         title="Numbered List"
                       >
                         1. List
@@ -754,7 +760,7 @@ export default function CourseManagement() {
                       <button 
                         type="button" 
                         onClick={() => handleMarkdownFormat('code')}
-                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 hover:dark:bg-gray-600 text-gray-300 font-mono"
+                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 bg-gray-300 hover:dark:bg-gray-600 hover:bg-gray-400 dark:text-gray-300 text-gray-700 font-mono"
                         title="Code Block"
                       >
                         {`<>`} Code
@@ -781,7 +787,7 @@ export default function CourseManagement() {
                       <button 
                         type="button" 
                         onClick={toggleColorPicker}
-                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 hover:dark:bg-gray-600 text-gray-300 flex items-center"
+                        className="px-2 py-1 text-xs rounded dark:bg-gray-700 bg-gray-300 hover:dark:bg-gray-600 hover:bg-gray-400 dark:text-gray-300 text-gray-700 flex items-center"
                         title="Text Color"
                       >
                         <span className="flex items-center">
@@ -791,7 +797,7 @@ export default function CourseManagement() {
                       </button>
                       
                       {showColorPicker && (
-                        <div className="absolute z-10 top-full left-0 mt-1 p-2 bg-gray-800 rounded-md border border-gray-700 shadow-lg">
+                        <div className="absolute z-10 top-full left-0 mt-1 p-2 dark:bg-gray-800 bg-white rounded-md dark:border-gray-700 border-gray-300 shadow-lg">
                           <div className="grid grid-cols-3 gap-1">
                             {colorOptions.map(color => (
                               <button
@@ -814,7 +820,7 @@ export default function CourseManagement() {
                         className={`px-3 py-1 text-xs rounded transition-colors ${
                           previewMode 
                             ? 'bg-emerald-600 hover:bg-emerald-700 text-white' 
-                            : 'dark:bg-gray-700 hover:dark:bg-gray-600 text-gray-300'
+                            : 'dark:bg-gray-700 bg-gray-300 hover:dark:bg-gray-600 hover:bg-gray-400 dark:text-gray-300 text-gray-700'
                         }`}
                         title="Toggle Preview"
                       >
@@ -930,16 +936,17 @@ export default function CourseManagement() {
                 </button>
                 <button
                   type="submit"
-                  className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                  className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
                 >
                   <CheckIcon className="h-4 w-4" />
-                  {editingCourse ? 'Update' : 'Create'}
+                  <span>{editingCourse ? 'Update' : 'Create'}</span>
                 </button>
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )
-} 
+}

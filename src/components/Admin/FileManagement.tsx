@@ -24,6 +24,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { format } from 'date-fns'
+import { createPortal } from 'react-dom'
 import { 
   DocumentIcon,
   MagnifyingGlassIcon,
@@ -111,6 +112,7 @@ export default function FileManagement() {
   const [deletingFile, setDeletingFile] = useState<string | null>(null)
   const [selectedFile, setSelectedFile] = useState<FileData | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isBrowser, setIsBrowser] = useState(false)
   
   // State for storage usage statistics
   const [storageSummary, setStorageSummary] = useState<StorageSummary>({
@@ -120,6 +122,11 @@ export default function FileManagement() {
     byType: {}
   })
   const [totalStorageUsed, setTotalStorageUsed] = useState('0 MB')
+
+  // Set isBrowser to true after component mounts (for portal rendering)
+  useEffect(() => {
+    setIsBrowser(true)
+  }, [])
 
   // Fetch all files 
   useEffect(() => {
@@ -572,9 +579,9 @@ export default function FileManagement() {
         </table>
       </div>
 
-      {/* File Details Modal */}
-      {isModalOpen && selectedFile && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-center z-50 pt-20 overflow-y-auto">
+      {/* File Details Modal - Using createPortal to render outside the container */}
+      {isBrowser && isModalOpen && selectedFile && createPortal(
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-center z-[100] pt-20 overflow-y-auto">
           <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 w-full max-w-2xl mx-auto my-8 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-white">File Details</h3>
@@ -599,63 +606,59 @@ export default function FileManagement() {
                 </div>
                 
                 {selectedFile.description && (
-                  <div className="mt-2">
-                    <h5 className="text-gray-400 text-sm mb-1">Description</h5>
-                    <p className="text-white">{selectedFile.description}</p>
+                  <div className="mt-3">
+                    <h5 className="text-gray-300 font-medium mb-1">Description</h5>
+                    <p className="text-gray-400">{selectedFile.description}</p>
                   </div>
                 )}
-                
-                <div className="mt-4 flex justify-end">
-                  <a
-                    href={selectedFile.file_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 bg-blue-500/10 text-blue-400 rounded-lg hover:bg-blue-500/20 transition-colors border border-blue-500/20 hover:border-blue-500/30 flex items-center gap-2"
-                  >
-                    <ArrowDownTrayIcon className="h-4 w-4" />
-                    Download
-                  </a>
+              </div>
+              
+              <div className="bg-gray-800/70 backdrop-blur-sm rounded-lg p-4 border border-gray-700">
+                <h4 className="text-white font-medium mb-2">Course Information</h4>
+                <div className="flex items-center">
+                  <AcademicCapIcon className="h-4 w-4 text-emerald-400 mr-2" />
+                  <span className="text-emerald-500 font-mono">{selectedFile.course_code}</span>
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-800/70 backdrop-blur-sm rounded-lg p-4 border border-gray-700">
-                  <h4 className="text-white font-medium mb-2">Uploader Information</h4>
-                  <div className="flex items-center gap-3">
-                    <div className="bg-gray-700/50 p-2 rounded-full">
-                      <UserCircleIcon className="h-6 w-6 text-emerald-400" />
-                    </div>
-                    <div className="text-white">
-                      {selectedFile.student_id 
-                        ? `Student ID: ${String(selectedFile.student_id)}` 
-                        : `User ID: ${selectedFile.user_id}`}
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="bg-gray-800/70 backdrop-blur-sm rounded-lg p-4 border border-gray-700">
-                  <h4 className="text-white font-medium mb-2">Course Information</h4>
-                  <div className="flex items-center gap-3">
-                    <div className="bg-gray-700/50 p-2 rounded-full">
-                      <AcademicCapIcon className="h-6 w-6 text-emerald-400" />
-                    </div>
-                    <div className="text-emerald-500 font-mono">{selectedFile.course_code}</div>
-                  </div>
+              <div className="bg-gray-800/70 backdrop-blur-sm rounded-lg p-4 border border-gray-700">
+                <h4 className="text-white font-medium mb-2">Uploader Information</h4>
+                <div className="flex items-center">
+                  <UserCircleIcon className="h-4 w-4 text-blue-400 mr-2" />
+                  <span className="text-gray-300">
+                    {selectedFile.student_id 
+                      ? `Student ID: ${String(selectedFile.student_id)}` 
+                      : `User ID: ${selectedFile.user_id}`}
+                  </span>
                 </div>
               </div>
               
               <div className="flex justify-end gap-3 mt-6">
+                <a
+                  href={selectedFile.file_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 bg-blue-500/10 text-blue-400 rounded-lg hover:bg-blue-500/20 transition-colors border border-blue-500/20 hover:border-blue-500/30 flex items-center gap-2"
+                >
+                  <ArrowDownTrayIcon className="h-4 w-4" />
+                  Download
+                </a>
                 <button
                   onClick={() => handleDeleteFile(selectedFile.id, selectedFile.course_code)}
                   disabled={deletingFile === selectedFile.id}
                   className="px-4 py-2 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500/20 transition-colors border border-red-500/20 hover:border-red-500/30 flex items-center gap-2"
                 >
                   {deletingFile === selectedFile.id ? (
-                    <div className="h-4 w-4 animate-spin rounded-full border-b border-red-400 mr-2"></div>
+                    <>
+                      <div className="h-4 w-4 animate-spin rounded-full border-b border-current"></div>
+                      <span>Deleting...</span>
+                    </>
                   ) : (
-                    <TrashIcon className="h-4 w-4" />
+                    <>
+                      <TrashIcon className="h-4 w-4" />
+                      <span>Delete File</span>
+                    </>
                   )}
-                  Delete File
                 </button>
                 <button
                   onClick={() => setIsModalOpen(false)}
@@ -666,8 +669,9 @@ export default function FileManagement() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )
-} 
+}

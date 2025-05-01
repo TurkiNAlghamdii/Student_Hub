@@ -1,0 +1,390 @@
+/* Content Moderation Light Mode Styles */
+
+/* Main container */
+:root:not(.dark) .bg-gray-900\/50.backdrop-blur-sm.rounded-2xl.p-6.border.border-gray-800\/50.shadow-lg {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Text colors */
+:root:not(.dark) .text-white {
+  color: #1f2937;
+}
+
+:root:not(.dark) .text-gray-400 {
+  color: #4b5563;
+}
+
+:root:not(.dark) .text-gray-300 {
+  color: #374151;
+}
+
+/* Tab navigation */
+:root:not(.dark) .border-gray-800 {
+  border-color: #e5e7eb;
+}
+
+:root:not(.dark) .text-gray-400.hover\:text-white {
+  color: #4b5563;
+}
+
+:root:not(.dark) .text-gray-400.hover\:text-white:hover {
+  color: #111827;
+}
+
+/* Search input */
+:root:not(.dark) .bg-gray-800\/70.backdrop-blur-sm.border.border-gray-700 {
+  background-color: rgba(243, 244, 246, 0.7);
+  border-color: #d1d5db;
+}
+
+:root:not(.dark) input.text-white {
+  color: #1f2937;
+}
+
+:root:not(.dark) input.text-white::placeholder {
+  color: #6b7280;
+}
+
+/* Table styling */
+:root:not(.dark) .border-gray-800\/60 {
+  border-color: rgba(209, 213, 219, 0.6);
+}
+
+:root:not(.dark) .bg-gray-800\/50.backdrop-blur-sm {
+  background-color: rgba(243, 244, 246, 0.5);
+}
+
+:root:not(.dark) .divide-gray-800\/50 > * + * {
+  border-color: rgba(209, 213, 219, 0.5);
+}
+
+:root:not(.dark) .hover\:bg-gray-800\/30:hover {
+  background-color: rgba(243, 244, 246, 0.8);
+}
+
+/* Modal styling */
+:root:not(.dark) .bg-black\/60.backdrop-blur-sm {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+:root:not(.dark) .bg-gray-900.border.border-gray-800 {
+  background-color: white;
+  border-color: #e5e7eb;
+}
+
+:root:not(.dark) .bg-gray-800 {
+  background-color: #f3f4f6;
+}
+
+:root:not(.dark) .bg-gray-800\/70.backdrop-blur-sm.rounded-lg.p-4.border.border-gray-700 {
+  background-color: rgba(249, 250, 251, 0.9);
+  border-color: #e5e7eb;
+}
+
+:root:not(.dark) .border-gray-700\/50 {
+  border-color: rgba(209, 213, 219, 0.5);
+}
+
+:root:not(.dark) .bg-gray-700\/50 {
+  background-color: rgba(229, 231, 235, 0.5);
+}
+
+:root:not(.dark) .bg-gray-700 {
+  background-color: #f9fafb;
+}
+
+/* Button styling */
+:root:not(.dark) .bg-gray-800.text-gray-300 {
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+
+:root:not(.dark) .bg-gray-800.text-gray-300:hover {
+  background-color: #e5e7eb;
+}
+
+/* Comment Reports Table styles */
+:root:not(.dark) .text-center.py-12 .text-gray-600 {
+  color: #9ca3af;
+}
+
+:root:not(.dark) .text-gray-500 {
+  color: #6b7280;
+}
+
+/* Material Reports Table styles */
+:root:not(.dark) .flex.flex-col.items-center.justify-center.bg-gray-800\/30 {
+  background-color: rgba(243, 244, 246, 0.3);
+}
+
+:root:not(.dark) .bg-gray-800\/50.backdrop-blur-sm.rounded-lg.p-4.border.border-gray-800 {
+  background-color: rgba(249, 250, 251, 0.9);
+  border-color: #e5e7eb;
+}
+
+/* File Management styles */
+:root:not(.dark) .bg-gray-800\/70.backdrop-blur-sm.rounded-lg.p-4.border.border-gray-700 {
+  background-color: rgba(249, 250, 251, 0.9);
+  border-color: #e5e7eb;
+}
+
+/* File Management specific styles */
+:root:not(.dark) .text-xl.font-semibold.text-white {
+  color: #1f2937;
+}
+
+:root:not(.dark) .text-xl.font-semibold.text-emerald-400 {
+  color: #059669;
+}
+
+/* Storage usage cards */
+:root:not(.dark) .grid.grid-cols-1.md\:grid-cols-3.gap-4.mb-6 .text-white.text-lg.font-medium {
+  color: #1f2937;
+}
+
+/* File type icons remain colorful in both modes */
+
+/* Course and file type lists */
+:root:not(.dark) .bg-gray-800.rounded-lg.p-3.mb-2 {
+  background-color: #f3f4f6;
+}
+
+:root:not(.dark) .bg-gray-800.rounded-lg.p-3.mb-2:hover {
+  background-color: #e5e7eb;
+}
+
+/* File preview modal */
+:root:not(.dark) .fixed.inset-0.z-50.flex.items-center.justify-center .bg-black\/70 {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+:root:not(.dark) .bg-gray-900.rounded-xl.border.border-gray-800 {
+  background-color: white;
+  border-color: #e5e7eb;
+}
+
+:root:not(.dark) .border-b.border-gray-800 {
+  border-color: #e5e7eb;
+}
+
+:root:not(.dark) .bg-gray-800\/50.rounded-lg.p-4.border.border-gray-700 {
+  background-color: rgba(243, 244, 246, 0.7);
+  border-color: #d1d5db;
+}
+
+:root:not(.dark) .bg-gray-700.rounded-lg.px-2.py-1.text-xs {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+/* Support Requests styles */
+:root:not(.dark) .bg-gray-800\/70.backdrop-blur-sm.rounded-lg.p-4.border.border-gray-700 {
+  background-color: rgba(249, 250, 251, 0.9);
+  border-color: #e5e7eb;
+}
+
+/* Support Requests specific styles */
+:root:not(.dark) .text-2xl.font-semibold.text-white {
+  color: #1f2937;
+}
+
+:root:not(.dark) .text-2xl.font-semibold.text-yellow-400 {
+  color: #d97706;
+}
+
+:root:not(.dark) .text-2xl.font-semibold.text-blue-400 {
+  color: #3b82f6;
+}
+
+:root:not(.dark) .text-2xl.font-semibold.text-emerald-400 {
+  color: #10b981;
+}
+
+/* Filter buttons */
+:root:not(.dark) .bg-gray-800\/30.text-gray-400.border-gray-700\/50:hover {
+  background-color: rgba(229, 231, 235, 0.5);
+}
+
+:root:not(.dark) .bg-gray-700.text-white.border-gray-600 {
+  background-color: #e5e7eb;
+  color: #1f2937;
+  border-color: #9ca3af;
+}
+
+:root:not(.dark) .bg-gray-600.text-white {
+  background-color: #9ca3af;
+  color: #f9fafb;
+}
+
+/* Status badges */
+:root:not(.dark) .text-yellow-400.bg-yellow-400\/10.border-yellow-400\/20 {
+  color: #d97706;
+  background-color: rgba(251, 191, 36, 0.1);
+  border-color: rgba(251, 191, 36, 0.2);
+}
+
+:root:not(.dark) .text-blue-400.bg-blue-400\/10.border-blue-400\/20 {
+  color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+:root:not(.dark) .text-emerald-400.bg-emerald-400\/10.border-emerald-400\/20 {
+  color: #10b981;
+  background-color: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+/* Support request detail modal */
+:root:not(.dark) .fixed.inset-0.flex.items-center.justify-center.p-4.z-50 .bg-black\/70 {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+:root:not(.dark) .bg-gray-900.rounded-xl.border.border-gray-800.shadow-xl {
+  background-color: white;
+  border-color: #e5e7eb;
+}
+
+:root:not(.dark) .bg-gray-800.py-4.px-6 {
+  background-color: #f3f4f6;
+}
+
+:root:not(.dark) .bg-gray-800.p-6 {
+  background-color: #f9fafb;
+}
+
+:root:not(.dark) .bg-gray-800\/50.p-4.rounded-lg.border.border-gray-700 {
+  background-color: rgba(243, 244, 246, 0.7);
+  border-color: #d1d5db;
+}
+
+/* Academic Calendar styles */
+:root:not(.dark) .bg-gray-800\/70.backdrop-blur-sm.rounded-lg.p-4.border.border-gray-700 {
+  background-color: rgba(249, 250, 251, 0.9);
+  border-color: #e5e7eb;
+}
+
+/* Academic Calendar specific styles */
+:root:not(.dark) .bg-gray-800\/80.rounded-xl.shadow-lg.border.border-gray-700,
+:root:not(.dark) .p-6.bg-gray-800\/80.rounded-xl.shadow-lg.border.border-gray-700 {
+  background-color: rgba(249, 250, 251, 0.9);
+  border-color: #e5e7eb;
+}
+
+/* Main container background */
+:root:not(.dark) .p-8.bg-gradient-to-br.from-gray-900.to-gray-800.rounded-xl.shadow-xl {
+  background: linear-gradient(to bottom right, #f9fafb, #f3f4f6);
+}
+
+/* Main heading */
+:root:not(.dark) .text-3xl.font-bold.mb-8.text-white {
+  color: #1f2937;
+}
+
+/* Tab navigation */
+:root:not(.dark) .mb-8.border-b.border-gray-700 {
+  border-color: #e5e7eb;
+}
+
+:root:not(.dark) .text-white.border-b-2.border-emerald-400.bg-gray-800 {
+  color: #1f2937;
+  background-color: #f3f4f6;
+}
+
+:root:not(.dark) .text-gray-400.hover\:text-gray-200.hover\:bg-gray-800\/50 {
+  color: #6b7280;
+}
+
+:root:not(.dark) .text-gray-400.hover\:text-gray-200.hover\:bg-gray-800\/50:hover {
+  color: #1f2937;
+  background-color: rgba(243, 244, 246, 0.5);
+}
+
+/* Table cell text */
+:root:not(.dark) .p-3.text-gray-300 {
+  color: #4b5563;
+}
+
+:root:not(.dark) .text-xl.font-medium.text-white {
+  color: #1f2937;
+}
+
+/* Form inputs */
+:root:not(.dark) .bg-gray-700.border.border-gray-600.rounded-lg.text-white {
+  background-color: #f3f4f6;
+  border-color: #d1d5db;
+  color: #1f2937;
+}
+
+:root:not(.dark) .bg-gray-700.border.border-gray-600.rounded-lg.text-white::placeholder {
+  color: #9ca3af;
+}
+
+:root:not(.dark) .block.text-sm.font-medium.text-gray-300 {
+  color: #4b5563;
+}
+
+/* Table styles */
+:root:not(.dark) .overflow-x-auto.rounded-lg.border.border-gray-700 {
+  border-color: #d1d5db;
+}
+
+:root:not(.dark) .bg-gray-700 {
+  background-color: #f3f4f6;
+}
+
+:root:not(.dark) .divide-y.divide-gray-700 > * + * {
+  border-color: #e5e7eb;
+}
+
+:root:not(.dark) .hover\:bg-gray-700\/50:hover {
+  background-color: rgba(229, 231, 235, 0.5);
+}
+
+:root:not(.dark) .text-gray-300.font-medium {
+  color: #4b5563;
+}
+
+/* Empty state */
+:root:not(.dark) .bg-gray-700\/50.text-gray-400.text-center.p-8.rounded-lg.border.border-gray-600 {
+  background-color: rgba(243, 244, 246, 0.5);
+  border-color: #d1d5db;
+}
+
+:root:not(.dark) .text-gray-500 {
+  color: #6b7280;
+}
+
+/* Error and success messages */
+:root:not(.dark) .bg-red-900\/50.text-red-300.rounded-lg.border.border-red-800 {
+  background-color: rgba(254, 226, 226, 0.7);
+  color: #b91c1c;
+  border-color: #ef4444;
+}
+
+:root:not(.dark) .bg-emerald-900\/50.text-emerald-300.rounded-lg.border.border-emerald-800 {
+  background-color: rgba(209, 250, 229, 0.7);
+  color: #047857;
+  border-color: #10b981;
+}
+
+/* Exam type badges */
+:root:not(.dark) .bg-blue-900\/50.text-blue-300 {
+  background-color: rgba(219, 234, 254, 0.7);
+  color: #1d4ed8;
+}
+
+:root:not(.dark) .bg-amber-900\/50.text-amber-300 {
+  background-color: rgba(254, 243, 199, 0.7);
+  color: #d97706;
+}
+
+/* Upload progress */
+:root:not(.dark) .bg-gray-700.rounded-full {
+  background-color: #e5e7eb;
+}
+
+:root:not(.dark) .bg-emerald-500.rounded-full {
+  background-color: #10b981;
+}

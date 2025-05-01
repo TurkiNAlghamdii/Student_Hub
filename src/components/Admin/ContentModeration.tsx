@@ -22,6 +22,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { format } from 'date-fns'
+import { createPortal } from 'react-dom'
 import { 
   TrashIcon,
   MagnifyingGlassIcon,
@@ -83,7 +84,18 @@ export default function ContentModeration() {
   const [deletingComment, setDeletingComment] = useState<string | null>(null) // ID of comment being deleted
   const [selectedComment, setSelectedComment] = useState<Comment | null>(null) // Comment selected for detailed view
   const [isModalOpen, setIsModalOpen] = useState(false)              // Modal visibility state
+  const [isBrowser, setIsBrowser] = useState(false)                  // State to track if we're in a browser environment for portal rendering
   const [activeTab, setActiveTab] = useState<'comments' | 'comment-reports' | 'material-reports'>('comments') // Current active tab
+
+  /**
+   * Set isBrowser state on component mount
+   * 
+   * This effect sets the isBrowser state to true after the component mounts.
+   * This is necessary for using createPortal which only works in browser environments.
+   */
+  useEffect(() => {
+    setIsBrowser(true)
+  }, [])
 
   /**
    * Initial Data Fetching Effect
@@ -369,9 +381,9 @@ export default function ContentModeration() {
         <MaterialReportsTable />
       )}
 
-      {/* Comment Details Modal */}
-      {isModalOpen && selectedComment && (
-        <div className="fixed inset-0 flex items-center justify-center p-4 z-50">
+      {/* Comment Details Modal - Using createPortal to render outside the container */}
+      {isBrowser && isModalOpen && selectedComment && createPortal(
+        <div className="fixed inset-0 flex items-center justify-center p-4 z-[100]">
           <div 
             className="fixed inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setIsModalOpen(false)}
@@ -448,8 +460,9 @@ export default function ContentModeration() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )
-} 
+}
