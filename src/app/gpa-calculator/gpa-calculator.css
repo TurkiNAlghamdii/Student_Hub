@@ -64,6 +64,68 @@
   @apply pb-6 border-b;
 }
 
+/* Calculation Mode Selector */
+.calculation-mode-selector {
+  @apply mb-6;
+}
+
+.mode-toggle {
+  @apply flex rounded-md overflow-hidden mb-2;
+  width: fit-content;
+}
+
+/* Dark theme mode toggle */
+:root.dark .mode-toggle {
+  @apply border border-gray-700;
+}
+
+/* Light theme mode toggle */
+:root:not(.dark) .mode-toggle {
+  @apply border border-gray-300;
+}
+
+.mode-button {
+  @apply px-4 py-2 transition-all duration-200 ease-in-out;
+}
+
+/* Dark theme mode button */
+:root.dark .mode-button {
+  @apply bg-gray-800 text-white;
+}
+
+/* Light theme mode button */
+:root:not(.dark) .mode-button {
+  @apply bg-gray-100 text-gray-800;
+}
+
+.mode-button.active {
+  @apply bg-emerald-600 text-white font-medium;
+}
+
+/* Dark theme mode button hover */
+:root.dark .mode-button:hover:not(.active) {
+  @apply bg-gray-700;
+}
+
+/* Light theme mode button hover */
+:root:not(.dark) .mode-button:hover:not(.active) {
+  @apply bg-gray-200;
+}
+
+.mode-description {
+  @apply text-sm;
+}
+
+/* Dark theme mode description */
+:root.dark .mode-description {
+  @apply text-gray-400;
+}
+
+/* Light theme mode description */
+:root:not(.dark) .mode-description {
+  @apply text-gray-500;
+}
+
 /* Dark theme border */
 :root.dark .previous-gpa-section {
   @apply border-gray-800/50;
@@ -82,8 +144,57 @@
   @apply flex flex-col space-y-2;
 }
 
+.input-field-header {
+  @apply flex justify-between items-center;
+}
+
+.calculation-mode-header {
+  @apply mb-4;
+}
+
+.calculation-mode-title {
+  @apply text-base font-medium;
+  color: #10b981;
+}
+
 .input-field label {
   @apply text-sm font-medium;
+}
+
+.calculation-toggle {
+  @apply flex items-center;
+}
+
+.toggle-label {
+  @apply flex items-center cursor-pointer;
+}
+
+.toggle-checkbox {
+  @apply mr-2 h-4 w-4;
+}
+
+/* Dark theme checkbox */
+:root.dark .toggle-checkbox {
+  @apply accent-emerald-500;
+}
+
+/* Light theme checkbox */
+:root:not(.dark) .toggle-checkbox {
+  @apply accent-emerald-600;
+}
+
+.toggle-text {
+  @apply text-xs;
+}
+
+/* Dark theme toggle text */
+:root.dark .toggle-text {
+  @apply text-gray-400;
+}
+
+/* Light theme toggle text */
+:root:not(.dark) .toggle-text {
+  @apply text-gray-500;
 }
 
 /* Dark theme label */

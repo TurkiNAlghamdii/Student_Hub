@@ -76,7 +76,7 @@ interface Course {
   id: number
   name: string
   grade: string
-  hours: number
+  hours: string
 }
 
 /**
@@ -97,10 +97,13 @@ interface Course {
  * @param prevCreditHours - Previous total credit hours completed (can be null for new students)
  * @returns Object containing semester and cumulative GPA statistics
  */
-function calculateGPA(courses: Course[], prevGPA: number | null, prevCreditHours: number | null) {
+function calculateGPA(courses: Course[], prevPoints: number | null, prevCreditHours: number | null) {
   // Convert null or undefined values to 0
-  const prevGPAValue = prevGPA || 0
+  const prevPointsValue = prevPoints || 0
   const prevCreditHoursValue = prevCreditHours || 0
+  
+  // Calculate previous GPA if we have credit hours
+  const prevGPAValue = prevCreditHoursValue > 0 ? prevPointsValue / prevCreditHoursValue : 0
   
   // If no courses, return existing GPA
   if (courses.length === 0) {
@@ -108,7 +111,7 @@ function calculateGPA(courses: Course[], prevGPA: number | null, prevCreditHours
       semesterGPA: 0, 
       totalGPA: prevGPAValue, 
       semesterPoints: 0, 
-      totalPoints: prevGPAValue * prevCreditHoursValue,
+      totalPoints: prevPointsValue,
       semesterHours: 0,
       totalHours: prevCreditHoursValue
     }
@@ -119,11 +122,14 @@ function calculateGPA(courses: Course[], prevGPA: number | null, prevCreditHours
   let semesterHours = 0
 
   courses.forEach(course => {
-    if (course.grade && course.hours) {
+    if (course.grade && course.hours.trim() !== '') {
       const gradePoint = gradeValues[course.grade as keyof typeof gradeValues].points
+      const hoursValue = parseFloat(course.hours)
       
-      semesterPoints += gradePoint * course.hours
-      semesterHours += course.hours
+      if (!isNaN(hoursValue)) {
+        semesterPoints += gradePoint * hoursValue
+        semesterHours += hoursValue
+      }
     }
   })
 
@@ -187,15 +193,17 @@ export default function GpaCalculatorClient() {
   // State for previous GPA data - using string for input fields
   const [prevCreditHours, setPrevCreditHours] = useState<string>('')
   const [prevGPA, setPrevGPA] = useState<string>('')
+  const [prevPoints, setPrevPoints] = useState<string>('')
+  const [calculationMode, setCalculationMode] = useState<'gpa' | 'points'>('gpa')
   
   // State for courses
   const [courses, setCourses] = useState<Course[]>([
-    { id: 1, name: '[Course 01]', grade: '', hours: 3 },
-    { id: 2, name: '[Course 02]', grade: '', hours: 3 },
-    { id: 3, name: '[Course 03]', grade: '', hours: 3 },
-    { id: 4, name: '[Course 04]', grade: '', hours: 3 },
-    { id: 5, name: '[Course 05]', grade: '', hours: 3 },
-    { id: 6, name: '[Course 06]', grade: '', hours: 3 },
+    { id: 1, name: '[Course 01]', grade: '', hours: '3' },
+    { id: 2, name: '[Course 02]', grade: '', hours: '3' },
+    { id: 3, name: '[Course 03]', grade: '', hours: '3' },
+    { id: 4, name: '[Course 04]', grade: '', hours: '3' },
+    { id: 5, name: '[Course 05]', grade: '', hours: '3' },
+    { id: 6, name: '[Course 06]', grade: '', hours: '3' },
   ])
 
   /**
@@ -206,11 +214,22 @@ export default function GpaCalculatorClient() {
    * with appropriate null handling for empty inputs.
    */
   // Convert string inputs to numbers for calculations
-  const prevGPANumber = prevGPA.trim() !== '' ? parseFloat(prevGPA) : null
   const prevCreditHoursNumber = prevCreditHours.trim() !== '' ? parseFloat(prevCreditHours) : null
   
+  // Calculate previous points based on calculation mode
+  let prevPointsNumber: number | null = null
+  
+  if (calculationMode === 'gpa') {
+    const prevGPANumber = prevGPA.trim() !== '' ? parseFloat(prevGPA) : null
+    prevPointsNumber = (prevGPANumber !== null && prevCreditHoursNumber !== null) 
+      ? prevGPANumber * prevCreditHoursNumber 
+      : null
+  } else { // points mode
+    prevPointsNumber = prevPoints.trim() !== '' ? parseFloat(prevPoints) : null
+  }
+  
   // Calculate current GPA results
-  const results = calculateGPA(courses, prevGPANumber, prevCreditHoursNumber)
+  const results = calculateGPA(courses, prevPointsNumber, prevCreditHoursNumber)
 
   /**
    * Course Update Handler
@@ -239,7 +258,7 @@ export default function GpaCalculatorClient() {
    */
   const addCourse = () => {
     const newId = Math.max(0, ...courses.map(c => c.id)) + 1
-    setCourses([...courses, { id: newId, name: `[Course ${String(newId).padStart(2, '0')}]`, grade: '', hours: 3 }])
+    setCourses([...courses, { id: newId, name: `[Course ${String(newId).padStart(2, '0')}]`, grade: '', hours: '3' }])
   }
 
   /**
@@ -282,32 +301,71 @@ export default function GpaCalculatorClient() {
           {/* Previous GPA Section - For entering previous academic record */}
           <div className="previous-gpa-section">
             <h2 className="section-subtitle">Cumulative GPA</h2>
+            
+
+            
             <div className="input-group">
               <div className="input-field">
                 <label htmlFor="prevHours">Previous Credit Hours</label>
                 <input 
-                  type="number" 
+                  type="text" 
                   id="prevHours" 
-                  min="0" 
+                  inputMode="decimal"
+                  pattern="[0-9]*"
                   value={prevCreditHours} 
-                  onChange={(e) => setPrevCreditHours(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Allow empty string or valid numbers
+                    if (value === '' || /^\d*\.?\d*$/.test(value)) {
+                      setPrevCreditHours(value);
+                    }
+                  }}
                   className="gpa-input"
                   placeholder="Enter hours"
                 />
               </div>
               
+
+
               <div className="input-field">
-                <label htmlFor="prevGPA">Previous GPA</label>
+                <div className="input-field-header">
+                  <label htmlFor="prevGPA">Previous GPA</label>
+                  <div className="calculation-toggle">
+                    <label className="toggle-label">
+                      <input 
+                        type="checkbox" 
+                        checked={calculationMode === 'points'}
+                        onChange={() => setCalculationMode(calculationMode === 'gpa' ? 'points' : 'gpa')}
+                        className="toggle-checkbox"
+                      />
+                      <span className="toggle-text">Use points</span>
+                    </label>
+                  </div>
+                </div>
                 <input 
-                  type="number" 
+                  type="text" 
                   id="prevGPA" 
-                  min="0" 
-                  max={5} 
-                  step="0.01" 
-                  value={prevGPA} 
-                  onChange={(e) => setPrevGPA(e.target.value)}
-                  className="gpa-input"
-                  placeholder="Enter GPA"
+                  inputMode="decimal"
+                  pattern="[0-9]*\.?[0-9]*"
+                  value={calculationMode === 'gpa' ? prevGPA : 
+                    (prevCreditHoursNumber && prevPointsNumber && prevCreditHoursNumber > 0) ? 
+                    (prevPointsNumber / prevCreditHoursNumber).toFixed(2) : ''}
+                  onChange={(e) => {
+                    if (calculationMode === 'gpa') {
+                      const value = e.target.value;
+                      // Allow empty string or valid numbers with up to 2 decimal places
+                      if (value === '' || /^\d*\.?\d{0,2}$/.test(value)) {
+                        // Ensure the value doesn't exceed 5
+                        const numValue = parseFloat(value);
+                        if (value === '' || isNaN(numValue) || numValue <= 5) {
+                          setPrevGPA(value);
+                        }
+                      }
+                    }
+                  }}
+                  readOnly={calculationMode === 'points'}
+                  className={`gpa-input ${calculationMode === 'points' ? 'readonly-input' : ''}`}
+                  placeholder="Enter GPA (0-5)"
                 />
               </div>
               
@@ -316,10 +374,23 @@ export default function GpaCalculatorClient() {
                 <input 
                   type="text" 
                   id="points" 
-                  value={prevGPANumber && prevCreditHoursNumber ? (prevGPANumber * prevCreditHoursNumber).toFixed(2) : ''}
-                  readOnly 
-                  className="gpa-input readonly-input"
-                  placeholder="0.00"
+                  inputMode="decimal"
+                  pattern="[0-9]*\.?[0-9]*"
+                  value={calculationMode === 'points' ? prevPoints : 
+                    prevGPA.trim() !== '' && prevCreditHours.trim() !== '' ? 
+                    (parseFloat(prevGPA) * parseFloat(prevCreditHours)).toFixed(2) : ''}
+                  onChange={(e) => {
+                    if (calculationMode === 'points') {
+                      const value = e.target.value;
+                      // Allow empty string or valid numbers with up to 2 decimal places
+                      if (value === '' || /^\d*\.?\d{0,2}$/.test(value)) {
+                        setPrevPoints(value);
+                      }
+                    }
+                  }}
+                  readOnly={calculationMode === 'gpa'}
+                  className={`gpa-input ${calculationMode === 'gpa' ? 'readonly-input' : ''}`}
+                  placeholder="Enter total points"
                 />
               </div>
             </div>
@@ -408,7 +479,8 @@ export default function GpaCalculatorClient() {
                   const gradePoint = course.grade ? 
                     gradeValues[course.grade as keyof typeof gradeValues]?.points : 0
                   
-                  const points = course.grade ? gradePoint * course.hours : 0
+                  const hoursValue = course.hours.trim() !== '' ? parseFloat(course.hours) : 0
+                  const points = (course.grade && !isNaN(hoursValue)) ? gradePoint * hoursValue : 0
                   
                   return (
                     <div className="course-row" key={course.id}>
@@ -435,11 +507,19 @@ export default function GpaCalculatorClient() {
                       </div>
                       <div className="course-cell course-hours-cell">
                         <input
-                          type="number"
-                          min="0"
+                          type="text"
+                          inputMode="decimal"
+                          pattern="[0-9]*"
                           value={course.hours}
-                          onChange={(e) => updateCourse(course.id, 'hours', Number(e.target.value))}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            // Allow empty string or valid numbers
+                            if (value === '' || /^\d*\.?\d*$/.test(value)) {
+                              updateCourse(course.id, 'hours', value);
+                            }
+                          }}
                           className="course-input hours-input"
+                          placeholder="0"
                         />
                       </div>
                       <div className="course-cell course-gpa-cell">
