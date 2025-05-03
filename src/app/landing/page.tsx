@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -28,7 +28,19 @@ export default function LandingPage() {
   const router = useRouter()
   const { session } = useAuth()
   const [loading, setLoading] = useState(true)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   
+  // Handle scroll effect
+  const handleScroll = useCallback(() => {
+    const offset = window.scrollY
+    if (offset > 60) {
+      setScrolled(true)
+    } else {
+      setScrolled(false)
+    }
+  }, [])
+
   // Update last activity timestamp to prevent session timeout
   useEffect(() => {
     // Only update if we have a session (user is logged in)
@@ -44,14 +56,21 @@ export default function LandingPage() {
       return () => clearInterval(interval)
     }
   }, [session])
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  // Add scroll listener
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [handleScroll])
 
   // Simulate initial loading process
   useEffect(() => {
     // Simulate app loading process
     const timer = setTimeout(() => {
       setLoading(false)
-    }, 1000) // Show loading for 2 seconds
+    }, 1000) // Show loading for 1 second
 
     return () => clearTimeout(timer)
   }, [])
@@ -84,7 +103,7 @@ export default function LandingPage() {
   return (
     <div className="landing-container">
       {/* Navigation Bar */}
-      <div className="navbar">
+      <div className={`navbar ${scrolled ? 'scrolled' : ''}`}>
         <motion.div 
           className="nav-content"
           initial={{ opacity: 0, y: -20 }}
@@ -95,7 +114,7 @@ export default function LandingPage() {
             <Link href="/" className="flex items-center">
               <h1 className="nav-title">
                 <span className="hashtag">#</span>
-                <span className="title-text">Student_Hub</span>
+                <span className="title-text"> Student_Hub</span>
               </h1>
             </Link>
           </div>
@@ -103,15 +122,35 @@ export default function LandingPage() {
             {/* Desktop Navigation Links */}
             <div className="landing-nav-links">
               <Link href="/academic-calendar" className="nav-link-item">
-                <span className="nav-link-icon">📅</span>
+                <span className="nav-link-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </span>
                 <span className="nav-link-text">Academic Calendar</span>
               </Link>
               <Link href="/gpa-calculator" className="nav-link-item">
-                <span className="nav-link-icon">+/-</span>
+                <span className="nav-link-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                    <line x1="8" y1="6" x2="16" y2="6"></line>
+                    <line x1="8" y1="10" x2="16" y2="10"></line>
+                    <line x1="8" y1="14" x2="16" y2="14"></line>
+                    <line x1="8" y1="18" x2="12" y2="18"></line>
+                  </svg>
+                </span>
                 <span className="nav-link-text">GPA Calculator</span>
               </Link>
               <Link href="/pomodoro" className="nav-link-item">
-                <span className="nav-link-icon">⏱️</span>
+                <span className="nav-link-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                </span>
                 <span className="nav-link-text">Pomodoro Clock</span>
               </Link>
               <ThemeToggle />
@@ -144,19 +183,41 @@ export default function LandingPage() {
             >
               <div className="mobile-nav-links">
                 <Link href="/academic-calendar" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
-                  <span className="nav-link-icon">📅</span>
+                  <span className="nav-link-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                  </span>
                   <span className="nav-link-text">Academic Calendar</span>
                 </Link>
                 <Link href="/gpa-calculator" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
-                  <span className="nav-link-icon">+/-</span>
+                  <span className="nav-link-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                      <line x1="8" y1="6" x2="16" y2="6"></line>
+                      <line x1="8" y1="10" x2="16" y2="10"></line>
+                      <line x1="8" y1="14" x2="16" y2="14"></line>
+                      <line x1="8" y1="18" x2="12" y2="18"></line>
+                    </svg>
+                  </span>
                   <span className="nav-link-text">GPA Calculator</span>
                 </Link>
                 <Link href="/pomodoro" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
-                  <span className="nav-link-icon">⏱️</span>
+                  <span className="nav-link-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                  </span>
                   <span className="nav-link-text">Pomodoro Clock</span>
                 </Link>
                 <div className="mobile-theme-toggle">
-                  <ThemeToggle />
+                  <div className="mobile-nav-theme">
+                    <ThemeToggle />
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -227,7 +288,7 @@ export default function LandingPage() {
               <line className="hash-line line-4" x1="15" y1="60" x2="85" y2="60" />
             </svg>
             <div className="hero-text-overlay">
-              <span className="typewriter">Student_Hub</span>
+              <span className="static-text">Student_Hub</span>
             </div>
           </div>
         </motion.div>

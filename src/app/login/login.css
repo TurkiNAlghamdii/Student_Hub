@@ -235,48 +235,135 @@
 
 /* Mini Nav for Public Links and Theme Toggle */
 .login-public-nav {
-  width: fit-content; /* Fit width to content */
+  width: auto;
   display: flex;
-  justify-content: center; /* Center items horizontally */
-  gap: 2rem; /* Add space between link group and theme toggle */
+  justify-content: center;
   align-items: center;
-  padding: 0.5rem 1rem; /* Reduced padding for compactness */
-  /* Position determined by flex layout now */
-  margin-bottom: 1.5rem; /* Space above login card */
-  border-radius: 8px; /* Rounded corners for sleek look */
-  backdrop-filter: blur(4px); /* Match card blur */
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  margin-bottom: 2rem;
+  border-radius: 0.75rem;
+  backdrop-filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.1);
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .dark .login-public-nav {
-  background-color: rgba(17, 24, 39, 0.5); /* Match dark card bg: bg-gray-900/50 */
-  box-shadow:
-    0 0 40px rgba(6, 78, 59, 0.1),
-    0 0 80px rgba(0, 0, 0, 0.3); /* Match dark card shadow */
-}
-
-:root:not(.dark) .login-public-nav {
-  background-color: rgba(255, 255, 255, 0.8); /* Match light card bg: bg-white/80 */
-  box-shadow: 
-    0 0 40px rgba(6, 78, 59, 0.05),
-    0 0 80px rgba(0, 0, 0, 0.1); /* Match light card shadow */
+  background-color: rgba(0, 0, 0, 0.2);
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .public-nav-links {
   display: flex;
-  gap: 0.75rem; /* Reduced space between links */
-  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .public-tool-link {
-  display: inline-block;
-  padding: 0.5rem 1rem; /* Button padding */
-  border-radius: 6px; /* Rounded corners */
-  font-size: 0.875rem; /* 14px */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
   font-weight: 500;
-  text-decoration: none;
-  transition: all 0.2s ease-in-out;
-  border: 1px solid transparent; /* Placeholder for potential border */
-  cursor: pointer;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  color: var(--foreground);
+}
+
+.dark .public-tool-link {
+  background-color: rgba(31, 41, 55, 0.5);
+  color: #e5e7eb;
+}
+
+.dark .public-tool-link:hover {
+  background-color: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+:root:not(.dark) .public-tool-link {
+  background-color: rgba(255, 255, 255, 0.5);
+  color: #374151;
+}
+
+:root:not(.dark) .public-tool-link:hover {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #059669;
+}
+
+/* Theme toggle in navbar */
+.login-container .login-public-nav .theme-toggle-button {
+  position: static;
+  top: auto;
+  right: auto;
+  z-index: auto;
+  min-width: 38px;
+  min-height: 38px;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+}
+
+.dark .login-container .login-public-nav .theme-toggle-button {
+  background-color: rgba(31, 41, 55, 0.5);
+  color: #e5e7eb;
+}
+
+.dark .login-container .login-public-nav .theme-toggle-button:hover {
+  background-color: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+:root:not(.dark) .login-container .login-public-nav .theme-toggle-button {
+  background-color: rgba(255, 255, 255, 0.5);
+  color: #374151;
+}
+
+:root:not(.dark) .login-container .login-public-nav .theme-toggle-button:hover {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #059669;
+}
+
+/* Media queries for responsive adjustments */
+@media (max-width: 640px) {
+  .login-public-nav {
+    padding: 0.5rem;
+    gap: 0.4rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .public-nav-links {
+    gap: 0.4rem;
+  }
+  
+  .public-tool-link {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Styles related to theme variables (keep these) */
+:root {
+  --border-color: #e5e7eb; /* Light mode border */
+  --border-rgb: 229, 231, 235; /* Light mode border RGB */
+  --text-secondary: #6b7280; /* Light mode default */
+  --primary-color: #10b981; /* Emerald-500 */
+  --primary-hover-color: #059669; /* Emerald-600 */
+}
+
+:root.dark {
+  --border-color: #374151; /* Dark mode border */
+  --border-rgb: 55, 65, 81; /* Dark mode border RGB */
+  --text-secondary: #9ca3af; /* Dark mode default */
+  --primary-color: #34d399; /* Emerald-400 */
+  --primary-hover-color: #6ee7b7; /* Emerald-300 */
 }
 
 .dark .public-tool-link {
@@ -305,52 +392,16 @@
   box-shadow: 0 2px 8px rgba(6, 78, 59, 0.05);
 }
 
-/* Override ThemeToggle.css absolute positioning AND apply mini-nav styles */
-.login-container .login-public-nav .theme-toggle-button {
-  position: static; /* Revert to default flow positioning */
-  top: auto;
-  right: auto;
-  z-index: auto;
-  
-  /* Match mini-nav base styles */
-  border-radius: 8px; 
-  backdrop-filter: blur(4px);
-  border: none; /* Remove default button border */
-  
-  /* Keep original button sizing/flex/color/cursor properties */
-  /* width, height, display, align-items, justify-content, color, cursor, transition */
-  /* These should be inherited from ThemeToggle.css unless overridden */
-}
-
-.dark .login-container .login-public-nav .theme-toggle-button {
-  background-color: rgba(17, 24, 39, 0.5); /* Match dark nav bg */
+.dark .login-public-nav {
+  background-color: rgba(17, 24, 39, 0.5); /* Match dark card bg: bg-gray-900/50 */
   box-shadow:
     0 0 40px rgba(6, 78, 59, 0.1),
-    0 0 80px rgba(0, 0, 0, 0.3); /* Match dark nav shadow */
+    0 0 80px rgba(0, 0, 0, 0.3); /* Match dark card shadow */
 }
 
-:root:not(.dark) .login-container .login-public-nav .theme-toggle-button {
-  background-color: rgba(255, 255, 255, 0.8); /* Match light nav bg */
+:root:not(.dark) .login-public-nav {
+  background-color: rgba(255, 255, 255, 0.8); /* Match light card bg: bg-white/80 */
   box-shadow: 
     0 0 40px rgba(6, 78, 59, 0.05),
-    0 0 80px rgba(0, 0, 0, 0.1); /* Match light nav shadow */
-}
-
-/* Hover/active animations from ThemeToggle.css should still apply */
-
-/* Styles related to theme variables (keep these) */
-:root {
-  --border-color: #e5e7eb; /* Light mode border */
-  --border-rgb: 229, 231, 235; /* Light mode border RGB */
-  --text-secondary: #6b7280; /* Light mode default */
-  --primary-color: #10b981; /* Emerald-500 */
-  --primary-hover-color: #059669; /* Emerald-600 */
-}
-
-:root.dark {
-  --border-color: #374151; /* Dark mode border */
-  --border-rgb: 55, 65, 81; /* Dark mode border RGB */
-  --text-secondary: #9ca3af; /* Dark mode default */
-  --primary-color: #34d399; /* Emerald-400 */
-  --primary-hover-color: #6ee7b7; /* Emerald-300 */
+    0 0 80px rgba(0, 0, 0, 0.1); /* Match light card shadow */
 }
