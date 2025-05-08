@@ -344,12 +344,19 @@ export default function Navbar({ showBack = false }: NavbarProps) {
 
   const handleLogout = async () => {
     try {
-      // Clear any session data in localStorage before signout
+      // Clear all session-related data from localStorage
       localStorage.removeItem('sessionStartTime')
-      // Proceed with signout
+      localStorage.removeItem('lastActivity')
+      
+      // Sign out through Supabase
       await signOut()
+      
+      // Force redirect to login page even if signOut fails
+      router.push('/landing')
     } catch (error) {
       console.error('Error logging out:', error)
+      // Ensure we still redirect on error
+      router.push('/landing')
     }
   }
 
@@ -655,7 +662,7 @@ export default function Navbar({ showBack = false }: NavbarProps) {
           )}
           <Link href="/" className="flex items-center">
             <h1 className="mx-2 flex items-center text-xl font-bold">
-              <span className="text-emerald-500 mr-0.5">#</span>
+              <span className="text-emerald-500 mr-0.5 text-[1.7rem] font-extrabold drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]">#</span>
               <span className="title-text">Student_Hub</span>
             </h1>
           </Link>

@@ -60,7 +60,7 @@
   transition: color 0.2s ease;
 }
 
-/* New title text styling with solid colors */
+/* Title text styling with solid colors and hover effect */
 .title-text {
   transition: color 0.2s ease;
   white-space: nowrap;

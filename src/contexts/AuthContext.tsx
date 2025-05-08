@@ -228,10 +228,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
    */
   const handleSignOut = async () => {
     try {
-      await supabase.auth.signOut();
-      router.push('/login');
+      // Clear all local storage session data
+      localStorage.removeItem('sessionStartTime');
+      localStorage.removeItem('lastActivity');
+      
+      // Reset local state immediately
+      setUser(null);
+      setSession(null);
+      
+      // Sign out through Supabase (which clears cookies)
+      const { error } = await supabase.auth.signOut({
+        scope: 'local' // Only sign out from this device
+      });
+      
+      if (error) {
+        console.error('Supabase signOut error:', error);
+      }
+      
+      // Always redirect to landing page
+      router.push('/landing');
     } catch (error) {
       console.error('Error signing out:', error);
+      // Ensure we still redirect on error
+      router.push('/landing');
     }
   };
 
