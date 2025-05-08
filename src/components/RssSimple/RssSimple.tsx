@@ -643,10 +643,6 @@ const RssSimple = ({ url, title = 'Latest Updates', count = 3 }: RssSimpleProps)
             // Extract all images from the item
             const images = getAllImages(item)
             
-            // For debugging - log the item and images to console
-            console.log('Tweet item:', item)
-            console.log('Extracted images:', images)
-            
             // Clean the description for display
             const cleanedDescription = cleanDescription(item.description || '')
             

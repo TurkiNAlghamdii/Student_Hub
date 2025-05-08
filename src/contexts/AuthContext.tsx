@@ -123,8 +123,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsPasswordRecovery(isRecoveryFlow);
       
       if (isRecoveryFlow) {
-        console.log("Password recovery flow detected in AuthContext");
-        
         /**
          * Handler for recovery-specific auth state changes
          * Gets the current session after token processing
@@ -160,7 +158,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log("Auth state change detected, event:", _event);
+      // Remove console log
       
       // Special handling for password recovery flow
       if (_event === 'PASSWORD_RECOVERY' || _event === 'USER_UPDATED') {
@@ -216,7 +214,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const lastActivityTime = parseInt(lastActivity);
       const now = Date.now();
       const timeDiff = now - lastActivityTime;
-      if (timeDiff > 30 * 60 * 1000) { // 30 minutes of inactivity
+      if (timeDiff > 45 * 60 * 1000) { // 45 minutes of inactivity
         handleSignOut();
         return true;
       }

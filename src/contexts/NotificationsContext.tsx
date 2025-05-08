@@ -127,7 +127,6 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
 
     // If we have cached notifications and the cache hasn't expired, don't fetch again
     if (notifications.length > 0 && lastFetched && Date.now() - lastFetched < CACHE_EXPIRATION) {
-      console.log('Using cached notifications data');
       return;
     }
 
@@ -135,8 +134,6 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     setError(null);
 
     try {
-      console.log(`Fetching notifications for user: ${user.id}`);
-
       // Query Supabase for notifications
       const { data, error } = await supabase
         .from('notifications')
@@ -151,8 +148,6 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
 
       // Count unread notifications
       const unreadNotifications = (data || []).filter(notification => !notification.is_read);
-      
-      console.log(`Found ${data?.length || 0} notifications, ${unreadNotifications.length} unread`);
       
       // Update state with fetched data
       setNotifications(data || []);
@@ -260,7 +255,6 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
    */
   useEffect(() => {
     // DISABLED - Causing too many requests
-    console.log('Real-time notifications subscription is DISABLED to prevent excessive requests');
     
     // Original code:
     /*
@@ -340,7 +334,6 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     const alreadyFetched = !!lastFetched;
     
     if (user && !alreadyFetched) {
-      console.log('Initial notifications fetch - will only happen once');
       
       // Use this timeout to delay the initial fetch slightly
       // This helps avoid race conditions during app startup

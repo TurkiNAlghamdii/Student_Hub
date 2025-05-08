@@ -283,6 +283,15 @@ export default function Register() {
   // Calculate current password strength for the indicator
   const passwordStrength = getPasswordStrength(password)
 
+  // Check if form is valid for submission
+  const isFormValid = () => {
+    // For students, require student ID to be exactly 7 digits
+    if (isStudent && studentId.length !== 7) {
+      return false;
+    }
+    return true;
+  };
+
   /**
    * Render the registration form with animations and theme support
    * The component uses CSS classes that adapt to both light and dark themes
@@ -353,6 +362,7 @@ export default function Register() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.4 }}
+                  className="relative"
                 >
                   <input
                     type="text"
@@ -363,9 +373,14 @@ export default function Register() {
                       const digits = e.target.value.replace(/\D/g, '');
                       setStudentId(digits.slice(0, 7));
                     }}
-                    className="input-field"
+                    className={`input-field ${studentId && studentId.length !== 7 ? 'border-red-500' : ''}`}
                     placeholder="Student ID (7 digits)"
                   />
+                  {studentId && studentId.length !== 7 && (
+                    <div className="text-red-500 text-xs mt-1">
+                      Student ID must be exactly 7 digits ({studentId.length}/7)
+                    </div>
+                  )}
                 </motion.div>
 
                 <motion.div
@@ -502,7 +517,7 @@ export default function Register() {
           >
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || (isStudent && studentId.length !== 7)}
               className="submit-button"
             >
               {loading ? 'Creating account...' : 'Create account'}

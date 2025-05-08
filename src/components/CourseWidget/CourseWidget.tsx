@@ -78,6 +78,9 @@ export default function CourseWidget() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [animationReady, setAnimationReady] = useState(false)
+  
+  // Add state for the hover effect on the View All link
+  const [isViewAllHovered, setIsViewAllHovered] = useState(false);
 
   useEffect(() => {
     if (!user) return
@@ -182,7 +185,18 @@ export default function CourseWidget() {
             <BookOpenIcon className="course-widget-icon" />
             <h3>My Courses</h3>
           </div>
-          <Link href="/courses" className="view-all-link">View All</Link>
+          <Link 
+            href="/courses" 
+            className="view-all-link"
+            onMouseEnter={() => setIsViewAllHovered(true)}
+            onMouseLeave={() => setIsViewAllHovered(false)}
+          >
+            <span>View All</span>
+            <ArrowRightIcon 
+              className={`h-4 w-4 ml-1 transition-transform duration-300 ${isViewAllHovered ? 'translate-x-1' : ''}`} 
+              aria-hidden="true"
+            />
+          </Link>
         </div>
         <div className="course-widget-list">
           {renderSkeletonCourses()}
@@ -199,7 +213,18 @@ export default function CourseWidget() {
             <BookOpenIcon className="course-widget-icon" />
             <h3>My Courses</h3>
           </div>
-          <Link href="/courses" className="view-all-link">View All</Link>
+          <Link 
+            href="/courses" 
+            className="view-all-link"
+            onMouseEnter={() => setIsViewAllHovered(true)}
+            onMouseLeave={() => setIsViewAllHovered(false)}
+          >
+            <span>View All</span>
+            <ArrowRightIcon 
+              className={`h-4 w-4 ml-1 transition-transform duration-300 ${isViewAllHovered ? 'translate-x-1' : ''}`} 
+              aria-hidden="true"
+            />
+          </Link>
         </div>
         <div className="course-widget-error">
           <p>{error}</p>
@@ -216,7 +241,18 @@ export default function CourseWidget() {
             <BookOpenIcon className="course-widget-icon" />
             <h3>My Courses</h3>
           </div>
-          <Link href="/courses" className="view-all-link">View All</Link>
+          <Link 
+            href="/courses" 
+            className="view-all-link"
+            onMouseEnter={() => setIsViewAllHovered(true)}
+            onMouseLeave={() => setIsViewAllHovered(false)}
+          >
+            <span>View All</span>
+            <ArrowRightIcon 
+              className={`h-4 w-4 ml-1 transition-transform duration-300 ${isViewAllHovered ? 'translate-x-1' : ''}`} 
+              aria-hidden="true"
+            />
+          </Link>
         </div>
         <div className="course-widget-empty">
           <BookOpenIcon className="empty-icon" />
@@ -236,7 +272,18 @@ export default function CourseWidget() {
           <BookOpenIcon className="course-widget-icon" />
           <h3>My Courses</h3>
         </div>
-        <Link href="/courses" className="view-all-link">View All</Link>
+        <Link 
+          href="/courses" 
+          className="view-all-link"
+          onMouseEnter={() => setIsViewAllHovered(true)}
+          onMouseLeave={() => setIsViewAllHovered(false)}
+        >
+          <span>View All</span>
+          <ArrowRightIcon 
+            className={`h-4 w-4 ml-1 transition-transform duration-300 ${isViewAllHovered ? 'translate-x-1' : ''}`} 
+            aria-hidden="true"
+          />
+        </Link>
       </div>
       <div className="course-widget-list">
         {courses.map((course, index) => (
